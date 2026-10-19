@@ -206,8 +206,10 @@ def smn_wrf(previo):
                     idx[z] = np.unravel_index(int(np.argmin(d2)), la.shape)
             fff = int(k.rsplit("_", 1)[1][:3])
             t = ini + dt.timedelta(hours=fff)
+            if fff == 1:
+                DIAG.append("SMN WRF variables h1: " + ",".join(list(ds.variables)[:40]))
             def val(n, i):
-                if not n: return None
+                if not n or n not in ds.variables: return None
                 a = np.squeeze(ds.variables[n][:])
                 x = a[i] if a.ndim == 2 else a[(0,) * (a.ndim - 2) + i]
                 return float(x)
@@ -236,8 +238,8 @@ def smn_wrf(previo):
             por.setdefault(d, []).append((f["temp"], pp or 0.0, f["ws"], f["wd"]))
         dias = []
         for d, v in sorted(por.items()):
-            if len(v) < 18: continue
             ts = [x[0] for x in v if x[0] is not None]
+            if len(ts) < 18: continue
             ws = [(x[2] or 0, x[3]) for x in v]
             wmax = max(ws, key=lambda w: w[0])
             kmh = wmax[0] * 3.6 if wmax[0] < 60 else wmax[0]
