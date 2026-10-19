@@ -10,9 +10,9 @@ import json, datetime as dt, urllib.request, urllib.parse, csv, io, sys, traceba
 TZ = "America/Montevideo"
 DIAG = []
 ZONAS = {
-    "salto":      {"lat": -31.383, "lon": -57.967, "isd": ["86360099999"], "icao": "SUSO"},  # Salto (Nueva Hespérides)
-    "montevideo": {"lat": -34.880, "lon": -56.180, "isd": ["86580099999", "86585099999"], "icao": "SUMU"},  # Carrasco
-    "este":       {"lat": -34.940, "lon": -54.960, "isd": ["86586099999"], "icao": "SULS"},  # Laguna del Sauce
+    "salto":      {"lat": -31.383, "lon": -57.967, "isd": ["86360099999"], "icao": "SUSO", "aero": (-31.438, -57.985)},  # Salto (Nueva Hespérides)
+    "montevideo": {"lat": -34.880, "lon": -56.180, "isd": ["86580099999", "86585099999"], "icao": "SUMU", "aero": (-34.838, -56.031)},  # Carrasco
+    "este":       {"lat": -34.940, "lon": -54.960, "isd": ["86586099999"], "icao": "SULS", "aero": (-34.856, -55.094)},  # Laguna del Sauce
 }
 MODELOS = ["ecmwf_ifs025", "gfs_seamless", "icon_seamless", "gem_seamless", "jma_seamless", "meteofrance_seamless", "ukmo_seamless"]
 NOMBRE = {"ecmwf_ifs025": "ECMWF", "gfs_seamless": "GFS", "icon_seamless": "ICON", "gem_seamless": "GEM",
@@ -202,7 +202,8 @@ def smn_wrf(previo):
                 la = np.squeeze(ds.variables[nombres["lat"]][:]); lo = np.squeeze(ds.variables[nombres["lon"]][:])
                 if la.ndim == 1: la, lo = np.meshgrid(la, lo, indexing="ij")
                 for z, zz in ZONAS.items():
-                    d2 = (la - zz["lat"]) ** 2 + ((lo - zz["lon"]) * np.cos(np.radians(zz["lat"]))) ** 2
+                    plat, plon = zz.get("aero", (zz["lat"], zz["lon"]))  # punto del aeropuerto: el mismo lugar que se mide
+                    d2 = (la - plat) ** 2 + ((lo - plon) * np.cos(np.radians(plat))) ** 2
                     idx[z] = np.unravel_index(int(np.argmin(d2)), la.shape)
             fff = int(k.rsplit("_", 1)[1][:3])
             t = ini + dt.timedelta(hours=fff)
