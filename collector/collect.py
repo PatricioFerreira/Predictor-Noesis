@@ -26,7 +26,7 @@ def get(url, timeout=60):
 def modelos(z):
     q = {"latitude": z["lat"], "longitude": z["lon"], "timezone": TZ, "forecast_days": 8,
          "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,wind_direction_10m_dominant",
-         "hourly": "pressure_msl", "past_days": 1, "models": ",".join(MODELOS)}
+         "hourly": "pressure_msl,temperature_2m", "past_days": 1, "models": ",".join(MODELOS)}
     d = json.loads(get("https://api.open-meteo.com/v1/forecast?" + urllib.parse.urlencode(q)))
     out = {}
     for m in MODELOS:
@@ -44,6 +44,12 @@ def modelos(z):
         out[NOMBRE[m]] = {"dias": dias}
         if m == "ecmwf_ifs025":
             out[NOMBRE[m]]["presionHoraria"] = [{"t": t, "hPa": p} for t, p in zip(hh["time"], hh.get("pressure_msl" + sfx, [])) if p is not None][:72]
+    # nuestra temperatura hora a hora: promedio de los modelos disponibles en cada hora
+    hh = d["hourly"]; mezcla = []
+    for i, t in enumerate(hh["time"]):
+        v = [hh["temperature_2m_" + m][i] for m in MODELOS if ("temperature_2m_" + m) in hh and hh["temperature_2m_" + m][i] is not None]
+        if v: mezcla.append({"t": t, "temp": round(sum(v) / len(v), 1), "n": len(v)})
+    out["_mezclaHoraria"] = mezcla
     return out
 
 def observado(estaciones, dias=5):
@@ -313,6 +319,15 @@ def main():
         except Exception as e:
             salida["errores"].append(f"metar {nombre}: {e}"); traceback.print_exc()
         zz["actual"] = actual_de(zz.get("observado"))
+        mez = (zz.get("modelos") or {}).pop("_mezclaHoraria", [])
+        zz["mezclaHoraria"] = mez
+        a = zz["actual"]
+        if a and a.get("temp") is not None:
+            clave = a["t"][:13] + ":00"
+            hit = next((m for m in mez if m["t"] == clave), None)
+            if hit:
+                a["previsto"] = hit["temp"]
+                a["desvio"] = round(a["temp"] - hit["temp"], 1)
         salida["zonas"][nombre] = zz
     import os
     previo = None
