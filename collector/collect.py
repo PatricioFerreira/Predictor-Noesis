@@ -95,8 +95,18 @@ def metar(icao, horas=96):
             t = dt.datetime.fromtimestamp(o["obsTime"], dt.timezone.utc).astimezone(loc)
         except Exception:
             continue
-        filas.append({"t": t.isoformat(), "temp": o.get("temp"), "hPa": o.get("altim"), "vientoKmh": round(o["wspd"] * 1.852) if isinstance(o.get("wspd"), (int, float)) else None,
-                      "vientoDir": o.get("wdir") if isinstance(o.get("wdir"), (int, float)) else None})
+        tmp, dew = o.get("temp"), o.get("dewp")
+        hr = None
+        if isinstance(tmp, (int, float)) and isinstance(dew, (int, float)):
+            import math
+            a, b = 17.625, 243.04
+            hr = round(100 * math.exp(a * dew / (b + dew) - a * tmp / (b + tmp)))
+        capas = o.get("clouds") or []
+        cob = max([{"FEW": 1, "SCT": 2, "BKN": 3, "OVC": 4, "OVX": 4}.get(c.get("cover"), 0) for c in capas] or [0])
+        filas.append({"t": t.isoformat(), "temp": tmp, "hPa": o.get("altim"), "humedad": hr,
+                      "vientoKmh": round(o["wspd"] * 1.852) if isinstance(o.get("wspd"), (int, float)) else None,
+                      "vientoDir": o.get("wdir") if isinstance(o.get("wdir"), (int, float)) else None,
+                      "nubosidad": cob, "fenomeno": o.get("wxString") or "", "visib": o.get("visib"), "metar": o.get("rawOb", "")})
     filas.sort(key=lambda f: f["t"])
     por = {}
     for f in filas:
