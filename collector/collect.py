@@ -1,7 +1,8 @@
 """Recolector del Predictor del Litoral.
 Corre en GitHub Actions cada 3 horas y deja data/latest.json con:
 - modelos: pronóstico diario y presión horaria de varios modelos (vía Open-Meteo) para Salto, Montevideo y el Este
-- observado: máximas, mínimas y lluvia de los últimos días en estaciones sinópticas (NOAA ISD)
+- observado: METAR de los aeropuertos (SUSO, SUMU, SULS) → data/medido.json
+- SMN Argentina WRF 4 km (AWS Open Data) → data/smn.json
 El tablero (https://claude.ai/artifact/NmUMC1ftYmnFYfr9grZAFw) lo lee en cada actualización.
 """
 import json, datetime as dt, urllib.request, urllib.parse, csv, io, sys, traceback
@@ -116,6 +117,136 @@ def metar(icao, horas=96):
     dias = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v), "completo": d < hoy and len(v) >= 12} for d, v in sorted(por.items())]
     return {"estacion": icao, "fuente": "METAR (aviationweather.gov)", "dias": dias, "horario": filas[-30:]}
 
+
+SMN_BUCKET = "https://smn-ar-wrf.s3.amazonaws.com"
+
+def _cielo(f, hora):
+    fen = (f.get("fenomeno") or "").upper()
+    noche = hora < 7 or hora >= 20
+    if "TS" in fen: return "tormenta"
+    if "SH" in fen: return "chaparron"
+    if "RA" in fen: return "lluvia"
+    if "DZ" in fen: return "llovizna"
+    if "FG" in fen or "BR" in fen: return "niebla"
+    n = f.get("nubosidad") or 0
+    if n <= 1: return "luna" if noche else "sol"
+    if n == 2: return "lunanube" if noche else "solnube"
+    return "nube" if n == 3 else "cubierto"
+
+def actual_de(obs):
+    """Último dato medido del aeropuerto, listo para mostrar."""
+    h = (obs or {}).get("horario") or []
+    if not h: return None
+    f = h[-1]
+    t = dt.datetime.fromisoformat(f["t"])
+    return {"t": f["t"], "hora": t.strftime("%H:%M"), "temp": f["temp"], "presion": f["hPa"], "humedad": f["humedad"],
+            "vientoKmh": f["vientoKmh"], "vientoDir": f["vientoDir"], "nubosidad": f["nubosidad"],
+            "fenomeno": f["fenomeno"] or None, "cielo": _cielo(f, t.hour),
+            "fuente": f"METAR {obs['estacion']} (aeropuerto)"}
+
+def _s3_list(prefix):
+    import re
+    txt = get(f"{SMN_BUCKET}/?list-type=2&max-keys=1000&prefix=" + urllib.parse.quote(prefix))
+    return re.findall(r"<Key>([^<]+)</Key>", txt)
+
+def smn_wrf(previo):
+    """SMN Argentina WRF determinístico 4 km (AWS Open Data, bucket smn-ar-wrf).
+    Baja la corrida más reciente completa (00 o 12 UTC), lee el punto más cercano a cada zona
+    y arma máximas, mínimas, lluvia y viento por día local. Solo trabaja si hay una corrida nueva."""
+    import concurrent.futures as cf
+    import numpy as np, netCDF4
+    ahora = dt.datetime.now(dt.timezone.utc)
+    elegida = None
+    for horas_atras in range(0, 60, 6):
+        c = ahora - dt.timedelta(hours=horas_atras)
+        if c.hour not in (0, 12) and horas_atras: 
+            pass
+        for hh in (12, 0):
+            ini = c.replace(hour=hh, minute=0, second=0, microsecond=0)
+            if ini > ahora: continue
+            pref = f"DATA/WRF/DET/{ini:%Y/%m/%d/%H}/"
+            claves = sorted(k for k in _s3_list(pref) if "_01H_" in k and k.endswith(".nc"))
+            if len(claves) >= 49:
+                elegida = (ini, claves); break
+        if elegida: break
+    if not elegida:
+        DIAG.append("SMN WRF: no hay corrida completa"); return previo
+    ini, claves = elegida
+    if previo and previo.get("init") == ini.isoformat():
+        DIAG.append(f"SMN WRF: sin corrida nueva ({ini:%d/%m %HZ})"); return previo
+    claves = claves[:73]
+    idx = {}
+    nombres = {}
+    def bajar(k):
+        req = urllib.request.Request(f"{SMN_BUCKET}/{k}", headers={"User-Agent": "predictor-litoral"})
+        with urllib.request.urlopen(req, timeout=180) as r:
+            return k, r.read()
+    filas = {z: [] for z in ZONAS}
+    def var(ds, cands):
+        for c in cands:
+            if c in ds.variables: return c
+        low = {v.lower(): v for v in ds.variables}
+        for c in cands:
+            if c.lower() in low: return low[c.lower()]
+        return None
+    with cf.ThreadPoolExecutor(8) as ex:
+        for k, b in ex.map(bajar, claves):
+            ds = netCDF4.Dataset("m.nc", memory=b)
+            if not nombres:
+                nombres = {"lat": var(ds, ["lat", "XLAT", "latitude"]), "lon": var(ds, ["lon", "XLONG", "longitude"]),
+                           "t": var(ds, ["T2", "t2", "T2m"]), "pp": var(ds, ["PP", "pp", "PPn", "RAINNC"]),
+                           "ws": var(ds, ["magViento10", "WSPD10", "ws10"]), "wd": var(ds, ["dirViento10", "WDIR10", "wd10"]),
+                           "u": var(ds, ["U10", "u10"]), "v": var(ds, ["V10", "v10"]),
+                           "p": var(ds, ["SLP", "slp", "PSFC", "psfc"])}
+                DIAG.append("SMN WRF variables: " + ",".join(list(ds.variables)[:40]))
+                la = np.squeeze(ds.variables[nombres["lat"]][:]); lo = np.squeeze(ds.variables[nombres["lon"]][:])
+                if la.ndim == 1: la, lo = np.meshgrid(la, lo, indexing="ij")
+                for z, zz in ZONAS.items():
+                    d2 = (la - zz["lat"]) ** 2 + ((lo - zz["lon"]) * np.cos(np.radians(zz["lat"]))) ** 2
+                    idx[z] = np.unravel_index(int(np.argmin(d2)), la.shape)
+            fff = int(k.rsplit("_", 1)[1][:3])
+            t = ini + dt.timedelta(hours=fff)
+            def val(n, i):
+                if not n: return None
+                a = np.squeeze(ds.variables[n][:])
+                x = a[i] if a.ndim == 2 else a[(0,) * (a.ndim - 2) + i]
+                return float(x)
+            for z in ZONAS:
+                i = idx[z]
+                tmp = val(nombres["t"], i)
+                if tmp is not None and tmp > 150: tmp -= 273.15
+                ws = val(nombres["ws"], i); wd = val(nombres["wd"], i)
+                if ws is None and nombres["u"]:
+                    u, v = val(nombres["u"], i), val(nombres["v"], i)
+                    ws = (u * u + v * v) ** 0.5; wd = (270 - np.degrees(np.arctan2(v, u))) % 360
+                filas[z].append({"t": t, "temp": tmp, "pp": val(nombres["pp"], i), "ws": ws, "wd": wd})
+            ds.close()
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    out = {"init": ini.isoformat(), "fuente": "SMN Argentina WRF 4 km (AWS smn-ar-wrf)", "zonas": {}}
+    for z, ff in filas.items():
+        ff.sort(key=lambda f: f["t"])
+        pps = [f["pp"] for f in ff if f["pp"] is not None]
+        acumulada = len(pps) > 3 and all(b >= a - 1e-6 for a, b in zip(pps, pps[1:])) and pps[-1] > pps[1] * 3
+        prev = 0.0
+        por = {}
+        for f in ff:
+            pp = f["pp"]
+            if pp is not None and acumulada: pp, prev = max(0.0, pp - prev), pp
+            d = f["t"].astimezone(loc).date().isoformat()
+            por.setdefault(d, []).append((f["temp"], pp or 0.0, f["ws"], f["wd"]))
+        dias = []
+        for d, v in sorted(por.items()):
+            if len(v) < 18: continue
+            ts = [x[0] for x in v if x[0] is not None]
+            ws = [(x[2] or 0, x[3]) for x in v]
+            wmax = max(ws, key=lambda w: w[0])
+            kmh = wmax[0] * 3.6 if wmax[0] < 60 else wmax[0]
+            dias.append({"fecha": d, "tmax": round(max(ts), 1), "tmin": round(min(ts), 1), "mm": round(sum(x[1] for x in v), 1),
+                         "vientoKmh": round(kmh), "vientoDir": round(wmax[1]) if wmax[1] is not None else None})
+        out["zonas"][z] = dias
+    DIAG.append(f"SMN WRF: corrida {ini:%d/%m %HZ}, {len(claves)} horas")
+    return out
+
 def main():
     salida = {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "zonas": {}, "errores": []}
     for nombre, z in ZONAS.items():
@@ -128,21 +259,42 @@ def main():
             zz["observado"] = metar(z["icao"])
         except Exception as e:
             salida["errores"].append(f"metar {nombre}: {e}"); traceback.print_exc()
-        try:
-            zz["synop"] = observado(z["isd"])
-        except Exception as e:
-            salida["errores"].append(f"synop {nombre}: {e}")
+        zz["actual"] = actual_de(zz.get("observado"))
         salida["zonas"][nombre] = zz
+    import os
+    previo = None
+    try:
+        previo = json.load(open("data/smn.json"))
+    except Exception:
+        pass
+    try:
+        smn = smn_wrf(previo)
+        if smn:
+            with open("data/smn.json", "w") as f:
+                json.dump(smn, f, ensure_ascii=False, separators=(",", ":"))
+    except Exception as e:
+        smn = previo
+        salida["errores"].append(f"smn: {e}"); traceback.print_exc()
     salida["diagnostico"] = DIAG
     with open("data/latest.json", "w") as f:
         json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
     # resumen chico para leer rápido (sin series horarias)
     res = {"generado": salida["generado"], "errores": salida["errores"], "diagnostico": DIAG, "zonas": {}}
     for z, v in salida["zonas"].items():
-        res["zonas"][z] = {"modelos": {k: m["dias"] for k, m in v.get("modelos", {}).items()},
-                           "observado": v.get("observado"), "synop": v.get("synop")}
+        mods = {k: m["dias"] for k, m in v.get("modelos", {}).items()}
+        if smn and smn.get("zonas", {}).get(z):
+            mods["SMN"] = smn["zonas"][z]
+        res["zonas"][z] = {"modelos": mods, "observado": v.get("observado"), "actual": v.get("actual")}
+    if smn: res["smnInit"] = smn.get("init")
     with open("data/resumen.json", "w") as f:
         json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
+    # lo medido, en un archivo chico: último dato y máximas/mínimas por día
+    med = {"generado": salida["generado"], "zonas": {}}
+    for z, v in salida["zonas"].items():
+        o = v.get("observado") or {}
+        med["zonas"][z] = {"estacion": o.get("estacion"), "actual": v.get("actual"), "dias": o.get("dias", [])}
+    with open("data/medido.json", "w") as f:
+        json.dump(med, f, ensure_ascii=False, indent=1)
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
 
 if __name__ == "__main__":
