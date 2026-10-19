@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-19T23:40:07.682792+00:00",
+ "generado": "2026-10-19T23:53:07.765229+00:00",
  "zonas": {
   "salto": {
    "estacion": "SUSO",
@@ -14,7 +14,9 @@
     "nubosidad": 0,
     "fenomeno": null,
     "cielo": "luna",
-    "fuente": "METAR SUSO (aeropuerto)"
+    "fuente": "METAR SUSO (aeropuerto)",
+    "previsto": 15.6,
+    "desvio": 0.4
    },
    "dias": [
     {
@@ -60,7 +62,9 @@
     "nubosidad": 3,
     "fenomeno": null,
     "cielo": "nube",
-    "fuente": "METAR SUMU (aeropuerto)"
+    "fuente": "METAR SUMU (aeropuerto)",
+    "previsto": 11.8,
+    "desvio": 0.2
    },
    "dias": [
     {
@@ -101,15 +105,65 @@
    ]
   },
   "este": {
-   "estacion": null,
-   "actual": null,
-   "dias": []
+   "estacion": "SULS",
+   "actual": {
+    "t": "2026-10-19T20:00:00-03:00",
+    "hora": "20:00",
+    "temp": 10,
+    "presion": 1022,
+    "humedad": 87,
+    "vientoKmh": 7,
+    "vientoDir": 120,
+    "nubosidad": 1,
+    "fenomeno": null,
+    "cielo": "luna",
+    "fuente": "METAR SULS (aeropuerto)",
+    "previsto": 11.0,
+    "desvio": -1.0
+   },
+   "dias": [
+    {
+     "fecha": "2026-10-15",
+     "tmax": 15,
+     "tmin": 15,
+     "n": 4,
+     "completo": false
+    },
+    {
+     "fecha": "2026-10-16",
+     "tmax": 15,
+     "tmin": 12,
+     "n": 30,
+     "completo": true
+    },
+    {
+     "fecha": "2026-10-17",
+     "tmax": 15,
+     "tmin": 11,
+     "n": 25,
+     "completo": true
+    },
+    {
+     "fecha": "2026-10-18",
+     "tmax": 15,
+     "tmin": 10,
+     "n": 24,
+     "completo": true
+    },
+    {
+     "fecha": "2026-10-19",
+     "tmax": 16,
+     "tmin": 8,
+     "n": 21,
+     "completo": false
+    }
+   ]
   }
  },
  "rio": {
   "Salto": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
+    "t": "2026-10-19T20:15:00-03:00",
     "nivel": 10.92,
     "lluvia": 0.0
    },
@@ -176,11 +230,11 @@
   },
   "Puerto Concordia": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
-    "nivel": 10.64,
+    "t": "2026-10-19T20:15:00-03:00",
+    "nivel": 10.62,
     "lluvia": 0.0
    },
-   "nivelHace24h": 10.7,
+   "nivelHace24h": 10.67,
    "nivelHace72h": 10.86,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
@@ -237,17 +291,17 @@
      "fecha": "2026-10-19",
      "max": 10.69,
      "min": 10.62,
-     "ultimo": 10.64
+     "ultimo": 10.62
     }
    ]
   },
   "Salto Grande": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
+    "t": "2026-10-19T20:15:00-03:00",
     "nivel": 34.69,
     "lluvia": 0.0
    },
-   "nivelHace24h": 34.36,
+   "nivelHace24h": 34.37,
    "nivelHace72h": 33.69,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
@@ -310,11 +364,11 @@
   },
   "Federación": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
+    "t": "2026-10-19T20:15:00-03:00",
     "nivel": 34.8,
     "lluvia": 0.0
    },
-   "nivelHace24h": 34.5,
+   "nivelHace24h": 34.51,
    "nivelHace72h": 33.86,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
@@ -468,12 +522,12 @@
   },
   "Paso de los Libres": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
-    "nivel": 9.02,
+    "t": "2026-10-19T20:15:00-03:00",
+    "nivel": 8.99,
     "lluvia": 0.0
    },
-   "nivelHace24h": 9.21,
-   "nivelHace72h": 9.36,
+   "nivelHace24h": 9.19,
+   "nivelHace72h": 9.38,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
    "dias": [
@@ -528,19 +582,19 @@
     {
      "fecha": "2026-10-19",
      "max": 9.16,
-     "min": 9.02,
-     "ultimo": 9.02
+     "min": 8.99,
+     "ultimo": 8.99
     }
    ]
   },
   "Yapeyú": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
-    "nivel": 9.44,
+    "t": "2026-10-19T20:15:00-03:00",
+    "nivel": 9.43,
     "lluvia": 0.0
    },
-   "nivelHace24h": 9.76,
-   "nivelHace72h": 10.04,
+   "nivelHace24h": 9.75,
+   "nivelHace72h": 10.05,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
    "dias": [
@@ -595,18 +649,18 @@
     {
      "fecha": "2026-10-19",
      "max": 9.7,
-     "min": 9.44,
-     "ultimo": 9.44
+     "min": 9.43,
+     "ultimo": 9.43
     }
    ]
   },
   "Santo Tomé": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
-    "nivel": 8.35,
+    "t": "2026-10-19T20:30:00-03:00",
+    "nivel": 8.31,
     "lluvia": 0.0
    },
-   "nivelHace24h": 9.36,
+   "nivelHace24h": 9.34,
    "nivelHace72h": 10.83,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
@@ -662,8 +716,8 @@
     {
      "fecha": "2026-10-19",
      "max": 9.19,
-     "min": 8.35,
-     "ultimo": 8.35
+     "min": 8.31,
+     "ultimo": 8.31
     }
    ]
   },
@@ -736,12 +790,12 @@
   },
   "El Soberbio": {
    "ultimo": {
-    "t": "2026-10-19T20:00:00-03:00",
-    "nivel": 3.33,
+    "t": "2026-10-19T20:30:00-03:00",
+    "nivel": 3.3,
     "lluvia": 0.0
    },
-   "nivelHace24h": 3.58,
-   "nivelHace72h": 5.55,
+   "nivelHace24h": 3.55,
+   "nivelHace72h": 5.53,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
    "dias": [
@@ -797,7 +851,7 @@
      "fecha": "2026-10-19",
      "max": 3.33,
      "min": 2.78,
-     "ultimo": 3.33
+     "ultimo": 3.3
     }
    ]
   }
