@@ -7,6 +7,7 @@ El tablero (https://claude.ai/artifact/NmUMC1ftYmnFYfr9grZAFw) lo lee en cada ac
 import json, datetime as dt, urllib.request, urllib.parse, csv, io, sys, traceback
 
 TZ = "America/Montevideo"
+DIAG = []
 ZONAS = {
     "salto":      {"lat": -31.383, "lon": -57.967, "isd": ["86360099999"]},           # Salto (Nueva Hesperides)
     "montevideo": {"lat": -34.880, "lon": -56.180, "isd": ["86580099999", "86585099999"]},  # Carrasco, Prado
@@ -39,8 +40,9 @@ def modelos(z):
                          "mm": dd["precipitation_sum" + sfx][i], "vientoKmh": dd["wind_speed_10m_max" + sfx][i],
                          "vientoDir": dd["wind_direction_10m_dominant" + sfx][i]})
         hh = d["hourly"]
-        pres = [{"t": t, "hPa": p} for t, p in zip(hh["time"], hh.get("pressure_msl" + sfx, [])) if p is not None]
-        out[NOMBRE[m]] = {"dias": dias, "presionHoraria": pres}
+        out[NOMBRE[m]] = {"dias": dias}
+        if m == "ecmwf_ifs025":
+            out[NOMBRE[m]]["presionHoraria"] = [{"t": t, "hPa": p} for t, p in zip(hh["time"], hh.get("pressure_msl" + sfx, [])) if p is not None][:72]
     return out
 
 def observado(estaciones, dias=5):
@@ -52,7 +54,8 @@ def observado(estaciones, dias=5):
         try:
             txt = get("https://www.ncei.noaa.gov/access/services/data/v1?" + urllib.parse.urlencode(q), timeout=90)
         except Exception as e:
-            print("ISD", st, e); continue
+            print("ISD", st, e); DIAG.append(f"ISD {st}: {e}"); continue
+        DIAG.append(f"ISD {st}: {len(txt.splitlines())} filas")
         por_dia = {}
         horaria = []
         for row in csv.DictReader(io.StringIO(txt)):
@@ -93,8 +96,16 @@ def main():
         except Exception as e:
             salida["errores"].append(f"observado {nombre}: {e}"); traceback.print_exc()
         salida["zonas"][nombre] = zz
+    salida["diagnostico"] = DIAG
     with open("data/latest.json", "w") as f:
         json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
+    # resumen chico para leer rápido (sin series horarias)
+    res = {"generado": salida["generado"], "errores": salida["errores"], "diagnostico": DIAG, "zonas": {}}
+    for z, v in salida["zonas"].items():
+        res["zonas"][z] = {"modelos": {k: m["dias"] for k, m in v.get("modelos", {}).items()},
+                           "observado": ({k: v["observado"][k] for k in ("estacion", "fuente", "dias")} if v.get("observado") else None)}
+    with open("data/resumen.json", "w") as f:
+        json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
 
 if __name__ == "__main__":
