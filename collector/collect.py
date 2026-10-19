@@ -9,9 +9,9 @@ import json, datetime as dt, urllib.request, urllib.parse, csv, io, sys, traceba
 TZ = "America/Montevideo"
 DIAG = []
 ZONAS = {
-    "salto":      {"lat": -31.383, "lon": -57.967, "isd": ["86360099999"]},           # Salto (Nueva Hesperides)
-    "montevideo": {"lat": -34.880, "lon": -56.180, "isd": ["86580099999", "86585099999"]},  # Carrasco, Prado
-    "este":       {"lat": -34.940, "lon": -54.960, "isd": ["86586099999"]},           # Laguna del Sauce
+    "salto":      {"lat": -31.383, "lon": -57.967, "isd": ["86360099999"], "icao": "SUSO"},  # Salto (Nueva Hespérides)
+    "montevideo": {"lat": -34.880, "lon": -56.180, "isd": ["86580099999", "86585099999"], "icao": "SUMU"},  # Carrasco
+    "este":       {"lat": -34.940, "lon": -54.960, "isd": ["86586099999"], "icao": "SULS"},  # Laguna del Sauce
 }
 MODELOS = ["ecmwf_ifs025", "gfs_seamless", "icon_seamless", "gem_seamless", "jma_seamless", "meteofrance_seamless", "ukmo_seamless"]
 NOMBRE = {"ecmwf_ifs025": "ECMWF", "gfs_seamless": "GFS", "icon_seamless": "ICON", "gem_seamless": "GEM",
@@ -83,6 +83,29 @@ def observado(estaciones, dias=5):
             return {"estacion": st, "fuente": "NOAA ISD (SYNOP)", "dias": res, "presionHoraria": horaria[-48:]}
     return None
 
+def metar(icao, horas=96):
+    """Observaciones horarias (METAR) del aeropuerto: temperatura, presión (QNH) y viento."""
+    txt = get("https://aviationweather.gov/api/data/metar?" + urllib.parse.urlencode({"ids": icao, "hours": horas, "format": "json"}))
+    obs = json.loads(txt) if txt.strip() else []
+    DIAG.append(f"METAR {icao}: {len(obs)} obs")
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    filas = []
+    for o in obs:
+        try:
+            t = dt.datetime.fromtimestamp(o["obsTime"], dt.timezone.utc).astimezone(loc)
+        except Exception:
+            continue
+        filas.append({"t": t.isoformat(), "temp": o.get("temp"), "hPa": o.get("altim"), "vientoKmh": round(o["wspd"] * 1.852) if isinstance(o.get("wspd"), (int, float)) else None,
+                      "vientoDir": o.get("wdir") if isinstance(o.get("wdir"), (int, float)) else None})
+    filas.sort(key=lambda f: f["t"])
+    por = {}
+    for f in filas:
+        if f["temp"] is None: continue
+        por.setdefault(f["t"][:10], []).append(f["temp"])
+    hoy = dt.datetime.now(loc).date().isoformat()
+    dias = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v), "completo": d < hoy and len(v) >= 16} for d, v in sorted(por.items())]
+    return {"estacion": icao, "fuente": "METAR (aviationweather.gov)", "dias": dias, "horario": filas[-30:]}
+
 def main():
     salida = {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "zonas": {}, "errores": []}
     for nombre, z in ZONAS.items():
@@ -92,9 +115,13 @@ def main():
         except Exception as e:
             salida["errores"].append(f"modelos {nombre}: {e}"); traceback.print_exc()
         try:
-            zz["observado"] = observado(z["isd"])
+            zz["observado"] = metar(z["icao"])
         except Exception as e:
-            salida["errores"].append(f"observado {nombre}: {e}"); traceback.print_exc()
+            salida["errores"].append(f"metar {nombre}: {e}"); traceback.print_exc()
+        try:
+            zz["synop"] = observado(z["isd"])
+        except Exception as e:
+            salida["errores"].append(f"synop {nombre}: {e}")
         salida["zonas"][nombre] = zz
     salida["diagnostico"] = DIAG
     with open("data/latest.json", "w") as f:
@@ -103,7 +130,7 @@ def main():
     res = {"generado": salida["generado"], "errores": salida["errores"], "diagnostico": DIAG, "zonas": {}}
     for z, v in salida["zonas"].items():
         res["zonas"][z] = {"modelos": {k: m["dias"] for k, m in v.get("modelos", {}).items()},
-                           "observado": ({k: v["observado"][k] for k in ("estacion", "fuente", "dias")} if v.get("observado") else None)}
+                           "observado": v.get("observado"), "synop": v.get("synop")}
     with open("data/resumen.json", "w") as f:
         json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
