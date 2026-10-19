@@ -250,6 +250,56 @@ def smn_wrf(previo):
     DIAG.append(f"SMN WRF: corrida {ini:%d/%m %HZ}, {len(claves)} horas")
     return out
 
+CTM_EST = {"Salto": "A501258E", "Puerto Concordia": "A50012EE", "Salto Grande": "A5002774", "Federación": "A5004C40",
+           "Belén": "A50B9752", "Monte Caseros": "A50C9566", "Bonpland": "A50CD66C", "Paso de los Libres": "A5004292",
+           "Yapeyú": "A5001C3C", "Santo Tomé": "A500F11C", "Garruchos": "A500E26A", "El Soberbio": "A5011014"}
+
+def ctm_estaciones(dias=8):
+    """Telemetría de CTM Salto Grande (datos cada 15 min, sin validar): nivel del río y lluvia por estación."""
+    import re, html as H
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    hoy = dt.datetime.now(loc)
+    out = {}
+    for nom, cod in CTM_EST.items():
+        try:
+            q = {"estacion": cod, "desde": (hoy - dt.timedelta(days=dias)).strftime("%d/%m/%Y"), "hasta": hoy.strftime("%d/%m/%Y")}
+            txt = get("https://www.saltogrande.org/datos_estacion.php?" + urllib.parse.urlencode(q))
+            filas = []
+            for r in re.findall(r"<tr.*?</tr>", txt, flags=re.S):
+                c = [H.unescape(re.sub(r"<[^>]+>", "", x)).strip() for x in re.findall(r"<td.*?</td>", r, flags=re.S)]
+                if len(c) < 2 or not re.match(r"\d\d/\d\d/\d{4} \d\d:\d\d", c[0]): continue
+                t = dt.datetime.strptime(c[0], "%d/%m/%Y %H:%M").replace(tzinfo=loc)
+                def num(x):
+                    try: return float(x.replace(",", "."))
+                    except Exception: return None
+                filas.append((t, num(c[1]), num(c[2]) if len(c) > 2 else None))
+            filas.sort()
+            if not filas:
+                DIAG.append(f"CTM {nom}: sin filas"); continue
+            ult = filas[-1]
+            def nivel_en(horas):
+                obj = ult[0] - dt.timedelta(hours=horas)
+                cand = [f for f in filas if f[1] is not None and abs((f[0] - obj).total_seconds()) <= 1800]
+                return cand[0][1] if cand else None
+            def lluvia(horas):
+                v = [f[2] for f in filas if f[2] is not None and f[0] > ult[0] - dt.timedelta(hours=horas)]
+                return round(sum(v), 1) if v else None
+            horario = [{"t": f[0].isoformat(), "nivel": f[1]} for f in filas if f[0].minute == 0 and f[1] is not None][-72:]
+            diario = {}
+            for f in filas:
+                if f[1] is None: continue
+                d = f[0].date().isoformat()
+                diario.setdefault(d, []).append(f[1])
+            out[nom] = {"id": cod, "ultimo": {"t": ult[0].isoformat(), "nivel": ult[1], "lluvia": ult[2]},
+                        "nivelHace24h": nivel_en(24), "nivelHace72h": nivel_en(72),
+                        "lluvia24h": lluvia(24), "lluvia72h": lluvia(72),
+                        "dias": [{"fecha": d, "max": max(v), "min": min(v), "ultimo": v[-1]} for d, v in sorted(diario.items())],
+                        "horario": horario}
+            DIAG.append(f"CTM {nom}: {len(filas)} datos")
+        except Exception as e:
+            DIAG.append(f"CTM {nom}: {e}")
+    return {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "fuente": "Telemetría CTM Salto Grande (datos_estacion.php, sin validar)", "estaciones": out}
+
 def main():
     salida = {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "zonas": {}, "errores": []}
     for nombre, z in ZONAS.items():
@@ -278,6 +328,13 @@ def main():
     except Exception as e:
         smn = previo
         salida["errores"].append(f"smn: {e}"); traceback.print_exc()
+    try:
+        ctm = ctm_estaciones()
+        with open("data/ctm.json", "w") as f:
+            json.dump(ctm, f, ensure_ascii=False, separators=(",", ":"))
+    except Exception as e:
+        ctm = None
+        salida["errores"].append(f"ctm: {e}"); traceback.print_exc()
     salida["diagnostico"] = DIAG
     with open("data/latest.json", "w") as f:
         json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
@@ -296,6 +353,10 @@ def main():
     for z, v in salida["zonas"].items():
         o = v.get("observado") or {}
         med["zonas"][z] = {"estacion": o.get("estacion"), "actual": v.get("actual"), "dias": o.get("dias", [])}
+    if ctm:
+        med["rio"] = {k: {kk: v[kk] for kk in ("ultimo", "nivelHace24h", "nivelHace72h", "lluvia24h", "lluvia72h", "dias")}
+                      for k, v in ctm["estaciones"].items()}
+        med["rioFuente"] = ctm["fuente"]
     with open("data/medido.json", "w") as f:
         json.dump(med, f, ensure_ascii=False, indent=1)
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
