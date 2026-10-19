@@ -103,7 +103,7 @@ def metar(icao, horas=96):
         if f["temp"] is None: continue
         por.setdefault(f["t"][:10], []).append(f["temp"])
     hoy = dt.datetime.now(loc).date().isoformat()
-    dias = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v), "completo": d < hoy and len(v) >= 16} for d, v in sorted(por.items())]
+    dias = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v), "completo": d < hoy and len(v) >= 12} for d, v in sorted(por.items())]
     return {"estacion": icao, "fuente": "METAR (aviationweather.gov)", "dias": dias, "horario": filas[-30:]}
 
 def main():
