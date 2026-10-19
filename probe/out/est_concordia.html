@@ -1,0 +1,1287 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width">	
+	<meta name="description" content="Salto Grande">
+    <meta name="keywords" content="Salto, represa, rio, uruguay, argentina" />
+	
+	
+	<title>Salto Grande | Datos Hidrológicos</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="shortcut icon" type="image/png" href="favicon.png">   
+	<link rel="stylesheet" type="text/css" href="css/fonts.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">  
+    <link rel="stylesheet" type="text/css" href="css/cabezal.css">
+	<link rel="stylesheet" type="text/css" href="css/flexslider.css">
+    <!--[if IE 9]>
+		<link rel="stylesheet" type="text/css" href="css/style_ie9.css">
+        <link rel="stylesheet" type="text/css" href="css/cabezal_ie9.css">
+	<![endif]-->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="css/jquery.jqplot.min.css">
+	
+    <!-- jQuery 1.7.2 -->
+	<script type="23f018dc504bb788b100c551-text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="23f018dc504bb788b100c551-text/javascript"></script>
+    <!-- Basic jQuery Slider -->
+	<script type="23f018dc504bb788b100c551-text/javascript" src="js/jquery.flexslider-min.js"></script>
+	
+	<script type="23f018dc504bb788b100c551-text/javascript" src="js/jquery.jqplot.min.js"></script>
+	<script type="23f018dc504bb788b100c551-text/javascript" src="js/jqplot.canvasTextRenderer.js"></script>
+	<script type="23f018dc504bb788b100c551-text/javascript" src="js/jqplot.canvasAxisLabelRenderer.js"></script>
+    <script type="23f018dc504bb788b100c551-text/javascript" src="js/jqplot.dateAxisRenderer.js"></script>
+	<script type="23f018dc504bb788b100c551-text/javascript" src="js/jqplot.barRenderer.js"></script>
+	<script type="23f018dc504bb788b100c551-text/javascript" src="js/jqplot.categoryAxisRenderer.js"></script>
+    <!-- HTML5 shiv es necesario para la visualizacion correcta de los elementos HTML5 en IE<9 -->
+	<!--[if lt IE 9]>
+		<script src="js/html5.js"></script>
+	<![endif]-->
+    
+    <!-- Selectivizr emula elementos CSS 3 en IE 6-8 -->
+	<!--[if (gte IE 6)&(lte IE 8)]>
+		<script src="js/selectivizr.js"></script>
+	<![endif]-->
+    
+	<style type="text/css">
+    body {
+        background-image: url(images/cabezales/cab_rrhh.jpg);
+    }
+	.contenedor_galeria {
+		max-width:700px;
+	}
+
+    </style>
+    
+	  <script type="23f018dc504bb788b100c551-text/javascript">
+	  $(function() {
+		$( "#desde" ).datepicker({
+		  defaultDate: "-1d",
+		  changeMonth: true,
+		  numberOfMonths: 1,
+		  onClose: function( selectedDate ) {
+			$( "#hasta" ).datepicker( "option", "minDate", selectedDate );
+		  },
+		  dateFormat: "dd/mm/yy"
+		});
+		$( "#hasta" ).datepicker({
+		  defaultDate: "1d",
+		  changeMonth: true,
+		  numberOfMonths: 1,
+		  onClose: function( selectedDate ) {
+			$( "#desde" ).datepicker( "option", "maxDate", selectedDate );
+		  },
+		  dateFormat: "dd/mm/yy"
+		});
+		
+		$('.mostrar_valores').click(function(){
+			$('#tarifas').toggle();
+			$('.mostrar_valores').toggle();
+			
+			return false;
+		});
+	  });
+	  </script>
+   
+</head>
+<body>
+<div class="container">
+	<div id="menu" class="menu">
+    <div class="logo"><a href="index.php"><img src="images/cabezal/logo.png" alt="Inicio"></a></div>
+	
+    <div class="botones">
+      <ul id="nav">
+                        <li><a href="#">Institucional</a>
+                 <div class="subs">
+                      <div class="wrp2" >
+                          <ul >
+                              <li>
+                                  <ul>
+                                                                            <li ><a href="perfil.php"><img src="images/cabezal/flecha.png">Perfil</a></li>
+                                                                                    <li class="ocultar_bt"><a href="historia.php"><img src="images/cabezal/flecha.png">Historia</a></li>
+                                                                                    <li class="ocultar_bt"><a href="organizacion.php"><img src="images/cabezal/flecha.png">Organización</a></li>
+                                                                                    <li ><a href="delegacion_uruguay.php"><img src="images/cabezal/flecha.png">Delegación<br> &emsp;del Uruguay</a></li>
+                                                                                    <li ><a href="delegacion_argentina.php"><img src="images/cabezal/flecha.png">Delegación<br> &emsp;Argentina</a></li>
+                                                                                    <li ><a href="memoria_anual.php"><img src="images/cabezal/flecha.png">Memoria Anual</a></li>
+                                                                                    <li class="ocultar_bt"><a href="centrodocumentacion.php"><img src="images/cabezal/flecha.png">Centro de<br>&emsp; Documentación</a></li>
+                                                                                    <li ><a href="tribunal_arbitral.php"><img src="images/cabezal/flecha.png">Tribunal Arbitral<br>&emsp; Internacional</a></li>
+                                                                            </ul>
+                              </li>
+                          </ul>
+                          <p class="sep" ></p>
+                          <ul>
+                              <li>
+                                  <ul>
+                                      <li style="padding-left:25px; padding-top:8px; width:172px"><img src="imgs/estructura/27.jpg"></li>
+                                      
+                                      <li style="font-size:0.85em; padding-left:25px; padding-top:11px; color:#cae3ff;">Institucional</li>
+                                      <li style="font-size:0.8em; color:#69adf8; line-height:16px; padding-left:25px; padding-top:5px; width:170px">La Comisión Técnica Mixta de Salto Grande es un organismo binacional creado por la República Argentina y la República Oriental del Uruguay para aprovechar los rápidos del río Uruguay en la zona de Salto Grande.</li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+               </li>
+                        <li><a href="#">Complejo<br />Hidroeléctrico</a>
+                 <div class="subs">
+                      <div class="wrp2" >
+                          <ul >
+                              <li>
+                                  <ul>
+                                                                            <li ><a href="caracteristicas.php"><img src="images/cabezal/flecha.png">Características</a></li>
+                                                                                    <li ><a href="ficha_tecnica.php"><img src="images/cabezal/flecha.png">Ficha Técnica</a></li>
+                                                                                    <li ><a href="instalaciones.php"><img src="images/cabezal/flecha.png">Instalaciones</a></li>
+                                                                                    <li ><a href="funcionamiento.php"><img src="images/cabezal/flecha.png">Funcionamiento</a></li>
+                                                                                    <li ><a href="rio_uruguay.php"><img src="images/cabezal/flecha.png">Río Uruguay</a></li>
+                                                                            </ul>
+                              </li>
+                          </ul>
+                          <p class="sep" ></p>
+                          <ul>
+                              <li>
+                                  <ul>
+                                      <li style="padding-left:25px; padding-top:8px; width:172px"><img src="imgs/estructura/28.jpg"></li>
+                                      
+                                      <li style="font-size:0.85em; padding-left:25px; padding-top:11px; color:#cae3ff;">Complejo<br />Hidroeléctrico</li>
+                                      <li style="font-size:0.8em; color:#69adf8; line-height:16px; padding-left:25px; padding-top:5px; width:170px">Se encuentra ubicado en el curso medio del río Uruguay, aprovechando para la generación hidroeléctrica un desnivel natural llamado Salto Grande, aguas arriba de las ciudades de Concordia (Argentina) y Salto (Uruguay).</li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+               </li>
+                        <li><a href="#">Energía</a>
+                 <div class="subs">
+                      <div class="wrp2" >
+                          <ul >
+                              <li>
+                                  <ul>
+                                                                            <li ><a href="generacion.php"><img src="images/cabezal/flecha.png">Generación</a></li>
+                                                                                    <li ><a href="transmision.php"><img src="images/cabezal/flecha.png">Transmisión</a></li>
+                                                                                    <li ><a href="mercado.php"><img src="images/cabezal/flecha.png">Mercado</a></li>
+                                                                            </ul>
+                              </li>
+                          </ul>
+                          <p class="sep" ></p>
+                          <ul>
+                              <li>
+                                  <ul>
+                                      <li style="padding-left:25px; padding-top:8px; width:172px"><img src="imgs/estructura/41.jpg"></li>
+                                      
+                                      <li style="font-size:0.85em; padding-left:25px; padding-top:11px; color:#cae3ff;">Energía</li>
+                                      <li style="font-size:0.8em; color:#69adf8; line-height:16px; padding-left:25px; padding-top:5px; width:170px">La energía eléctrica generada por la Central tiene por destino los sistemas interconectados de ambos países, abasteciendo, en valores aproximados, el 50% de la energía del sistema uruguayo y el 7% del sistema argentino, ofreciendo una de las tarifas más bajas de ambos mercados eléctricos.</li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+               </li>
+                        <li><a href="#">Propósitos</a>
+                 <div class="subs">
+                      <div class="wrp2" style="margin-left:-267px;">
+                          <ul style="float:right; padding-right:0px; padding-left:10px;">
+                              <li>
+                                  <ul>
+                                                                            <li ><a href="gestion_calidad.php"><img src="images/cabezal/flecha.png">Gestión de Calidad</a></li>
+                                                                                    <li ><a href="gestion_ambiental.php"><img src="images/cabezal/flecha.png">Gestión Ambiental</a></li>
+                                                                                    <li ><a href="responsabilidad_social.php"><img src="images/cabezal/flecha.png">Responsabilidad<br>&emsp; Social</a></li>
+                                                                                    <li ><a href="region.php"><img src="images/cabezal/flecha.png">La Región</a></li>
+                                                                                    <li ><a href="actividades.php"><img src="images/cabezal/flecha.png">Otras Actividades</a></li>
+                                                                            </ul>
+                              </li>
+                          </ul>
+                          <p class="sep" style="left:220px"></p>
+                          <ul>
+                              <li>
+                                  <ul>
+                                      <li style="padding-left:25px; padding-top:8px; width:172px"><img src="imgs/estructura/45.jpg"></li>
+                                      
+                                      <li style="font-size:0.85em; padding-left:25px; padding-top:11px; color:#cae3ff;">Propósitos</li>
+                                      <li style="font-size:0.8em; color:#69adf8; line-height:16px; padding-left:25px; padding-top:5px; width:170px">Como lo define el Convenio de 1946 por el cual se crea la Comisión Técnica Mixta de Salto Grande, trabajamos con el propósito de obtener el mayor beneficio de las disposiciones naturales que ofrece el río Uruguay, realizándolo con recursos técnicos actualizados, recursos humanos calificados y en un marco de calidad, cuidando el ambiente y con responsabilidad social.</li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+               </li>
+                        <li><a href="#">Relaciones <br> Públicas</a>
+                 <div class="subs">
+                      <div class="wrp2" style="margin-left:-267px;">
+                          <ul style="float:right; padding-right:0px; padding-left:10px;">
+                              <li>
+                                  <ul>
+                                                                            <li ><a href="visitas.php"><img src="images/cabezal/flecha.png">Visitas</a></li>
+                                                                                    <li ><a href="museo.php"><img src="images/cabezal/flecha.png">Museo</a></li>
+                                                                                    <li ><a href="videos_educativos.php"><img src="images/cabezal/flecha.png">Videos Educativos</a></li>
+                                                                                    <li ><a target="_blank" href="https://infantil.saltogrande.org"><img src="images/cabezal/flecha.png">Portal Infantil</a></li>
+                                                                            </ul>
+                              </li>
+                          </ul>
+                          <p class="sep" style="left:220px"></p>
+                          <ul>
+                              <li>
+                                  <ul>
+                                      <li style="padding-left:25px; padding-top:8px; width:172px"><img src="imgs/estructura/50.jpg"></li>
+                                      
+                                      <li style="font-size:0.85em; padding-left:25px; padding-top:11px; color:#cae3ff;">Relaciones <br> Públicas</li>
+                                      <li style="font-size:0.8em; color:#69adf8; line-height:16px; padding-left:25px; padding-top:5px; width:170px">Relaciones Públicas es el Área que se encarga de gestionar los vínculos con los públicos estratégicos. Su objetivo principal es mantener informados tanto a los organismos gubernamentales y empresariales como así también a los diversos sectores de la sociedad civil.<li style="font-size:0.85em; padding-left:10px; padding-top:11px; color:#cae3ff;"><a href="relaciones_publicas.php">leer más</a></li></li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+               </li>
+                  <li id="contactobt"><a href="contacto.php"><img src="images/cabezal/contacto_65.png" alt="Contacto"></a></li>
+    </ul><!-- ul nav-->
+   </div><!-- div botones-->
+      
+          
+  <div class="frase">
+  </div>      
+  <div class="audio" align="left"><a href="index.php"><img id="ico_home" src="images/cabezal/ico_home.png" align="absmiddle" /></a></div>
+      
+</div>
+
+
+
+<script type="23f018dc504bb788b100c551-text/javascript">
+
+$(window).load(function()
+{
+	//-------------------------------------------------------IDIOMAS
+	//muestro/oculto div idioma actual
+	var idioma = "es";
+	var idiomas = ["es","pt","en"];
+	$.each(idiomas, function(clave, valor)
+	{
+		if (valor==idioma)
+		{
+			$("#div_"+valor).show();
+		}
+		else
+		{
+			$("#div_"+valor).hide();
+		}
+	});
+	
+	//-------------------------------------------------------MENU
+	//manejo el click en el menu
+	$("#nav > li > a").click(function ()
+	{ 
+    	if ($(this).parent().hasClass('selected'))
+		{
+            $("#nav .selected div div").slideUp(100); 
+            $("#nav .selected").removeClass("selected");
+        }
+		else
+		{
+            $("#nav .selected div div").slideUp(100); 
+            $("#nav .selected").removeClass("selected");
+
+            if ($(this).next(".subs").length)
+			{
+                $(this).parent().addClass("selected"); 
+                $(this).next(".subs").children().slideDown(200);
+            }
+        }
+    });
+	
+	//manejo el click en cualquier parte de la ventana
+	$(document).click(function(event)
+	{
+		var elemento = $("#nav > li > a");
+		//si el click es en el menu no hago nada
+		if (elemento.is(event.target))
+		{
+      		return false;
+		}
+		//si es en otra parte
+  		else
+		{
+			//y el menu esta deplegado
+			if ($("#nav > li > a").parent().hasClass('selected'))
+			{
+				//lo cierro
+				$("#nav .selected div div").slideUp(100); 
+				$("#nav .selected").removeClass("selected");
+			}
+		}
+	});
+	
+	//-------------------------------------------------------OCULTACION
+	//inicialmente, si el ancho es menor o igual a 320
+	if (window.outerWidth<=320)
+	{
+		//oculto elementos con clase "ocultar_bt"
+		$(".ocultar_bt").hide();
+    }
+	//si el ancho es mayor a 320
+    else
+    {
+		//hago visibles los elemento con clase "ocultar_bt"
+	    $(".ocultar_bt").show();
+	}
+	var previousOrientation = window.orientation;
+	//si hay un cambio de orientacion, nuevamente controlo el ancho
+	var checkOrientation = function(){
+		if(window.orientation !== previousOrientation){
+			previousOrientation = window.orientation;
+			if (window.outerWidth<=320)
+			{
+				$(".ocultar_bt").hide();
+            }
+		    else
+		    {
+			   $(".ocultar_bt").show();
+			}
+		}
+	};
+	window.addEventListener("resize", checkOrientation, false);
+	window.addEventListener("orientationchange", checkOrientation, false);
+	setInterval(checkOrientation, 2000);
+	//-------------------------------------------------------
+});
+</script><!--------------------------------------------------------------------------------------------->
+<div id="div_es" ><!-- esp -->
+
+	<div class="about-page main grid-wrap">
+
+		<header class="grid col-full">
+		<br>
+			<p class="fleft">Red Telemétrica</p>                    
+		</header>
+
+		<aside class="grid col-one-quarter mq2-col-full">
+         	<menu>
+				<ul style="margin-left:-50px">
+					<li style="margin-right:10px;"><a href="mapa_estacion.php" class="arrow">&emsp;Estaciones Hidrometeorológicas</a></li>
+					<li style="margin-right:10px;"><a class="arrow">&emsp;Variables por Estación Hidrometeorológica</a></li>
+				</ul>
+			</menu>
+		</aside>
+		
+		<style type="text/css">
+			#tarifas {
+				width:100%; 
+				text-align:center;
+			}
+			
+			#tarifas td, #tarifas th {
+				padding: 5px;
+				border: 1px solid #999999;
+			}
+			
+			select#estacion, #desde, #hasta, #aceptar {
+					width: auto;
+			}
+			
+			#aceptar {
+					height: 35px;
+					padding-top: 0;
+					padding-bottom: 0;
+			}
+			
+		</style>
+			
+		<section class="grid col-three-quarters mq2-col-full">
+        
+			<article>
+						<form action="" type="GET">
+						<p>Consultar estación 
+				<select id="estacion" name="estacion">
+										<option value="A5003AD0" >Aguapey</option>
+										<option value="A5018576" >Alto Arapey</option>
+										<option value="A500878C" >Alto Cuareim</option>
+										<option value="A50029A6" >Alvear</option>
+										<option value="A50B24DC" >Arapey Chico</option>
+										<option value="A50B0230" >Arapey Grande</option>
+										<option value="A50CB38A" >Arapey Grande Ruta 4</option>
+										<option value="A5016684" >Arerunguá</option>
+										<option value="A50C65E2" >Artigas</option>
+										<option value="A50BF2B4" >Baibene</option>
+										<option value="A50B524C" >Baltasar Brum</option>
+										<option value="A50B9752" >Belén</option>
+										<option value="A500B216" >Bernabé Rivera</option>
+										<option value="A50CD66C" >Bonpland</option>
+										<option value="A50051E4" >Catalán</option>
+										<option value="A5006AAC" >Catalan Grande</option>
+										<option value="A50C1372" >Cazadores Correntinos</option>
+										<option value="A500647E" >Cerro Amarillo</option>
+										<option value="A501B0EC" >Cerro Chato</option>
+										<option value="A50C359E" >Chajarí</option>
+										<option value="A5014068" >Colonia Lavalleja</option>
+										<option value="A50B8424" >Colonia Palma</option>
+										<option value="A500A160" >Cuaró</option>
+										<option value="A50079DA" >Cuareim Rio</option>
+										<option value="A5012B5C" >Cuay Chico</option>
+										<option value="A50BA2C8" >Cuchilla de Salto</option>
+										<option value="A50C0004" >Curuzú Cuatiá</option>
+										<option value="A500CA54" >Dayman Ruta 3</option>
+										<option value="A50B67D6" >Diego Lamas</option>
+										<option value="A5011014" >El Soberbio</option>
+										<option value="A5005F36" >El Trompo</option>
+										<option value="A50B1146" >Espinillar</option>
+										<option value="A5004C40" >Federación</option>
+										<option value="A500E26A" >Garruchos</option>
+										<option value="A501C67C" >Guaviyú de Arapey</option>
+										<option value="A50BB1BE" >Itapebí</option>
+										<option value="A50B37AA" >Javier de Viana</option>
+										<option value="A5011EC6" >Las Marias</option>
+										<option value="A5000F4A" >Libertad</option>
+										<option value="A500BCC4" >Loma Alta</option>
+										<option value="A50C26E8" >Los Conquistadores</option>
+										<option value="A500C486" >Meneses</option>
+										<option value="A50BC72E" >Miriñay Medio</option>
+										<option value="A50BD458" >Miriñay Río</option>
+										<option value="A5010DB0" >Mirunga</option>
+										<option value="A50C8610" >Mocoretá Lago</option>
+										<option value="A50C5078" >Mocoretá Medio</option>
+										<option value="A50CC51A" >Mocoretá Río</option>
+										<option value="A50C9566" >Monte Caseros</option>
+										<option value="A5007708" >Paso Campamento</option>
+										<option value="A5003402" >Paso de la Cruz</option>
+										<option value="A5004292" >Paso de los Libres</option>
+										<option value="A50094FA" >Paso del León</option>
+										<option value="A500D7F0" >Paso del Remanso</option>
+										<option value="A50B413A" >Paso Farías </option>
+										<option value="A501A39A" >Paso Potrero</option>
+										<option value="A50136F8" >Pepirí Miní</option>
+										<option value="A50012EE" selected>Puerto Concordia</option>
+										<option value="A50CA0FC" >Pujol</option>
+										<option value="A5019600" >Puntas de Valentín</option>
+										<option value="A500D922" >Queguay Ruta 3</option>
+										<option value="A50175F2" >Quintana</option>
+										<option value="A501258E" >Salto</option>
+										<option value="A5002774" >Salto Grande</option>
+										<option value="A50C430E" >San Jaime</option>
+										<option value="A5010362" >San Javier</option>
+										<option value="A50C7694" >San Roquito</option>
+										<option value="A5009A28" >Santa Ana</option>
+										<option value="A500F11C" >Santo Tomé</option>
+										<option value="A501D50A" >Sarandí de Arapey</option>
+										<option value="A501531E" >Sequeira</option>
+										<option value="A50BE1C2" >Solari</option>
+										<option value="A50B74A0" >Tomás Gomensoro</option>
+										<option value="A500AFB2" >Uguay</option>
+										<option value="A5001C3C" >Yapeyú</option>
+									</select> 
+				desde <input type="text" id="desde" name="desde" value="18/10/2026" size="10" />
+				hasta <input type="text" id="hasta" name="hasta" value="19/10/2026" size="10" />
+				<input id="aceptar" type="submit" value="Aceptar" />
+				<br /><br />
+			</p>
+			</form>
+						<h2>Variables de la Estación Puerto Concordia</h2>
+						<div id="charthidro" style="height:400;width:740px; "></div>
+			<script type="23f018dc504bb788b100c551-text/javascript">
+				$(document).ready(function(){
+				
+				
+				var plot1 = $.jqplot('charthidro', [[["2026-10-18 00:00:00",10.74],["2026-10-18 00:15:00",10.74],["2026-10-18 00:30:00",10.74],["2026-10-18 00:45:00",10.74],["2026-10-18 01:00:00",10.74],["2026-10-18 01:15:00",10.74],["2026-10-18 01:30:00",10.74],["2026-10-18 01:45:00",10.74],["2026-10-18 02:00:00",10.72],["2026-10-18 02:15:00",10.72],["2026-10-18 02:30:00",10.74],["2026-10-18 02:45:00",10.74],["2026-10-18 03:00:00",10.74],["2026-10-18 03:15:00",10.72],["2026-10-18 03:30:00",10.74],["2026-10-18 03:45:00",10.72],["2026-10-18 04:00:00",10.72],["2026-10-18 04:15:00",10.71],["2026-10-18 04:30:00",10.72],["2026-10-18 04:45:00",10.72],["2026-10-18 05:00:00",10.72],["2026-10-18 05:15:00",10.72],["2026-10-18 05:30:00",10.72],["2026-10-18 05:45:00",10.72],["2026-10-18 06:00:00",10.71],["2026-10-18 06:15:00",10.72],["2026-10-18 06:30:00",10.71],["2026-10-18 06:45:00",10.71],["2026-10-18 07:00:00",10.71],["2026-10-18 07:15:00",10.71],["2026-10-18 07:30:00",10.71],["2026-10-18 07:45:00",10.71],["2026-10-18 08:00:00",10.71],["2026-10-18 08:15:00",10.71],["2026-10-18 08:30:00",10.71],["2026-10-18 08:45:00",10.71],["2026-10-18 09:00:00",10.7],["2026-10-18 09:15:00",10.7],["2026-10-18 09:30:00",10.7],["2026-10-18 09:45:00",10.7],["2026-10-18 10:00:00",10.71],["2026-10-18 10:15:00",10.71],["2026-10-18 10:30:00",10.7],["2026-10-18 10:45:00",10.7],["2026-10-18 11:00:00",10.7],["2026-10-18 11:15:00",10.7],["2026-10-18 11:30:00",10.7],["2026-10-18 11:45:00",10.69],["2026-10-18 12:00:00",10.7],["2026-10-18 12:15:00",10.7],["2026-10-18 12:30:00",10.7],["2026-10-18 12:45:00",10.7],["2026-10-18 13:00:00",10.7],["2026-10-18 13:15:00",10.7],["2026-10-18 13:30:00",10.7],["2026-10-18 13:45:00",10.69],["2026-10-18 14:00:00",10.69],["2026-10-18 14:15:00",10.7],["2026-10-18 14:30:00",10.7],["2026-10-18 14:45:00",10.7],["2026-10-18 15:00:00",10.7],["2026-10-18 15:15:00",10.69],["2026-10-18 15:30:00",10.7],["2026-10-18 15:45:00",10.67],["2026-10-18 16:00:00",10.7],["2026-10-18 16:15:00",10.7],["2026-10-18 16:30:00",10.69],["2026-10-18 16:45:00",10.69],["2026-10-18 17:00:00",10.69],["2026-10-18 17:15:00",10.69],["2026-10-18 17:30:00",10.7],["2026-10-18 17:45:00",10.69],["2026-10-18 18:00:00",10.69],["2026-10-18 18:15:00",10.69],["2026-10-18 18:30:00",10.69],["2026-10-18 18:45:00",10.7],["2026-10-18 19:00:00",10.7],["2026-10-18 19:15:00",10.69],["2026-10-18 19:30:00",10.7],["2026-10-18 19:45:00",10.67],["2026-10-18 20:00:00",10.7],["2026-10-18 20:15:00",10.7],["2026-10-18 20:30:00",10.7],["2026-10-18 20:45:00",10.7],["2026-10-18 21:00:00",10.69],["2026-10-18 21:15:00",10.69],["2026-10-18 21:30:00",10.69],["2026-10-18 21:45:00",10.69],["2026-10-18 22:00:00",10.69],["2026-10-18 22:15:00",10.69],["2026-10-18 22:30:00",10.69],["2026-10-18 22:45:00",10.7],["2026-10-18 23:00:00",10.69],["2026-10-18 23:15:00",10.67],["2026-10-18 23:30:00",10.67],["2026-10-18 23:45:00",10.69],["2026-10-19 00:00:00",10.69],["2026-10-19 00:15:00",10.69],["2026-10-19 00:30:00",10.69],["2026-10-19 00:45:00",10.69],["2026-10-19 01:00:00",10.67],["2026-10-19 01:15:00",10.69],["2026-10-19 01:30:00",10.67],["2026-10-19 01:45:00",10.67],["2026-10-19 02:00:00",10.69],["2026-10-19 02:15:00",10.67],["2026-10-19 02:30:00",10.69],["2026-10-19 02:45:00",10.69],["2026-10-19 03:00:00",10.67],["2026-10-19 03:15:00",10.67],["2026-10-19 03:30:00",10.67],["2026-10-19 03:45:00",10.69],["2026-10-19 04:00:00",10.67],["2026-10-19 04:15:00",10.67],["2026-10-19 04:30:00",10.67],["2026-10-19 04:45:00",10.67],["2026-10-19 05:00:00",10.67],["2026-10-19 05:15:00",10.67],["2026-10-19 05:30:00",10.67],["2026-10-19 05:45:00",10.67],["2026-10-19 06:00:00",10.67],["2026-10-19 06:15:00",10.67],["2026-10-19 06:30:00",10.67],["2026-10-19 06:45:00",10.67],["2026-10-19 07:00:00",10.67],["2026-10-19 07:15:00",10.67],["2026-10-19 07:30:00",10.67],["2026-10-19 07:45:00",10.67],["2026-10-19 08:00:00",10.66],["2026-10-19 08:15:00",10.66],["2026-10-19 08:30:00",10.67],["2026-10-19 08:45:00",10.67],["2026-10-19 09:00:00",10.66],["2026-10-19 09:15:00",10.66],["2026-10-19 09:30:00",10.67],["2026-10-19 09:45:00",10.67],["2026-10-19 10:00:00",10.67],["2026-10-19 10:15:00",10.67],["2026-10-19 10:30:00",10.66],["2026-10-19 10:45:00",10.66],["2026-10-19 11:00:00",10.66],["2026-10-19 11:15:00",10.66],["2026-10-19 11:30:00",10.66],["2026-10-19 11:45:00",10.65],["2026-10-19 12:00:00",10.65],["2026-10-19 12:15:00",10.66],["2026-10-19 12:30:00",10.66],["2026-10-19 12:45:00",10.65],["2026-10-19 13:00:00",10.64],["2026-10-19 13:15:00",10.64],["2026-10-19 13:30:00",10.64],["2026-10-19 13:45:00",10.66],["2026-10-19 14:00:00",10.65],["2026-10-19 14:15:00",10.65],["2026-10-19 14:30:00",10.64],["2026-10-19 14:45:00",10.66],["2026-10-19 15:00:00",10.64],["2026-10-19 15:15:00",10.65],["2026-10-19 15:30:00",10.65],["2026-10-19 15:45:00",10.65],["2026-10-19 16:00:00",10.64],["2026-10-19 16:15:00",10.66],["2026-10-19 16:30:00",10.64],["2026-10-19 16:45:00",10.66],["2026-10-19 17:00:00",10.64],["2026-10-19 17:15:00",10.64],["2026-10-19 17:30:00",10.64],["2026-10-19 17:45:00",10.64],["2026-10-19 18:00:00",10.64],["2026-10-19 18:15:00",10.64],["2026-10-19 18:30:00",10.64],["2026-10-19 18:45:00",10.64],["2026-10-19 19:00:00",10.64],["2026-10-19 19:15:00",10.64],["2026-10-19 19:30:00",10.64],["2026-10-19 19:45:00",10.62],["2026-10-19 20:00:00",10.64]]], {  
+					  series:[{showMarker:false}],
+					  axes:{
+						xaxis:{
+						  label:'Hora',
+						  renderer:$.jqplot.DateAxisRenderer,
+						  tickOptions:{formatString:'%d/%m %H:%M'}/*,
+						  tickInterval:'15 minute'*/
+						},
+						yaxis:{
+						  label:'Nivel'
+						}
+					  }
+					});
+				
+				
+					
+				
+				});
+				
+			</script>
+									<div id="chartpluvio" style="height:400;width:740px; "></div>
+			<script type="23f018dc504bb788b100c551-text/javascript">
+				$(document).ready(function(){
+				
+					$.jqplot.config.enablePlugins = true;
+					
+					var plot1 = $.jqplot('chartpluvio', [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]], {  
+						animate: !$.jqplot.use_excanvas,
+						seriesDefaults:{
+							renderer:$.jqplot.BarRenderer,
+							pointLabels: { show: true }
+						},
+						axes: {
+							xaxis: {
+								label:'Hora',
+								renderer: $.jqplot.CategoryAxisRenderer,
+								ticks: ["18\/10 00:00","","","","","","","","","","","","","","","","","","","","","","","","","","","","","18\/10 07:15","","","","","","","","","","","","","","","","","","","","","","","","","","","","","18\/10 14:30","","","","","","","","","","","","","","","","","","","","","","","","","","","","","18\/10 21:45","","","","","","","","","","","","","","","","","","","","","","","","","","","","","19\/10 05:00","","","","","","","","","","","","","","","","","","","","","","","","","","","","","19\/10 12:15","","","","","","","","","","","","","","","","","","","","","","","","","","","","","19\/10 19:30","",""]							},
+							yaxis:{
+								label:'Lluvia'
+							}
+						},
+						highlighter: { show: false }
+					});
+				});
+				
+			</script>
+						<br /><br />
+			<a href="datos_estacion_csv.php?estacion=A50012EE&desde=18%2F10%2F2026&hasta=19%2F10%2F2026"><img src="images/xls.png" />&nbsp;&nbsp;Descargar valores en formato CSV</a>
+			<br /><br />
+			<a href="#" class="mostrar_valores"><img src="images/expand.png" />&nbsp;&nbsp;Mostrar valores</a>
+			<a href="#" class="mostrar_valores" style="display:none"><img src="images/contract.png" />&nbsp;&nbsp;Mostrar valores</a>
+			<br /><br />
+			<table id="tarifas" style="display:none">
+				<tr>
+				<th style="width:40%">Fecha</th><th style="width:30%">Nivel</th><th style="width:30%">Lluvia</th>
+				</tr>
+								
+					<tr>
+					<td>19/10/2026 20:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 19:45</td><td >10.62</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 19:30</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 19:15</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 19:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 18:45</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 18:30</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 18:15</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 18:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 17:45</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 17:30</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 17:15</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 17:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 16:45</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 16:30</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 16:15</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 16:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 15:45</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 15:30</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 15:15</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 15:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 14:45</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 14:30</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 14:15</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 14:00</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 13:45</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 13:30</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 13:15</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 13:00</td><td >10.64</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 12:45</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 12:30</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 12:15</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 12:00</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 11:45</td><td >10.65</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 11:30</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 11:15</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 11:00</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 10:45</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 10:30</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 10:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 10:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 09:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 09:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 09:15</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 09:00</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 08:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 08:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 08:15</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 08:00</td><td >10.66</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 07:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 07:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 07:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 07:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 06:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 06:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 06:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 06:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 05:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 05:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 05:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 05:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 04:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 04:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 04:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 04:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 03:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 03:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 03:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 03:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 02:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 02:30</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 02:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 02:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 01:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 01:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 01:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 01:00</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 00:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 00:30</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 00:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>19/10/2026 00:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 23:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 23:30</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 23:15</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 23:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 22:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 22:30</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 22:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 22:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 21:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 21:30</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 21:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 21:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 20:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 20:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 20:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 20:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 19:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 19:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 19:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 19:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 18:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 18:30</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 18:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 18:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 17:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 17:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 17:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 17:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 16:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 16:30</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 16:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 16:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 15:45</td><td >10.67</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 15:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 15:15</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 15:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 14:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 14:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 14:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 14:00</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 13:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 13:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 13:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 13:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 12:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 12:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 12:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 12:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 11:45</td><td >10.69</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 11:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 11:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 11:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 10:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 10:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 10:15</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 10:00</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 09:45</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 09:30</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 09:15</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 09:00</td><td >10.70</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 08:45</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 08:30</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 08:15</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 08:00</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 07:45</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 07:30</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 07:15</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 07:00</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 06:45</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 06:30</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 06:15</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 06:00</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 05:45</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 05:30</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 05:15</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 05:00</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 04:45</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 04:30</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 04:15</td><td >10.71</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 04:00</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 03:45</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 03:30</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 03:15</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 03:00</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 02:45</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 02:30</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 02:15</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 02:00</td><td >10.72</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 01:45</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 01:30</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 01:15</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 01:00</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 00:45</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 00:30</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 00:15</td><td >10.74</td><td >0.00</td>
+					</tr>
+								
+					<tr>
+					<td>18/10/2026 00:00</td><td >10.74</td><td >0.00</td>
+					</tr>
+								</table>
+			
+			<p style="font-size:16px"><br /></p>
+						</article>
+            
+			
+					
+            
+            
+		</section>
+		
+	</div> 
+</div><!-- /esp -->
+<!---------------------------------------------------------------------------------------------> 
+
+<!-- PIE -->
+	<br />
+<div class="pie" align="center">
+    <table width="1035px" border="0" cellspacing="0" cellpadding="0" align="center" height="40" style="margin: 0px 3em auto;">
+          <tr>
+            <td width="33%" align="left"><a href="index.php" style="color:#333333; font-size:10px">© 2013 Comisión Técnica Mixta de Salto Grande</a></td>
+            <td width="33%" align="center" style="font-size:10px"></td>
+            <td width="34%" align="right"><a href="http://www.pleka.com" target="_blank"><img src="images/pleka.png" title="Pleka"></a></td>
+        </tr>
+    </table>
+</div>
+
+<script type="23f018dc504bb788b100c551-text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55468310-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</div>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="23f018dc504bb788b100c551-|49" defer></script></body>
+</html>
