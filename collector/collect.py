@@ -26,7 +26,7 @@ def get(url, timeout=60):
 def modelos(z):
     q = {"latitude": z["lat"], "longitude": z["lon"], "timezone": TZ, "forecast_days": 8,
          "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,wind_direction_10m_dominant",
-         "hourly": "pressure_msl,temperature_2m", "past_days": 1, "models": ",".join(MODELOS)}
+         "hourly": "pressure_msl,temperature_2m,relative_humidity_2m", "past_days": 1, "models": ",".join(MODELOS)}
     d = json.loads(get("https://api.open-meteo.com/v1/forecast?" + urllib.parse.urlencode(q)))
     out = {}
     for m in MODELOS:
@@ -41,6 +41,15 @@ def modelos(z):
                          "mm": dd["precipitation_sum" + sfx][i], "vientoKmh": dd["wind_speed_10m_max" + sfx][i],
                          "vientoDir": dd["wind_direction_10m_dominant" + sfx][i]})
         hh = d["hourly"]
+        por = {}
+        for t, hr, pr in zip(hh["time"], hh.get("relative_humidity_2m" + sfx, []), hh.get("pressure_msl" + sfx, [])):
+            e = por.setdefault(t[:10], {"hr": [], "p": []})
+            if hr is not None: e["hr"].append(hr)
+            if pr is not None: e["p"].append(pr)
+        for dd_ in dias:
+            e = por.get(dd_["fecha"], {})
+            dd_["humedad"] = round(sum(e["hr"]) / len(e["hr"])) if e.get("hr") and len(e["hr"]) >= 18 else None
+            dd_["presionMin"] = round(min(e["p"]), 1) if e.get("p") and len(e["p"]) >= 18 else None
         out[NOMBRE[m]] = {"dias": dias}
         if m == "ecmwf_ifs025":
             out[NOMBRE[m]]["presionHoraria"] = [{"t": t, "hPa": p} for t, p in zip(hh["time"], hh.get("pressure_msl" + sfx, [])) if p is not None][:72]
@@ -292,15 +301,16 @@ def ctm_estaciones(dias=8, estaciones=None, horario=True):
                 v = [f[2] for f in filas if f[2] is not None and f[0] > ult[0] - dt.timedelta(hours=horas)]
                 return round(sum(v), 1) if v else None
             horario_l = [{"t": f[0].isoformat(), "nivel": f[1]} for f in filas if f[0].minute == 0 and f[1] is not None][-72:]
-            diario = {}
+            diario = {}; lluvia_d = {}
             for f in filas:
+                if f[2] is not None: lluvia_d[f[0].date().isoformat()] = lluvia_d.get(f[0].date().isoformat(), 0) + f[2]
                 if f[1] is None: continue
                 d = f[0].date().isoformat()
                 diario.setdefault(d, []).append(f[1])
             out[nom] = {"id": cod, "ultimo": {"t": ult[0].isoformat(), "nivel": ult[1], "lluvia": ult[2]},
                         "nivelHace24h": nivel_en(24), "nivelHace72h": nivel_en(72),
                         "lluvia24h": lluvia(24), "lluvia72h": lluvia(72),
-                        "dias": [{"fecha": d, "max": max(v), "min": min(v), "ultimo": v[-1]} for d, v in sorted(diario.items())],
+                        "dias": [{"fecha": d, "max": max(v), "min": min(v), "ultimo": v[-1], "lluvia": round(lluvia_d.get(d, 0), 1)} for d, v in sorted(diario.items())],
                         "horario": horario_l if horario else []}
             if horario: DIAG.append(f"CTM {nom}: {len(filas)} datos")
         except Exception as e:
@@ -337,10 +347,19 @@ def synop(bloque, horas=54):
         for x in sec[2:]:
             if len(x) != 5 or not x[1:].replace("/", "").isdigit() or "/" in x[1:]: continue
             if x[0] == "1" and x[1] in "01": f["temp"] = (-1 if x[1] == "1" else 1) * int(x[2:]) / 10
+            elif x[0] == "2" and x[1] in "01": f["rocio"] = (-1 if x[1] == "1" else 1) * int(x[2:]) / 10
+            elif x[0] == "6" and "lluvia" not in f:
+                rrr, tr = int(x[1:4]), x[4]
+                f["lluvia"] = 0.0 if rrr == 990 else (rrr - 990) / 10 if rrr > 990 else float(rrr)
+                f["lluviaHoras"] = {"1": 6, "2": 12, "3": 18, "4": 24, "5": 1, "6": 2, "7": 3, "8": 9, "9": 15}.get(tr)
             elif x[0] == "4":
                 v = int(x[1:]); f["hPa"] = round((v / 10 + 1000) if v < 5000 else v / 10, 1)
             elif x[0] == "3" and "hPa" not in f:
                 v = int(x[1:]); f["hPaEstacion"] = round((v / 10 + 1000) if v < 5000 else v / 10, 1)
+        if f.get("temp") is not None and f.get("rocio") is not None:
+            import math
+            a_, b_ = 17.625, 243.04
+            f["humedad"] = round(100 * math.exp(a_ * f["rocio"] / (b_ + f["rocio"]) - a_ * f["temp"] / (b_ + f["temp"])))
         out.append(f)
     out.sort(key=lambda f: f["t"])
     DIAG.append(f"SYNOP {bloque}: {len(out)} partes")
@@ -464,17 +483,39 @@ def main():
             zz["synop"] = []; salida["errores"].append(f"synop {nombre}: {e}")
         # máximas y mínimas diarias combinando METAR + SYNOP (misma estación del aeropuerto)
         o = zz.get("observado") or {}
-        temps = {}
-        for f in (o.get("horario_completo") or o.get("horario") or []) + zz["synop"]:
-            if f.get("temp") is None: continue
-            temps.setdefault(f["t"][:16], f["temp"])
-        if temps:
+        obs = {}
+        for f in zz["synop"] + (o.get("horario_completo") or o.get("horario") or []):
+            obs.setdefault(f["t"][:16], {}).update({k: v for k, v in f.items() if v is not None and k not in obs.get(f["t"][:16], {})})
+        if obs:
+            import math
             por = {}
-            for t, v in temps.items(): por.setdefault(t[:10], []).append(v)
+            for t, f in obs.items(): por.setdefault(t[:10], []).append((t, f))
             hoy = ahora_loc.date().isoformat()
-            o["dias"] = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v),
-                          "completo": d < hoy and (len(v) >= 12 and any(t[11:13] in ("03", "04", "05", "06", "07") for t in temps if t[:10] == d))}
-                         for d, v in sorted(por.items())]
+            dias_m = []
+            for d, lst in sorted(por.items()):
+                tv = [f["temp"] for _, f in lst if f.get("temp") is not None]
+                if not tv: continue
+                ws = [f["vientoKmh"] for _, f in lst if f.get("vientoKmh") is not None]
+                vx = [(f["vientoKmh"], f["vientoDir"]) for _, f in lst if f.get("vientoKmh") and f.get("vientoDir") is not None]
+                hr = [f["humedad"] for _, f in lst if f.get("humedad") is not None]
+                pr = [f["hPa"] for _, f in lst if f.get("hPa") is not None]
+                ll = {}
+                for _, f in lst:
+                    if f.get("lluvia") is not None and f.get("lluviaHoras"): ll.setdefault(f["lluviaHoras"], []).append(f["lluvia"])
+                mm = round(sum(ll[6]), 1) if len(ll.get(6, [])) >= 4 else round(sum(ll[12]), 1) if len(ll.get(12, [])) >= 2 else (ll[24][-1] if ll.get(24) else None)
+                if vx:
+                    u = sum(w * math.sin(math.radians(a)) for w, a in vx); v = sum(w * math.cos(math.radians(a)) for w, a in vx)
+                    dmean = round(math.degrees(math.atan2(u, v)) % 360)
+                else: dmean = None
+                noche = any(t[11:13] in ("03", "04", "05", "06", "07") for t, _ in lst)
+                dias_m.append({"fecha": d, "tmax": max(tv), "tmin": min(tv), "n": len(tv), "completo": d < hoy and len(tv) >= 12 and noche,
+                               "mm": mm, "vientoKmh": max(ws) if ws else None, "vientoDir": dmean,
+                               "humedad": round(sum(hr) / len(hr)) if len(hr) >= 6 else None, "presionMin": min(pr) if len(pr) >= 4 else None})
+            if nombre == "salto" and ctm:
+                pl = {x["fecha"]: x.get("lluvia") for x in ctm["estaciones"].get("Salto", {}).get("dias", [])}
+                for x in dias_m:
+                    if x["fecha"] in pl and pl[x["fecha"]] is not None: x["mm"] = pl[x["fecha"]]; x["mmFuente"] = "pluviómetro CTM Salto"
+            o["dias"] = dias_m
         # dato actual: si el METAR es viejo, completar con el SYNOP más nuevo
         a = zz.get("actual")
         sy = [f for f in zz["synop"] if f.get("hPa") is not None]
@@ -583,24 +624,25 @@ def main():
                       a.get("presion", ""), a.get("presionPrevista", ""), a.get("desvioPresion", ""), a.get("humedad", ""), a.get("vientoKmh", ""), a.get("vientoDir", ""), rio, rt, a.get("fuente", "")])
     append("registro", ["corrida", "zona", "hora_dato", "temp_medida", "temp_pronosticada", "desvio", "presion_hPa", "presion_pronosticada", "desvio_presion", "humedad", "viento_kmh",
                         "viento_dir", "rio_puerto_m", "temp_represa", "fuente"], filas)
-    # pronóstico diario de cada modelo, una vez por día (corrida de las 21 h aprox.)
+    # --- verificación por variable, pronóstico propio ponderado y fotos diarias
+    import sys as _s; _s.path.insert(0, os.path.dirname(__file__)); import verif as V
+    try:
+        inu, inu_pub = V.inumet(get)
+    except Exception as e:
+        inu, inu_pub = {}, None; salida["errores"].append(f"inumet: {e}")
+    V.guardar_medido(ahora_loc, med["zonas"])
+    ver = V.verificar(ahora_loc)
+    mods = {z: v["modelos"] for z, v in res["zonas"].items()}
+    nuestro = V.mezclar(mods, inu, ver, ahora_loc.date().isoformat())
     if 20 <= ahora_loc.hour <= 22:
-        pf = []
-        for z, v in res["zonas"].items():
-            for M, dias in v["modelos"].items():
-                for d in dias:
-                    pf.append([ahora_loc.strftime("%Y-%m-%d"), z, M, d["fecha"], d.get("tmax"), d.get("tmin"), d.get("mm")])
-        if not os.path.exists(f"data/historial/pronosticos-{mes}.csv") or ahora_loc.strftime("%Y-%m-%d") not in open(f"data/historial/pronosticos-{mes}.csv").read():
-            append("pronosticos", ["emitido", "zona", "modelo", "fecha_objetivo", "tmax", "tmin", "mm"], pf)
-    # lo medido por día (se escribe cuando el día quedó completo)
-    om = []
-    ruta = f"data/historial/medido-{mes}.csv"
-    ya = open(ruta).read() if os.path.exists(ruta) else ""
-    for z, v in med["zonas"].items():
-        for d in v.get("dias", []):
-            if d.get("completo") and f"{d['fecha']},{z}," not in ya:
-                om.append([d["fecha"], z, d["tmax"], d["tmin"], d["n"], v.get("estacion")])
-    if om: append("medido", ["fecha", "zona", "tmax", "tmin", "n", "estacion"], om)
+        V.guardar_foto(ahora_loc, mods, inu, nuestro)
+    res["inumet"] = {"publicado": inu_pub, "zonas": inu}
+    res["verificacion"] = ver
+    res["nuestro"] = nuestro
+    with open("data/resumen.json", "w") as f:
+        json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
+    with open("data/verificacion.json", "w") as f:
+        json.dump({"generado": salida["generado"], "ventanaDias": 30, "minimoN": V.MIN_N, "zonas": ver}, f, ensure_ascii=False, indent=1)
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
 
 if __name__ == "__main__":
