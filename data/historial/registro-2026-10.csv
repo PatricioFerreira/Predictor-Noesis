@@ -1,4 +1,4 @@
-corrida,zona,hora_dato,temp_medida,temp_pronosticada,desvio,presion_hPa,humedad,viento_kmh,viento_dir,rio_puerto_m,temp_represa,fuente
-2026-10-19 21:29,salto,21:00,14,14.5,-0.5,1019.6,63,4,180,10.92,17.44,METAR SUSO (aeropuerto)
-2026-10-19 21:29,montevideo,21:00,12,11.4,0.6,1023.0,77,13,130,,,METAR SUMU (aeropuerto)
-2026-10-19 21:29,este,21:00,10,10.5,-0.5,1023.1,94,4,130,,,METAR SULS (aeropuerto)
+corrida,zona,hora_dato,temp_medida,temp_pronosticada,desvio,presion_hPa,presion_pronosticada,desvio_presion,humedad,viento_kmh,viento_dir,rio_puerto_m,temp_represa,fuente
+2026-10-19 21:29,salto,21:00,14,14.5,-0.5,1019.6,,,63,4,180,10.92,17.44,METAR SUSO (aeropuerto)
+2026-10-19 21:29,montevideo,21:00,12,11.4,0.6,1023.0,,,77,13,130,,,METAR SUMU (aeropuerto)
+2026-10-19 21:29,este,21:00,10,10.5,-0.5,1023.1,,,94,4,130,,,METAR SULS (aeropuerto)

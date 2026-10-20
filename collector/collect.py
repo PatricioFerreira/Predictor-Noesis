@@ -48,7 +48,8 @@ def modelos(z):
     hh = d["hourly"]; mezcla = []
     for i, t in enumerate(hh["time"]):
         v = [hh["temperature_2m_" + m][i] for m in MODELOS if ("temperature_2m_" + m) in hh and hh["temperature_2m_" + m][i] is not None]
-        if v: mezcla.append({"t": t, "temp": round(sum(v) / len(v), 1), "n": len(v)})
+        pv = [hh["pressure_msl_" + m][i] for m in MODELOS if ("pressure_msl_" + m) in hh and hh["pressure_msl_" + m][i] is not None]
+        if v: mezcla.append({"t": t, "temp": round(sum(v) / len(v), 1), "hPa": round(sum(pv) / len(pv), 1) if pv else None, "n": len(v)})
     out["_mezclaHoraria"] = mezcla
     return out
 
@@ -384,6 +385,26 @@ def ctm_mapa():
     DIAG.append(f"CTM mapa: {len(est)} estaciones; campos {sorted(est[0].keys()) if est else []}")
     return est
 
+def sesgos(dias=7):
+    """Sesgo medio (pronosticado − medido) de los últimos días, por zona, leído del historial."""
+    import csv, glob
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    lim = (dt.datetime.now(loc) - dt.timedelta(days=dias)).strftime("%Y-%m-%d %H:%M")
+    acc = {}
+    for ruta in sorted(glob.glob("data/historial/registro-*.csv"))[-2:]:
+        for r in csv.DictReader(open(ruta)):
+            if r["corrida"] < lim: continue
+            a = acc.setdefault(r["zona"], {"t": [], "p": []})
+            try: a["t"].append(float(r["temp_pronosticada"]) - float(r["temp_medida"]))
+            except Exception: pass
+            try: a["p"].append(float(r.get("presion_pronosticada") or "") - float(r["presion_hPa"]))
+            except Exception: pass
+    out = {}
+    for z, a in acc.items():
+        out[z] = {"temp": round(sum(a["t"]) / len(a["t"]), 2) if len(a["t"]) >= 8 else 0.0, "nTemp": len(a["t"]),
+                  "presion": round(sum(a["p"]) / len(a["p"]), 2) if len(a["p"]) >= 8 else 0.0, "nPresion": len(a["p"]), "dias": dias}
+    return out
+
 def main():
     salida = {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "zonas": {}, "errores": []}
     for nombre, z in ZONAS.items():
@@ -406,6 +427,7 @@ def main():
             if hit:
                 a["previsto"] = hit["temp"]
                 a["desvio"] = round(a["temp"] - hit["temp"], 1)
+                a["presionPrevista"] = hit.get("hPa")
         salida["zonas"][nombre] = zz
     import os
     previo = None
@@ -462,6 +484,19 @@ def main():
             elif abs((dt.datetime.fromisoformat(a["t"]) - dt.datetime.fromisoformat(ult["t"])).total_seconds()) <= 3 * 3600:
                 a["presionSynop"] = ult["hPa"]
         o.pop("horario_completo", None)
+        if a and a.get("presionPrevista") is not None and a.get("presion") is not None:
+            a["desvioPresion"] = round(a["presion"] - a["presionPrevista"], 1)
+    # --- corrección por sesgo (aprendida del historial) y pronóstico horario corregido
+    SES = sesgos()
+    for nombre, zz in salida["zonas"].items():
+        b = SES.get(nombre, {"temp": 0.0, "presion": 0.0})
+        zz["sesgo"] = b
+        fut = [m for m in zz.get("mezclaHoraria", []) if m["t"] >= ahora_loc.strftime("%Y-%m-%dT%H:00")][:48]
+        zz["horariaCorregida"] = [{"t": m["t"], "temp": round(m["temp"] - b["temp"], 1),
+                                   "hPa": round(m["hPa"] - b["presion"], 1) if m.get("hPa") is not None else None} for m in fut]
+        a = zz.get("actual")
+        if a and a.get("previsto") is not None:
+            a["previstoCorregido"] = round(a["previsto"] - b["temp"], 1)
     # --- represa: temperatura ambiente horaria
     try:
         rep = ctm_horario()
@@ -475,7 +510,7 @@ def main():
         for m in mapa:
             nom = m.get("nombre") or m.get("name"); cod = m.get("address") or m.get("id")
             if nom and cod and nom not in CTM_EST: otros[nom] = cod
-        ll = ctm_estaciones(3, otros, horario=False)
+        ll = ctm_estaciones(3, otros, horario=False)["estaciones"]
         coords = {(m.get("nombre") or m.get("name")): (m.get("lat"), m.get("lng")) for m in mapa}
         ests = []
         for nom, v in {**(ctm["estaciones"] if ctm else {}), **ll}.items():
@@ -507,7 +542,8 @@ def main():
     for z, v in salida["zonas"].items():
         o = v.get("observado") or {}
         med["zonas"][z] = {"estacion": o.get("estacion"), "actual": v.get("actual"), "dias": o.get("dias", []),
-                           "synop": [{k: f.get(k) for k in ("t", "temp", "hPa")} for f in v.get("synop", [])]}
+                           "synop": [{k: f.get(k) for k in ("t", "temp", "hPa")} for f in v.get("synop", [])],
+                           "sesgo": v.get("sesgo"), "horariaCorregida": v.get("horariaCorregida", [])[:24]}
     if rep:
         ur = [f for f in rep if f.get("temp") is not None]
         dd = {}
@@ -541,8 +577,8 @@ def main():
         rio = ((ctm or {}).get("estaciones", {}).get("Salto", {}).get("ultimo", {}) or {}).get("nivel") if z == "salto" else ""
         rt = (rep[-1].get("temp") if rep else "") if z == "salto" else ""
         filas.append([ahora_loc.strftime("%Y-%m-%d %H:%M"), z, a.get("hora", ""), a.get("temp", ""), a.get("previsto", ""), a.get("desvio", ""),
-                      a.get("presion", ""), a.get("humedad", ""), a.get("vientoKmh", ""), a.get("vientoDir", ""), rio, rt, a.get("fuente", "")])
-    append("registro", ["corrida", "zona", "hora_dato", "temp_medida", "temp_pronosticada", "desvio", "presion_hPa", "humedad", "viento_kmh",
+                      a.get("presion", ""), a.get("presionPrevista", ""), a.get("desvioPresion", ""), a.get("humedad", ""), a.get("vientoKmh", ""), a.get("vientoDir", ""), rio, rt, a.get("fuente", "")])
+    append("registro", ["corrida", "zona", "hora_dato", "temp_medida", "temp_pronosticada", "desvio", "presion_hPa", "presion_pronosticada", "desvio_presion", "humedad", "viento_kmh",
                         "viento_dir", "rio_puerto_m", "temp_represa", "fuente"], filas)
     # pronóstico diario de cada modelo, una vez por día (corrida de las 21 h aprox.)
     if 20 <= ahora_loc.hour <= 22:
