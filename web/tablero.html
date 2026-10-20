@@ -128,6 +128,8 @@ header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content
 .nowrow{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))!important;margin-top:4px!important}.desv{font-size:13px;color:var(--muted);margin-top:8px}.desv b{color:var(--fg)}
 .rdot{width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 10px currentColor}
 .ctmwide{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px}@media (max-width:900px){.ctmwide{grid-template-columns:1fr}}
+.ensoreg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}.ensoreg>div{background:var(--bg);border:1px solid var(--line-soft);border-radius:10px;padding:9px 10px;min-width:0}.ensoreg .l{font-size:11px;color:var(--muted)}.ensoreg .v{font-size:19px;font-weight:700}.ensoreg .v small{font-size:11px;color:var(--muted);font-weight:500}.ensoreg3{grid-template-columns:repeat(3,minmax(0,1fr))}.ensosp{width:100%;height:60px;display:block}.ensoleg{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:4px}.ensoleg i{display:inline-block;width:12px;height:3px;margin-right:4px;vertical-align:middle}
+@media (max-width:560px){.ensoreg{grid-template-columns:repeat(2,minmax(0,1fr))}.ensoreg3{grid-template-columns:1fr}}
 .grid2e{display:grid;grid-template-columns:1fr;gap:16px}
 .hzc{display:grid;gap:8px 28px;align-items:start}.hzc>.eyebrow{grid-column:1/-1}
 .hzp{grid-template-columns:minmax(200px,260px) minmax(0,1fr)}.hzp .ptiles{grid-template-columns:1fr!important;margin:0}
@@ -506,11 +508,18 @@ function render(){
     </div>
     <div class="card enso">
       <div class="eyebrow">Clima de la temporada · ${esc(DATA.enso.fuente||"NOAA")}</div>
-      <h3>Año de El Niño fuerte</h3>
-      <p>${esc(DATA.enso.explica)}</p>
-      <div class="thermo"><span>frío</span><div class="bar"><em style="left:calc(${Math.min(100,Math.max(0,(DATA.enso.nino34+3)/6*100))}% - 2px)"></em></div><span>caliente</span></div>
-      <p>${esc(DATA.enso.efecto)}</p>
-      <p class="insight">${esc(DATA.enso.comparables||"")} Dato del ${esc(DATA.enso.fecha)}.</p>
+      ${(()=>{const E=DATA.enso, c1=v=>v==null?"–":(v>0?"+":"")+nf(v,1), reg=[["Niño 1+2","frente a Perú y Ecuador",E.nino12],["Niño 3","Pacífico este",E.nino3],["Niño 3.4","centro (el que se usa para declararlo)",E.nino34],["Niño 4","Pacífico oeste",E.nino4]];
+        const col=v=>v==null?"var(--muted)":v>=1.5?"var(--alert)":v>=0.5?"var(--warn)":v<=-0.5?"var(--river)":"var(--ok)";
+        const s=(E.serie34||[]), W=300,Hh=54; let sp="";
+        if(s.length>2){const vs=s.flatMap(x=>[x.v,x.v12]), mn=Math.min(0,...vs), mx=Math.max(...vs), X=i=>i/(s.length-1)*W, Y=v=>Hh-4-(v-mn)/(mx-mn||1)*(Hh-8);
+          sp=`<svg viewBox="0 0 ${W} ${Hh}" class="ensosp" preserveAspectRatio="none" aria-label="Anomalía semanal de los últimos 6 meses"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)"/><polyline points="${s.map((x,i)=>X(i)+","+Y(x.v12)).join(" ")}" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/><polyline points="${s.map((x,i)=>X(i)+","+Y(x.v)).join(" ")}" fill="none" stroke="var(--alert)" stroke-width="2.2" vector-effect="non-scaling-stroke"/></svg>`}
+        return `<h3>${esc(E.estado==="Neutral"?"Sin El Niño ni La Niña":(E.estado+(E.fuerza?" "+E.fuerza:"")))}</h3>
+      <p>${esc(E.explica)}</p>
+      <div class="ensoreg">${reg.map(([n,d,v])=>`<div><div class="l">${n}</div><div class="v num" style="color:${col(v)}">${c1(v)} <small>°C</small></div><div class="help">${d}</div></div>`).join("")}</div>
+      ${sp?`<div class="ensoleg"><span><i style="background:var(--alert)"></i>Niño 3.4</span><span><i style="background:var(--warn)"></i>Niño 1+2</span><span>últimos 6 meses, anomalía semanal</span></div>${sp}`:""}
+      <div class="ensoreg ensoreg3">${E.oni?`<div><div class="l">ONI (promedio 3 meses)</div><div class="v num">${c1(E.oni.valor)} <small>°C · ${esc(E.oni.periodo)}</small></div></div>`:""}${E.soi?`<div><div class="l">Índice de Oscilación del Sur</div><div class="v num">${nf(E.soi.valor,1)}</div><div class="help">${E.soi.valor<=-1?"muy negativo: atmósfera acoplada a El Niño":E.soi.valor>=1?"positivo: típico de La Niña":"cercano a lo normal"}</div></div>`:""}${(E.discusion?.probabilidades||[]).length?`<div><div class="l">Chance de evento histórico (≥ +2,5 °C)</div><div class="v num" style="font-size:15px">${E.discusion.probabilidades.map(p=>`${esc(p.periodo)} ${p.p} %`).join(" · ")}</div></div>`:""}</div>
+      <p>${esc(E.efecto||"")}</p>
+      <p class="insight">${esc(E.discusion?.resumen||"")} ${esc(E.comparables||"")} Datos semanales del ${esc(E.fecha)}${E.discusion?.fecha?"; discusión mensual de NOAA del "+esc(E.discusion.fecha):""}.</p>`})()}
     </div>
   </section>
 

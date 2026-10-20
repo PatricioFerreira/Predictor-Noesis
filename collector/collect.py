@@ -642,8 +642,9 @@ def main():
     with open("data/resumen.json", "w") as f:
         json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
     try:
-        import tablero as T
-        parche = T.armar(ahora_loc, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, salida["errores"])
+        import tablero as T, documentos as DOC
+        docs = DOC.todos(salida["errores"])
+        parche = T.armar(ahora_loc, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, salida["errores"], docs)
         with open("data/tablero.json", "w") as f:
             json.dump(parche, f, ensure_ascii=False, separators=(",", ":"))
         # documento completo para la página web (GitHub Pages): base persistente + parche

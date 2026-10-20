@@ -7,7 +7,7 @@ Uso: python3 fusionar.py actual.json tablero.json salida.json
 """
 import json, sys
 
-AUTO = {"INUMET", "Telemetría CTM", "ECMWF (MET Norway)", "SYNOP INUMET"}
+AUTO = {"INUMET", "Telemetría CTM", "ECMWF (MET Norway)", "SYNOP INUMET", "Serviço Geológico do Brasil", "CARU", "CTM Salto Grande"}
 
 
 def merge(base, parche):
@@ -25,6 +25,8 @@ def main(a, t, out):
     p = json.load(open(t))
     for k in ("actualizado", "motor", "verificacion", "ranking"):
         if k in p: doc[k] = p[k]
+    if isinstance(p.get("enso"), dict):
+        doc["enso"] = merge(doc.get("enso") or {}, p["enso"])
     doc.setdefault("zonas", {})
     for z, v in p.get("zonas", {}).items():
         doc["zonas"].setdefault(z, {})

@@ -76,7 +76,8 @@ def resumen_texto(dias):
     return " ".join(partes[:2])
 
 
-def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores):
+def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, docs=None):
+    docs = docs or {}
     """Devuelve el parche del documento tablero/actual."""
     zonas = {}
     lluvia_cuenca = {}
@@ -235,8 +236,27 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores):
                                              "puntos": [{"n": f"{k}, ECMWF", "mm": v} for k, v in lluvia_cuenca.items()]},
                             "metodo": "Estimación propia automática: parte de la altura medida en el puerto (telemetría CTM), sigue la tendencia de los últimos 3 días amortiguada, "
                                       "suma si aguas arriba (Garruchos, Santo Tomé, Paso de los Libres) está subiendo y abre el rango hacia arriba si se prevé lluvia fuerte en la cuenca alta."}
+    # documentos leídos automáticamente (CTM, Brasil, NOAA)
+    com = docs.get("comunicado") or {}
+    if com.get("pronostico"):
+        rio.setdefault("puerto", {})["pronostico"] = com["pronostico"]
+    if com.get("represa"):
+        rio.setdefault("represa", {}).update({k: v for k, v in com["represa"].items() if v is not None})
+    if docs.get("ctm"): rio["ctm"] = docs["ctm"]
+    if docs.get("sgb"): rio["aguasArriba"] = docs["sgb"]
     # alertas automáticas
     alertas = []
+    sg = (docs.get("sgb") or {}).get("estaciones") or []
+    sobre = [e for e in sg if e.get("nivel") and e.get("inund") and e["nivel"] >= e["inund"]]
+    cerca = [e for e in sg if e.get("nivel") and e.get("inund") and 0.8 * e["inund"] <= e["nivel"] < e["inund"]]
+    if sobre or cerca:
+        baja = all(e.get("tend") == "baja" for e in sobre + cerca if e.get("tend"))
+        lista = ", ".join(f"{e['n']} ({e['nivel'] / 100:.2f} m de {e['inund'] / 100:.2f} m)".replace(".", ",") for e in (sobre or cerca))
+        alertas.append({"nivel": "rojo" if sobre else "amarillo",
+                        "titulo": ("Río Uruguay sobre la cota de inundación en Brasil" if sobre else "Río Uruguay cerca de la cota de inundación en Brasil"),
+                        "texto": f"{lista}." + (" Con tendencia a bajar." if baja else " Atención a la evolución en los próximos días."),
+                        "fuente": "Serviço Geológico do Brasil", "fecha": (docs.get("sgb") or {}).get("fecha", ""),
+                        "link": "https://www.sgb.gov.br/sace/uruguai/"})
     try:
         av = _get("https://www.inumet.gub.uy/aviso")
         if re.search(r"No hay aviso", av, re.I):
@@ -284,9 +304,11 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores):
         "actualizado": ahora.isoformat(timespec="minutes"),
         "generadoPor": "recolector",
         "motor": "Nuestro pronóstico: promedio ponderado por variable según el acierto de cada fuente en los últimos 30 días, corregido por sesgo (calculado en el recolector)",
-        "zonas": zonas, "rio": rio, "alertasAuto": alertas, "verificacion": ver or {},
+        "zonas": zonas, "rio": rio, "alertasAuto": alertas, **({"enso": docs["enso"]} if docs.get("enso") else {}), "verificacion": ver or {},
         "ranking": {"tabla": tabla, "diasHistorial": max([t["n"] for t in tabla] or [0])},
         "fuentesAct": {"Recolector propio (GitHub)": f"{ahora:%d/%m %H:%M}", "Estaciones (medido en aeropuertos)": (med["zonas"]["salto"].get("actual") or {}).get("hora", ""),
                        "CTM · Telemetría": (s or {}).get("ultimo", {}).get("t", "")[11:16], "CTM Salto Grande": rio.get("represa", {}).get("fecha", ""),
-                       "ECMWF (vía MET Norway y recolector)": f"{ahora:%d/%m %H:%M}", "INUMET": (inu and "ok") or ""},
+                       "ECMWF (vía MET Norway y recolector)": f"{ahora:%d/%m %H:%M}", "INUMET": (inu and "ok") or "",
+                       "CTM · Datos hidrológicos": (docs.get("ctm") or {}).get("fecha", ""), "Serviço Geológico do Brasil": (docs.get("sgb") or {}).get("fecha", ""),
+                       "NOAA CPC": (docs.get("enso") or {}).get("fecha", ""), "CARU": ""},
     }
