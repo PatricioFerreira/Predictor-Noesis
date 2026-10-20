@@ -390,10 +390,13 @@ def sesgos(dias=7):
     import csv, glob
     loc = dt.timezone(dt.timedelta(hours=-3))
     lim = (dt.datetime.now(loc) - dt.timedelta(days=dias)).strftime("%Y-%m-%d %H:%M")
-    acc = {}
+    acc = {}; vistos = set()
     for ruta in sorted(glob.glob("data/historial/registro-*.csv"))[-2:]:
         for r in csv.DictReader(open(ruta)):
             if r["corrida"] < lim: continue
+            clave = (r["zona"], r["corrida"][:10], r["hora_dato"])
+            if clave in vistos: continue
+            vistos.add(clave)
             a = acc.setdefault(r["zona"], {"t": [], "p": []})
             try: a["t"].append(float(r["temp_pronosticada"]) - float(r["temp_medida"]))
             except Exception: pass
