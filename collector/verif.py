@@ -100,7 +100,7 @@ def guardar_medido(ahora, med_zonas):
             nuevo = {"fecha": d["fecha"], "zona": z, "tmax": d.get("tmax"), "tmin": d.get("tmin"), "mm": d.get("mm"), "viento": d.get("vientoKmh"),
                      "dir": d.get("vientoDir"), "humedad": d.get("humedad"), "pmin": d.get("presionMin"), "n": d.get("n"), "estacion": v.get("estacion")}
             viejo = filas.get((d["fecha"], z), {})
-            filas[(d["fecha"], z)] = {c: (viejo.get(c) if viejo.get(c) not in (None, "") else ("" if nuevo[c] is None else nuevo[c])) for c in CAB_M}
+            filas[(d["fecha"], z)] = {c: (nuevo[c] if nuevo[c] is not None else viejo.get(c, "")) for c in CAB_M}
     with open(ruta, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=CAB_M); w.writeheader()
         for k in sorted(filas): w.writerow(filas[k])
