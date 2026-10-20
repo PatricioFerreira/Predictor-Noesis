@@ -89,17 +89,21 @@ def guardar_foto(ahora, modelos_por_zona, inu, nuestro):
 
 
 def guardar_medido(ahora, med_zonas):
+    """Lo medido por día (días completos). Si el día ya estaba, completa las columnas que falten."""
     mes = ahora.strftime("%Y-%m")
     ruta = f"data/historial/medido-{mes}.csv"
     _migrar(ruta, CAB_M)
-    ya = {(r["fecha"], r["zona"]) for r in csv.DictReader(open(ruta))} if os.path.exists(ruta) else set()
-    filas = []
+    filas = {(r["fecha"], r["zona"]): r for r in csv.DictReader(open(ruta))} if os.path.exists(ruta) else {}
     for z, v in med_zonas.items():
         for d in v.get("dias", []):
-            if d.get("completo") and (d["fecha"], z) not in ya:
-                filas.append([d["fecha"], z, d.get("tmax"), d.get("tmin"), d.get("mm"), d.get("vientoKmh"), d.get("vientoDir"),
-                              d.get("humedad"), d.get("presionMin"), d.get("n"), v.get("estacion")])
-    if filas: _append(ruta, CAB_M, filas)
+            if not d.get("completo") or not d["fecha"].startswith(mes): continue
+            nuevo = {"fecha": d["fecha"], "zona": z, "tmax": d.get("tmax"), "tmin": d.get("tmin"), "mm": d.get("mm"), "viento": d.get("vientoKmh"),
+                     "dir": d.get("vientoDir"), "humedad": d.get("humedad"), "pmin": d.get("presionMin"), "n": d.get("n"), "estacion": v.get("estacion")}
+            viejo = filas.get((d["fecha"], z), {})
+            filas[(d["fecha"], z)] = {c: (viejo.get(c) if viejo.get(c) not in (None, "") else ("" if nuevo[c] is None else nuevo[c])) for c in CAB_M}
+    with open(ruta, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=CAB_M); w.writeheader()
+        for k in sorted(filas): w.writerow(filas[k])
 
 
 def _f(x):
