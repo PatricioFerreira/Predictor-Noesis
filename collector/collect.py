@@ -121,7 +121,7 @@ def metar(icao, horas=96):
         por.setdefault(f["t"][:10], []).append(f["temp"])
     hoy = dt.datetime.now(loc).date().isoformat()
     dias = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v), "completo": d < hoy and len(v) >= 12} for d, v in sorted(por.items())]
-    return {"estacion": icao, "fuente": "METAR (aviationweather.gov)", "dias": dias, "horario": filas[-30:]}
+    return {"estacion": icao, "fuente": "METAR (aviationweather.gov)", "dias": dias, "horario": filas[-30:], "horario_completo": filas}
 
 
 SMN_BUCKET = "https://smn-ar-wrf.s3.amazonaws.com"
@@ -260,13 +260,13 @@ CTM_EST = {"Salto": "A501258E", "Puerto Concordia": "A50012EE", "Salto Grande": 
            "Belén": "A50B9752", "Monte Caseros": "A50C9566", "Bonpland": "A50CD66C", "Paso de los Libres": "A5004292",
            "Yapeyú": "A5001C3C", "Santo Tomé": "A500F11C", "Garruchos": "A500E26A", "El Soberbio": "A5011014"}
 
-def ctm_estaciones(dias=8):
+def ctm_estaciones(dias=8, estaciones=None, horario=True):
     """Telemetría de CTM Salto Grande (datos cada 15 min, sin validar): nivel del río y lluvia por estación."""
     import re, html as H
     loc = dt.timezone(dt.timedelta(hours=-3))
     hoy = dt.datetime.now(loc)
     out = {}
-    for nom, cod in CTM_EST.items():
+    for nom, cod in (estaciones or CTM_EST).items():
         try:
             q = {"estacion": cod, "desde": (hoy - dt.timedelta(days=dias)).strftime("%d/%m/%Y"), "hasta": hoy.strftime("%d/%m/%Y")}
             txt = get("https://www.saltogrande.org/datos_estacion.php?" + urllib.parse.urlencode(q))
@@ -290,7 +290,7 @@ def ctm_estaciones(dias=8):
             def lluvia(horas):
                 v = [f[2] for f in filas if f[2] is not None and f[0] > ult[0] - dt.timedelta(hours=horas)]
                 return round(sum(v), 1) if v else None
-            horario = [{"t": f[0].isoformat(), "nivel": f[1]} for f in filas if f[0].minute == 0 and f[1] is not None][-72:]
+            horario_l = [{"t": f[0].isoformat(), "nivel": f[1]} for f in filas if f[0].minute == 0 and f[1] is not None][-72:]
             diario = {}
             for f in filas:
                 if f[1] is None: continue
@@ -300,11 +300,89 @@ def ctm_estaciones(dias=8):
                         "nivelHace24h": nivel_en(24), "nivelHace72h": nivel_en(72),
                         "lluvia24h": lluvia(24), "lluvia72h": lluvia(72),
                         "dias": [{"fecha": d, "max": max(v), "min": min(v), "ultimo": v[-1]} for d, v in sorted(diario.items())],
-                        "horario": horario}
-            DIAG.append(f"CTM {nom}: {len(filas)} datos")
+                        "horario": horario_l if horario else []}
+            if horario: DIAG.append(f"CTM {nom}: {len(filas)} datos")
         except Exception as e:
             DIAG.append(f"CTM {nom}: {e}")
     return {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "fuente": "Telemetría CTM Salto Grande (datos_estacion.php, sin validar)", "estaciones": out}
+
+SYNOP = {"salto": "86360", "montevideo": "86580", "este": "86586"}
+
+def synop(bloque, horas=54):
+    """Partes SYNOP de INUMET (vía Ogimet): presión con décimas, temperatura, viento, cada 3 h, también de noche."""
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    fin = dt.datetime.now(dt.timezone.utc); ini = fin - dt.timedelta(hours=horas)
+    txt = get("https://www.ogimet.com/cgi-bin/getsynop?" + urllib.parse.urlencode(
+        {"block": bloque, "begin": ini.strftime("%Y%m%d%H%M"), "end": fin.strftime("%Y%m%d%H%M")}))
+    out = []
+    for lin in txt.splitlines():
+        c = lin.split(",")
+        if len(c) < 7 or not c[1].isdigit(): continue
+        t = dt.datetime(int(c[1]), int(c[2]), int(c[3]), int(c[4]), int(c[5]), tzinfo=dt.timezone.utc).astimezone(loc)
+        g = c[6].replace("=", "").split()
+        try:
+            k = g.index(bloque)
+        except ValueError:
+            continue
+        yyggi = g[k - 1] if k >= 1 else ""
+        iw = yyggi[-1:] if yyggi else "1"
+        sec = g[k + 1:]
+        if "333" in sec: sec = sec[:sec.index("333")]
+        f = {"t": t.isoformat()}
+        if len(sec) >= 2 and len(sec[1]) == 5 and sec[1][1:3].isdigit() and sec[1][3:].isdigit():
+            dd, ff = int(sec[1][1:3]) * 10, int(sec[1][3:])
+            f["vientoDir"] = dd if dd <= 360 else None
+            f["vientoKmh"] = round(ff * (1.852 if iw in ("3", "4") else 3.6))
+        for x in sec[2:]:
+            if len(x) != 5 or not x[1:].replace("/", "").isdigit() or "/" in x[1:]: continue
+            if x[0] == "1" and x[1] in "01": f["temp"] = (-1 if x[1] == "1" else 1) * int(x[2:]) / 10
+            elif x[0] == "4":
+                v = int(x[1:]); f["hPa"] = round((v / 10 + 1000) if v < 5000 else v / 10, 1)
+            elif x[0] == "3" and "hPa" not in f:
+                v = int(x[1:]); f["hPaEstacion"] = round((v / 10 + 1000) if v < 5000 else v / 10, 1)
+        out.append(f)
+    out.sort(key=lambda f: f["t"])
+    DIAG.append(f"SYNOP {bloque}: {len(out)} partes")
+    return out
+
+def ctm_horario(horas=24):
+    """Datos horarios de CTM: temperatura ambiente en la represa (y cota/caudales), últimas horas."""
+    import re
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    ahora = dt.datetime.now(loc).replace(minute=0, second=0, microsecond=0)
+    vistos = {}
+    def num(x):
+        try: return float(x.replace(".", "").replace(",", ".")) if x.count(",") else float(x)
+        except Exception: return None
+    for h in range(horas, -1, -1):
+        t = ahora - dt.timedelta(hours=h)
+        try:
+            s = get("https://www.saltogrande.org/datos_horarios.php?" + urllib.parse.urlencode({"fh": t.strftime("%Y-%m-%d %H:00:00")}))
+        except Exception as e:
+            DIAG.append(f"CTM horario {t:%H}: {e}"); continue
+        m = re.search(r"(\d\d)/(\d\d)/(\d{4})\s*Hora:\s*(\d\d):(\d\d)", s)
+        if not m: continue
+        tt = dt.datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)), int(m.group(4)), int(m.group(5)), tzinfo=loc)
+        txt = re.sub(r"<[^>]+>", "|", s)
+        def campo(nombre):
+            mm = re.search(nombre + r"[|\s]*([-\d.,]+)", txt)
+            return num(mm.group(1)) if mm else None
+        vistos[tt.isoformat()] = {"t": tt.isoformat(), "temp": campo("Temperatura Ambiente"), "embalse": campo(r"Cota del Embalse \(Promedio\)"),
+                                   "restitucion": campo(r"Cota de Restituci.n \(Promedio\)"), "turbinado": campo("Caudal Turbinado"), "vertido": campo("Caudal Vertido")}
+    filas = sorted(vistos.values(), key=lambda f: f["t"])
+    DIAG.append(f"CTM horario: {len(filas)} horas distintas")
+    return filas
+
+def ctm_mapa():
+    """Lista de estaciones de la telemetría de CTM con coordenadas."""
+    import re
+    s = get("https://www.saltogrande.org/mapxmlweb.php")
+    est = []
+    for m in re.finditer(r"<marker\s([^>]*)/?>", s):
+        a = dict(re.findall(r'(\w+)="([^"]*)"', m.group(1)))
+        est.append(a)
+    DIAG.append(f"CTM mapa: {len(est)} estaciones; campos {sorted(est[0].keys()) if est else []}")
+    return est
 
 def main():
     salida = {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "zonas": {}, "errores": []}
@@ -350,6 +428,67 @@ def main():
     except Exception as e:
         ctm = None
         salida["errores"].append(f"ctm: {e}"); traceback.print_exc()
+
+    loc = dt.timezone(dt.timedelta(hours=-3))
+    ahora_loc = dt.datetime.now(loc)
+    # --- SYNOP (presión con décimas y temperatura también de noche)
+    for nombre, zz in salida["zonas"].items():
+        try:
+            zz["synop"] = synop(SYNOP[nombre])
+        except Exception as e:
+            zz["synop"] = []; salida["errores"].append(f"synop {nombre}: {e}")
+        # máximas y mínimas diarias combinando METAR + SYNOP (misma estación del aeropuerto)
+        o = zz.get("observado") or {}
+        temps = {}
+        for f in (o.get("horario_completo") or o.get("horario") or []) + zz["synop"]:
+            if f.get("temp") is None: continue
+            temps.setdefault(f["t"][:16], f["temp"])
+        if temps:
+            por = {}
+            for t, v in temps.items(): por.setdefault(t[:10], []).append(v)
+            hoy = ahora_loc.date().isoformat()
+            o["dias"] = [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v),
+                          "completo": d < hoy and (len(v) >= 12 and any(t[11:13] in ("03", "04", "05", "06", "07") for t in temps if t[:10] == d))}
+                         for d, v in sorted(por.items())]
+        # dato actual: si el METAR es viejo, completar con el SYNOP más nuevo
+        a = zz.get("actual")
+        sy = [f for f in zz["synop"] if f.get("hPa") is not None]
+        if a and sy:
+            ult = sy[-1]
+            if ult["t"] >= a["t"]:
+                a["presion"] = ult["hPa"]
+                if ult.get("temp") is not None and ult["t"] > a["t"]:
+                    a.update({"t": ult["t"], "hora": ult["t"][11:16], "temp": ult["temp"], "fuente": f"SYNOP {SYNOP[nombre]} (INUMET)"})
+            elif abs((dt.datetime.fromisoformat(a["t"]) - dt.datetime.fromisoformat(ult["t"])).total_seconds()) <= 3 * 3600:
+                a["presionSynop"] = ult["hPa"]
+        o.pop("horario_completo", None)
+    # --- represa: temperatura ambiente horaria
+    try:
+        rep = ctm_horario()
+    except Exception as e:
+        rep = []; salida["errores"].append(f"ctm horario: {e}")
+    # --- lluvia medida en toda la cuenca (telemetría CTM)
+    cuenca = None
+    try:
+        mapa = ctm_mapa()
+        otros = {}
+        for m in mapa:
+            nom = m.get("nombre") or m.get("name"); cod = m.get("address") or m.get("id")
+            if nom and cod and nom not in CTM_EST: otros[nom] = cod
+        ll = ctm_estaciones(3, otros, horario=False)
+        coords = {(m.get("nombre") or m.get("name")): (m.get("lat"), m.get("lng")) for m in mapa}
+        ests = []
+        for nom, v in {**(ctm["estaciones"] if ctm else {}), **ll}.items():
+            if v.get("lluvia72h") is None: continue
+            la, lo = coords.get(nom, (None, None))
+            ests.append({"n": nom, "lat": float(la) if la else None, "lon": float(lo) if lo else None,
+                         "lluvia24h": v["lluvia24h"], "lluvia72h": v["lluvia72h"], "t": v["ultimo"]["t"]})
+        if ests:
+            l24 = [e["lluvia24h"] or 0 for e in ests]; l72 = [e["lluvia72h"] or 0 for e in ests]
+            cuenca = {"n": len(ests), "promedio24h": round(sum(l24) / len(l24), 1), "promedio72h": round(sum(l72) / len(l72), 1),
+                      "max72h": max(ests, key=lambda e: e["lluvia72h"] or 0), "estaciones": sorted(ests, key=lambda e: -(e["lluvia72h"] or 0))}
+    except Exception as e:
+        salida["errores"].append(f"cuenca: {e}"); traceback.print_exc()
     salida["diagnostico"] = DIAG
     with open("data/latest.json", "w") as f:
         json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
@@ -367,13 +506,62 @@ def main():
     med = {"generado": salida["generado"], "zonas": {}}
     for z, v in salida["zonas"].items():
         o = v.get("observado") or {}
-        med["zonas"][z] = {"estacion": o.get("estacion"), "actual": v.get("actual"), "dias": o.get("dias", [])}
+        med["zonas"][z] = {"estacion": o.get("estacion"), "actual": v.get("actual"), "dias": o.get("dias", []),
+                           "synop": [{k: f.get(k) for k in ("t", "temp", "hPa")} for f in v.get("synop", [])]}
+    if rep:
+        ur = [f for f in rep if f.get("temp") is not None]
+        dd = {}
+        for f in ur: dd.setdefault(f["t"][:10], []).append(f["temp"])
+        med["zonas"]["salto"]["represa"] = {"fuente": "CTM Salto Grande, temperatura ambiente en la represa",
+            "ultimo": ur[-1] if ur else None, "horario": [{"t": f["t"], "temp": f["temp"]} for f in ur],
+            "dias": [{"fecha": d, "tmax": max(v), "tmin": min(v), "n": len(v)} for d, v in sorted(dd.items())]}
+    if cuenca:
+        med["cuencaLluvia"] = {k: cuenca[k] for k in ("n", "promedio24h", "promedio72h", "max72h")}
+        med["cuencaLluvia"]["top"] = cuenca["estaciones"][:15]
     if ctm:
         med["rio"] = {k: {kk: v[kk] for kk in ("ultimo", "nivelHace24h", "nivelHace72h", "lluvia24h", "lluvia72h", "dias")}
                       for k, v in ctm["estaciones"].items()}
         med["rioFuente"] = ctm["fuente"]
     with open("data/medido.json", "w") as f:
         json.dump(med, f, ensure_ascii=False, indent=1)
+
+    # --- historial permanente (planillas mensuales, no se borran)
+    import csv, os
+    os.makedirs("data/historial", exist_ok=True)
+    mes = ahora_loc.strftime("%Y-%m")
+    def append(nombre, cab, filas):
+        ruta = f"data/historial/{nombre}-{mes}.csv"; nuevo = not os.path.exists(ruta)
+        with open(ruta, "a", newline="") as f:
+            w = csv.writer(f)
+            if nuevo: w.writerow(cab)
+            w.writerows(filas)
+    filas = []
+    for z, v in salida["zonas"].items():
+        a = v.get("actual") or {}
+        rio = ((ctm or {}).get("estaciones", {}).get("Salto", {}).get("ultimo", {}) or {}).get("nivel") if z == "salto" else ""
+        rt = (rep[-1].get("temp") if rep else "") if z == "salto" else ""
+        filas.append([ahora_loc.strftime("%Y-%m-%d %H:%M"), z, a.get("hora", ""), a.get("temp", ""), a.get("previsto", ""), a.get("desvio", ""),
+                      a.get("presion", ""), a.get("humedad", ""), a.get("vientoKmh", ""), a.get("vientoDir", ""), rio, rt, a.get("fuente", "")])
+    append("registro", ["corrida", "zona", "hora_dato", "temp_medida", "temp_pronosticada", "desvio", "presion_hPa", "humedad", "viento_kmh",
+                        "viento_dir", "rio_puerto_m", "temp_represa", "fuente"], filas)
+    # pronóstico diario de cada modelo, una vez por día (corrida de las 21 h aprox.)
+    if 20 <= ahora_loc.hour <= 22:
+        pf = []
+        for z, v in res["zonas"].items():
+            for M, dias in v["modelos"].items():
+                for d in dias:
+                    pf.append([ahora_loc.strftime("%Y-%m-%d"), z, M, d["fecha"], d.get("tmax"), d.get("tmin"), d.get("mm")])
+        if not os.path.exists(f"data/historial/pronosticos-{mes}.csv") or ahora_loc.strftime("%Y-%m-%d") not in open(f"data/historial/pronosticos-{mes}.csv").read():
+            append("pronosticos", ["emitido", "zona", "modelo", "fecha_objetivo", "tmax", "tmin", "mm"], pf)
+    # lo medido por día (se escribe cuando el día quedó completo)
+    om = []
+    ruta = f"data/historial/medido-{mes}.csv"
+    ya = open(ruta).read() if os.path.exists(ruta) else ""
+    for z, v in med["zonas"].items():
+        for d in v.get("dias", []):
+            if d.get("completo") and f"{d['fecha']},{z}," not in ya:
+                om.append([d["fecha"], z, d["tmax"], d["tmin"], d["n"], v.get("estacion")])
+    if om: append("medido", ["fecha", "zona", "tmax", "tmin", "n", "estacion"], om)
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
 
 if __name__ == "__main__":
