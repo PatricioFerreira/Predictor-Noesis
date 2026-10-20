@@ -142,7 +142,11 @@ def enso():
         h = _bytes("https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml").decode("utf-8", "replace")
         t = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", h)))
         m = re.search(r"issued by CLIMATE PREDICTION CENTER/NCEP/NWS (\d{1,2} \w+ \d{4})", t)
-        if m: disc["fecha"] = m.group(1)
+        if m:
+            d_, mo, y_ = m.group(1).split()
+            mes_es = {"January": "enero", "February": "febrero", "March": "marzo", "April": "abril", "May": "mayo", "June": "junio", "July": "julio",
+                      "August": "agosto", "September": "setiembre", "October": "octubre", "November": "noviembre", "December": "diciembre"}
+            disc["fecha"] = f"{d_} de {mes_es.get(mo, mo)} de {y_}"
         m = re.search(r"ENSO Alert System Status: ([^:]+?) Synopsis: (.+?)(?= El Niño strengthened| La Niña| ENSO-neutral is| \S+ (?:strengthened|weakened))", t)
         if m: disc["estado"], disc["sinopsis"] = m.group(1).strip(), m.group(2).strip()
         pc = re.findall(r"(\d+)% (?:chance )?for ([A-Z][a-z]+-[A-Z][a-z]+)", t)

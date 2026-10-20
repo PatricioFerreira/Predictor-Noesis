@@ -42,7 +42,7 @@ def main(a, t, out):
             if despues: doc["rio"][k]["despues"] = despues
         else:
             doc["rio"][k] = v
-    viejas = [x for x in doc.get("alertas", []) if x.get("fuente") not in AUTO and not str(x.get("fuente", "")).startswith("ECMWF")]
+    viejas = [x for x in doc.get("alertas", []) if x.get("fuente") not in AUTO and not str(x.get("fuente", "")).startswith(("ECMWF", "CARU"))]
     orden = {"rojo": 0, "naranja": 1, "amarillo": 2, "verde": 3}
     doc["alertas"] = sorted(p.get("alertasAuto", []) + viejas, key=lambda x: orden.get(x.get("nivel"), 4))
     for f in doc.get("fuentes", []):
