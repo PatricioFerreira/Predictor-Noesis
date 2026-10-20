@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-20T00:32:35.483937+00:00",
+ "generado": "2026-10-20T00:43:06.438955+00:00",
  "zonas": {
   "salto": {
    "estacion": "SUSO",
@@ -27,28 +27,52 @@
      "tmax": 21,
      "tmin": 15,
      "n": 13,
-     "completo": true
+     "completo": true,
+     "mm": 0.0,
+     "vientoKmh": 22,
+     "vientoDir": 212,
+     "humedad": 71,
+     "presionMin": 1017,
+     "mmFuente": "pluviómetro CTM Salto"
     },
     {
      "fecha": "2026-10-17",
      "tmax": 17,
      "tmin": 9.3,
      "n": 17,
-     "completo": true
+     "completo": true,
+     "mm": 0.0,
+     "vientoKmh": 20,
+     "vientoDir": 215,
+     "humedad": 66,
+     "presionMin": 1019.0,
+     "mmFuente": "pluviómetro CTM Salto"
     },
     {
      "fecha": "2026-10-18",
-     "tmax": 18,
+     "tmax": 18.3,
      "tmin": 5.2,
      "n": 24,
-     "completo": true
+     "completo": true,
+     "mm": 0.0,
+     "vientoKmh": 18,
+     "vientoDir": 210,
+     "humedad": 69,
+     "presionMin": 1018.9,
+     "mmFuente": "pluviómetro CTM Salto"
     },
     {
      "fecha": "2026-10-19",
-     "tmax": 20,
+     "tmax": 20.1,
      "tmin": 5.5,
      "n": 22,
-     "completo": false
+     "completo": false,
+     "mm": 0.0,
+     "vientoKmh": 18,
+     "vientoDir": 132,
+     "humedad": 65,
+     "presionMin": 1018.4,
+     "mmFuente": "pluviómetro CTM Salto"
     }
    ],
    "synop": [
@@ -606,35 +630,60 @@
      "tmax": 15,
      "tmin": 15,
      "n": 2,
-     "completo": false
+     "completo": false,
+     "mm": null,
+     "vientoKmh": 28,
+     "vientoDir": 166,
+     "humedad": null,
+     "presionMin": null
     },
     {
      "fecha": "2026-10-16",
      "tmax": 15,
      "tmin": 11,
      "n": 28,
-     "completo": true
+     "completo": true,
+     "mm": null,
+     "vientoKmh": 33,
+     "vientoDir": 177,
+     "humedad": 85,
+     "presionMin": 1019
     },
     {
      "fecha": "2026-10-17",
      "tmax": 13,
      "tmin": 11,
      "n": 25,
-     "completo": true
+     "completo": true,
+     "mm": null,
+     "vientoKmh": 33,
+     "vientoDir": 183,
+     "humedad": 74,
+     "presionMin": 1019
     },
     {
      "fecha": "2026-10-18",
-     "tmax": 14,
-     "tmin": 11,
+     "tmax": 13.8,
+     "tmin": 10.9,
      "n": 25,
-     "completo": true
+     "completo": true,
+     "mm": null,
+     "vientoKmh": 33,
+     "vientoDir": 169,
+     "humedad": 73,
+     "presionMin": 1019.3
     },
     {
      "fecha": "2026-10-19",
-     "tmax": 15,
-     "tmin": 5,
+     "tmax": 14.3,
+     "tmin": 6.1,
      "n": 22,
-     "completo": false
+     "completo": false,
+     "mm": 0.0,
+     "vientoKmh": 19,
+     "vientoDir": 148,
+     "humedad": 77,
+     "presionMin": 1021.6
     }
    ],
    "synop": [
@@ -1065,35 +1114,60 @@
      "tmax": 15,
      "tmin": 15,
      "n": 2,
-     "completo": false
+     "completo": false,
+     "mm": null,
+     "vientoKmh": 31,
+     "vientoDir": 160,
+     "humedad": null,
+     "presionMin": null
     },
     {
      "fecha": "2026-10-16",
      "tmax": 15,
      "tmin": 12,
      "n": 30,
-     "completo": true
+     "completo": true,
+     "mm": null,
+     "vientoKmh": 33,
+     "vientoDir": 195,
+     "humedad": 93,
+     "presionMin": 1017
     },
     {
      "fecha": "2026-10-17",
      "tmax": 15,
      "tmin": 11,
      "n": 25,
-     "completo": true
+     "completo": true,
+     "mm": null,
+     "vientoKmh": 31,
+     "vientoDir": 196,
+     "humedad": 79,
+     "presionMin": 1017
     },
     {
      "fecha": "2026-10-18",
-     "tmax": 15,
-     "tmin": 10,
+     "tmax": 13.6,
+     "tmin": 10.5,
      "n": 24,
-     "completo": true
+     "completo": true,
+     "mm": 0.0,
+     "vientoKmh": 25,
+     "vientoDir": 180,
+     "humedad": 78,
+     "presionMin": 1018.1
     },
     {
      "fecha": "2026-10-19",
-     "tmax": 16,
-     "tmin": 8,
+     "tmax": 14.5,
+     "tmin": 7.5,
      "n": 22,
-     "completo": false
+     "completo": false,
+     "mm": 0.0,
+     "vientoKmh": 22,
+     "vientoDir": 174,
+     "humedad": 76,
+     "presionMin": 1021.2
     }
    ],
    "synop": [
@@ -1650,55 +1724,64 @@
      "fecha": "2026-10-11",
      "max": 11.88,
      "min": 11.82,
-     "ultimo": 11.82
+     "ultimo": 11.82,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 11.82,
      "min": 11.56,
-     "ultimo": 11.6
+     "ultimo": 11.6,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-13",
      "max": 11.6,
      "min": 11.39,
-     "ultimo": 11.41
+     "ultimo": 11.41,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-14",
      "max": 11.41,
      "min": 11.2,
-     "ultimo": 11.22
+     "ultimo": 11.22,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 11.22,
      "min": 11.13,
-     "ultimo": 11.13
+     "ultimo": 11.13,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 11.16,
      "min": 11.11,
-     "ultimo": 11.16
+     "ultimo": 11.16,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 11.16,
      "min": 11.01,
-     "ultimo": 11.03
+     "ultimo": 11.03,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 11.03,
      "min": 10.96,
-     "ultimo": 10.98
+     "ultimo": 10.98,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 10.98,
      "min": 10.9,
-     "ultimo": 10.92
+     "ultimo": 10.92,
+     "lluvia": 0.0
     }
    ]
   },
@@ -1717,55 +1800,64 @@
      "fecha": "2026-10-11",
      "max": 11.59,
      "min": 11.55,
-     "ultimo": 11.55
+     "ultimo": 11.55,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 11.54,
      "min": 11.31,
-     "ultimo": 11.31
+     "ultimo": 11.31,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-13",
      "max": 11.31,
      "min": 11.12,
-     "ultimo": 11.12
+     "ultimo": 11.12,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-14",
      "max": 11.14,
      "min": 10.92,
-     "ultimo": 10.92
+     "ultimo": 10.92,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 10.92,
      "min": 10.87,
-     "ultimo": 10.87
+     "ultimo": 10.87,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 10.87,
      "min": 10.84,
-     "ultimo": 10.86
+     "ultimo": 10.86,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 10.87,
      "min": 10.74,
-     "ultimo": 10.74
+     "ultimo": 10.74,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 10.74,
      "min": 10.67,
-     "ultimo": 10.69
+     "ultimo": 10.69,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 10.69,
      "min": 10.62,
-     "ultimo": 10.62
+     "ultimo": 10.62,
+     "lluvia": 0.0
     }
    ]
   },
@@ -1784,55 +1876,64 @@
      "fecha": "2026-10-11",
      "max": 32.32,
      "min": 32.24,
-     "ultimo": 32.31
+     "ultimo": 32.31,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 32.56,
      "min": 32.32,
-     "ultimo": 32.55
+     "ultimo": 32.55,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-13",
      "max": 32.81,
      "min": 32.56,
-     "ultimo": 32.81
+     "ultimo": 32.81,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 33.12,
      "min": 32.81,
-     "ultimo": 33.12
+     "ultimo": 33.12,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 33.43,
      "min": 33.13,
-     "ultimo": 33.43
+     "ultimo": 33.43,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 33.73,
      "min": 33.43,
-     "ultimo": 33.73
+     "ultimo": 33.73,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 34.07,
      "min": 33.74,
-     "ultimo": 34.07
+     "ultimo": 34.07,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 34.43,
      "min": 34.08,
-     "ultimo": 34.43
+     "ultimo": 34.43,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 34.69,
      "min": 34.43,
-     "ultimo": 34.69
+     "ultimo": 34.69,
+     "lluvia": 0.0
     }
    ]
   },
@@ -1851,55 +1952,64 @@
      "fecha": "2026-10-11",
      "max": 32.53,
      "min": 32.45,
-     "ultimo": 32.53
+     "ultimo": 32.53,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 32.74,
      "min": 32.52,
-     "ultimo": 32.74
+     "ultimo": 32.74,
+     "lluvia": 2.0
     },
     {
      "fecha": "2026-10-13",
      "max": 32.99,
      "min": 32.73,
-     "ultimo": 32.99
+     "ultimo": 32.99,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 33.28,
      "min": 32.99,
-     "ultimo": 33.28
+     "ultimo": 33.28,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 33.6,
      "min": 33.29,
-     "ultimo": 33.6
+     "ultimo": 33.6,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 33.91,
      "min": 33.61,
-     "ultimo": 33.91
+     "ultimo": 33.91,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 34.22,
      "min": 33.91,
-     "ultimo": 34.22
+     "ultimo": 34.22,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 34.55,
      "min": 34.23,
-     "ultimo": 34.55
+     "ultimo": 34.55,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 34.81,
      "min": 34.56,
-     "ultimo": 34.81
+     "ultimo": 34.81,
+     "lluvia": 0.0
     }
    ]
   },
@@ -1930,55 +2040,64 @@
      "fecha": "2026-10-11",
      "max": 7.02,
      "min": 6.96,
-     "ultimo": 7.01
+     "ultimo": 7.01,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 7.04,
      "min": 6.97,
-     "ultimo": 7.0
+     "ultimo": 7.0,
+     "lluvia": 2.0
     },
     {
      "fecha": "2026-10-13",
      "max": 7.0,
      "min": 6.94,
-     "ultimo": 6.97
+     "ultimo": 6.97,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 7.01,
      "min": 6.95,
-     "ultimo": 7.0
+     "ultimo": 7.0,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 7.07,
      "min": 6.97,
-     "ultimo": 7.06
+     "ultimo": 7.06,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 7.1,
      "min": 7.01,
-     "ultimo": 7.09
+     "ultimo": 7.09,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 7.1,
      "min": 7.06,
-     "ultimo": 7.1
+     "ultimo": 7.1,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-18",
      "max": 7.09,
      "min": 7.01,
-     "ultimo": 7.05
+     "ultimo": 7.05,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 7.05,
      "min": 6.9,
-     "ultimo": 6.95
+     "ultimo": 6.95,
+     "lluvia": 0.0
     }
    ]
   },
@@ -2009,55 +2128,64 @@
      "fecha": "2026-10-11",
      "max": 9.14,
      "min": 9.1,
-     "ultimo": 9.12
+     "ultimo": 9.12,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 9.19,
      "min": 9.12,
-     "ultimo": 9.16
+     "ultimo": 9.16,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-13",
      "max": 9.25,
      "min": 9.16,
-     "ultimo": 9.25
+     "ultimo": 9.25,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 9.34,
      "min": 9.25,
-     "ultimo": 9.34
+     "ultimo": 9.34,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 9.38,
      "min": 9.31,
-     "ultimo": 9.38
+     "ultimo": 9.38,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 9.38,
      "min": 9.36,
-     "ultimo": 9.38
+     "ultimo": 9.38,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 9.38,
      "min": 9.31,
-     "ultimo": 9.31
+     "ultimo": 9.31,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 9.31,
      "min": 9.16,
-     "ultimo": 9.16
+     "ultimo": 9.16,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 9.16,
      "min": 8.99,
-     "ultimo": 8.99
+     "ultimo": 8.99,
+     "lluvia": 0.0
     }
    ]
   },
@@ -2076,55 +2204,64 @@
      "fecha": "2026-10-11",
      "max": 9.79,
      "min": 9.75,
-     "ultimo": 9.79
+     "ultimo": 9.79,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 9.86,
      "min": 9.78,
-     "ultimo": 9.86
+     "ultimo": 9.86,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-13",
      "max": 9.96,
      "min": 9.86,
-     "ultimo": 9.96
+     "ultimo": 9.96,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 10.05,
      "min": 9.96,
-     "ultimo": 10.05
+     "ultimo": 10.05,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 10.06,
      "min": 10.04,
-     "ultimo": 10.06
+     "ultimo": 10.06,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 10.06,
      "min": 10.03,
-     "ultimo": 10.03
+     "ultimo": 10.03,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 10.03,
      "min": 9.93,
-     "ultimo": 9.93
+     "ultimo": 9.93,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 9.93,
      "min": 9.7,
-     "ultimo": 9.7
+     "ultimo": 9.7,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 9.7,
      "min": 9.43,
-     "ultimo": 9.43
+     "ultimo": 9.43,
+     "lluvia": 0.0
     }
    ]
   },
@@ -2143,55 +2280,64 @@
      "fecha": "2026-10-11",
      "max": 10.56,
      "min": 9.93,
-     "ultimo": 10.56
+     "ultimo": 10.56,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 11.1,
      "min": 10.56,
-     "ultimo": 11.09
+     "ultimo": 11.09,
+     "lluvia": 68.0
     },
     {
      "fecha": "2026-10-13",
      "max": 11.34,
      "min": 11.06,
-     "ultimo": 11.3
+     "ultimo": 11.3,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 11.33,
      "min": 11.11,
-     "ultimo": 11.11
+     "ultimo": 11.11,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 11.13,
      "min": 11.01,
-     "ultimo": 11.01
+     "ultimo": 11.01,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 11.01,
      "min": 10.74,
-     "ultimo": 10.74
+     "ultimo": 10.74,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 10.74,
      "min": 10.05,
-     "ultimo": 10.05
+     "ultimo": 10.05,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 10.04,
      "min": 9.2,
-     "ultimo": 9.2
+     "ultimo": 9.2,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 9.19,
      "min": 8.3,
-     "ultimo": 8.3
+     "ultimo": 8.3,
+     "lluvia": 0.0
     }
    ]
   },
@@ -2210,55 +2356,64 @@
      "fecha": "2026-10-11",
      "max": 10.63,
      "min": 9.65,
-     "ultimo": 10.6
+     "ultimo": 10.6,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-12",
      "max": 11.1,
      "min": 10.63,
-     "ultimo": 11.1
+     "ultimo": 11.1,
+     "lluvia": 42.0
     },
     {
      "fecha": "2026-10-13",
      "max": 11.13,
      "min": 10.75,
-     "ultimo": 10.75
+     "ultimo": 10.75,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-14",
      "max": 10.75,
      "min": 10.38,
-     "ultimo": 10.5
+     "ultimo": 10.5,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-15",
      "max": 10.55,
      "min": 10.4,
-     "ultimo": 10.4
+     "ultimo": 10.4,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 10.4,
      "min": 9.6,
-     "ultimo": 9.6
+     "ultimo": 9.6,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 9.6,
      "min": 8.33,
-     "ultimo": 8.33
+     "ultimo": 8.33,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 8.3,
      "min": 7.15,
-     "ultimo": 7.15
+     "ultimo": 7.15,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 7.15,
      "min": 5.88,
-     "ultimo": 5.88
+     "ultimo": 5.88,
+     "lluvia": 0.0
     }
    ]
   },
@@ -2277,55 +2432,64 @@
      "fecha": "2026-10-11",
      "max": 7.53,
      "min": 6.93,
-     "ultimo": 7.53
+     "ultimo": 7.53,
+     "lluvia": 13.0
     },
     {
      "fecha": "2026-10-12",
      "max": 7.53,
      "min": 5.7,
-     "ultimo": 5.7
+     "ultimo": 5.7,
+     "lluvia": 33.0
     },
     {
      "fecha": "2026-10-13",
      "max": 7.25,
      "min": 5.4,
-     "ultimo": 7.25
+     "ultimo": 7.25,
+     "lluvia": 3.0
     },
     {
      "fecha": "2026-10-14",
      "max": 7.5,
      "min": 7.15,
-     "ultimo": 7.5
+     "ultimo": 7.5,
+     "lluvia": 1.0
     },
     {
      "fecha": "2026-10-15",
      "max": 7.55,
      "min": 5.95,
-     "ultimo": 5.95
+     "ultimo": 5.95,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-16",
      "max": 5.93,
      "min": 5.35,
-     "ultimo": 5.35
+     "ultimo": 5.35,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-17",
      "max": 5.35,
      "min": 4.68,
-     "ultimo": 4.68
+     "ultimo": 4.68,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-18",
      "max": 4.65,
      "min": 3.35,
-     "ultimo": 3.35
+     "ultimo": 3.35,
+     "lluvia": 0.0
     },
     {
      "fecha": "2026-10-19",
      "max": 3.33,
      "min": 2.78,
-     "ultimo": 3.3
+     "ultimo": 3.3,
+     "lluvia": 0.0
     }
    ]
   }
