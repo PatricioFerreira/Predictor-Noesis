@@ -641,6 +641,13 @@ def main():
     res["nuestro"] = nuestro
     with open("data/resumen.json", "w") as f:
         json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
+    try:
+        import tablero as T
+        parche = T.armar(ahora_loc, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, salida["errores"])
+        with open("data/tablero.json", "w") as f:
+            json.dump(parche, f, ensure_ascii=False, separators=(",", ":"))
+    except Exception as e:
+        salida["errores"].append(f"tablero: {e}"); traceback.print_exc()
     with open("data/verificacion.json", "w") as f:
         json.dump({"generado": salida["generado"], "ventanaDias": 30, "minimoN": V.MIN_N, "zonas": ver}, f, ensure_ascii=False, indent=1)
     print("ok", {k: list(v.get("modelos", {}).keys()) for k, v in salida["zonas"].items()}, salida["errores"])
