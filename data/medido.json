@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-20T17:08:18.343962+00:00",
+ "generado": "2026-10-20T17:11:15.742963+00:00",
  "zonas": {
   "salto": {
    "estacion": "SUSO",
@@ -358,9 +358,9 @@
    ],
    "sesgo": {
     "temp": 0.0,
-    "nTemp": 4,
+    "nTemp": 5,
     "presion": 0.0,
-    "nPresion": 3,
+    "nPresion": 4,
     "dias": 7
    },
    "horariaCorregida": [
@@ -488,12 +488,12 @@
    "represa": {
     "fuente": "CTM Salto Grande, temperatura ambiente en la represa",
     "ultimo": {
-     "t": "2026-10-20T13:00:00-03:00",
-     "temp": 22.08,
-     "embalse": 34.84,
-     "restitucion": 13.62,
-     "turbinado": 7.238,
-     "vertido": 8.669
+     "t": "2026-10-20T14:00:00-03:00",
+     "temp": 0.0,
+     "embalse": 0.0,
+     "restitucion": 0.0,
+     "turbinado": null,
+     "vertido": null
     },
     "horario": [
      {
@@ -591,6 +591,10 @@
      {
       "t": "2026-10-20T13:00:00-03:00",
       "temp": 22.08
+     },
+     {
+      "t": "2026-10-20T14:00:00-03:00",
+      "temp": 0.0
      }
     ],
     "dias": [
@@ -603,8 +607,8 @@
      {
       "fecha": "2026-10-20",
       "tmax": 22.08,
-      "tmin": 13.78,
-      "n": 14
+      "tmin": 0.0,
+      "n": 15
      }
     ]
    }
@@ -961,9 +965,9 @@
    ],
    "sesgo": {
     "temp": 0.0,
-    "nTemp": 4,
+    "nTemp": 5,
     "presion": 0.0,
-    "nPresion": 3,
+    "nPresion": 4,
     "dias": 7
    },
    "horariaCorregida": [
@@ -1441,9 +1445,9 @@
    ],
    "sesgo": {
     "temp": 0.0,
-    "nTemp": 4,
+    "nTemp": 5,
     "presion": 0.0,
-    "nPresion": 3,
+    "nPresion": 4,
     "dias": 7
    },
    "horariaCorregida": [
