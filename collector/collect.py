@@ -646,6 +646,10 @@ def main():
         parche = T.armar(ahora_loc, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, salida["errores"])
         with open("data/tablero.json", "w") as f:
             json.dump(parche, f, ensure_ascii=False, separators=(",", ":"))
+        # documento completo para la página web (GitHub Pages): base persistente + parche
+        import fusionar as FU
+        FU.main("data/base.json", "data/tablero.json", "data/completo.json")
+        import shutil; shutil.copy("data/completo.json", "data/base.json")
     except Exception as e:
         salida["errores"].append(f"tablero: {e}"); traceback.print_exc()
     with open("data/verificacion.json", "w") as f:
