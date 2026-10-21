@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-21T12:14:37.877642+00:00",
+ "generado": "2026-10-21T12:22:34.064660+00:00",
  "zonas": {
   "salto": {
    "estacion": "SUSO",
@@ -7,7 +7,7 @@
     "t": "2026-10-21T09:00:00-03:00",
     "hora": "09:00",
     "temp": 16,
-    "presion": 1017,
+    "presion": 1017.2,
     "humedad": 68,
     "vientoKmh": 26,
     "vientoDir": 100,
@@ -18,8 +18,7 @@
     "previsto": 16.7,
     "desvio": -0.7,
     "presionPrevista": 1017.9,
-    "presionSynop": 1017.4,
-    "desvioPresion": -0.9,
+    "desvioPresion": -0.7,
     "previstoCorregido": 15.8
    },
    "dias": [
@@ -77,13 +76,13 @@
     },
     {
      "fecha": "2026-10-21",
-     "tmax": 16,
+     "tmax": 16.3,
      "tmin": 13.8,
      "n": 10,
      "completo": false,
      "mm": 0.0,
-     "vientoKmh": 26,
-     "vientoDir": 117,
+     "vientoKmh": 22,
+     "vientoDir": 118,
      "humedad": 74,
      "presionMin": 1016.2,
      "mmFuente": "pluviómetro CTM Salto"
@@ -354,6 +353,11 @@
      "t": "2026-10-21T08:00:00-03:00",
      "temp": 15.2,
      "hPa": 1017.4
+    },
+    {
+     "t": "2026-10-21T09:00:00-03:00",
+     "temp": 16.3,
+     "hPa": 1017.2
     }
    ],
    "sesgo": {
@@ -619,7 +623,7 @@
     "t": "2026-10-21T09:00:00-03:00",
     "hora": "09:00",
     "temp": 16,
-    "presion": 1024,
+    "presion": 1023.5,
     "humedad": 68,
     "vientoKmh": 20,
     "vientoDir": 80,
@@ -630,8 +634,7 @@
     "previsto": 14.2,
     "desvio": 1.8,
     "presionPrevista": 1023.2,
-    "presionSynop": 1023.2,
-    "desvioPresion": 0.8,
+    "desvioPresion": 0.3,
     "previstoCorregido": 14.1
    },
    "dias": [
@@ -685,11 +688,11 @@
     },
     {
      "fecha": "2026-10-21",
-     "tmax": 16,
+     "tmax": 15.1,
      "tmin": 9.5,
      "n": 10,
      "completo": false,
-     "mm": null,
+     "mm": 0.0,
      "vientoKmh": 20,
      "vientoDir": 85,
      "humedad": 75,
@@ -961,6 +964,11 @@
      "t": "2026-10-21T08:00:00-03:00",
      "temp": 12.6,
      "hPa": 1023.2
+    },
+    {
+     "t": "2026-10-21T09:00:00-03:00",
+     "temp": 15.1,
+     "hPa": 1023.5
     }
    ],
    "sesgo": {
@@ -1099,7 +1107,7 @@
     "t": "2026-10-21T09:00:00-03:00",
     "hora": "09:00",
     "temp": 15,
-    "presion": 1024,
+    "presion": 1024.1,
     "humedad": 67,
     "vientoKmh": 22,
     "vientoDir": 80,
@@ -1110,8 +1118,7 @@
     "previsto": 14.9,
     "desvio": 0.1,
     "presionPrevista": 1024.4,
-    "presionSynop": 1023.7,
-    "desvioPresion": -0.4,
+    "desvioPresion": -0.3,
     "previstoCorregido": 15.7
    },
    "dias": [
@@ -1165,12 +1172,12 @@
     },
     {
      "fecha": "2026-10-21",
-     "tmax": 15,
+     "tmax": 14.6,
      "tmin": 9.1,
      "n": 10,
      "completo": false,
-     "mm": null,
-     "vientoKmh": 29,
+     "mm": 0.0,
+     "vientoKmh": 32,
      "vientoDir": 59,
      "humedad": 84,
      "presionMin": 1022.9
@@ -1441,6 +1448,11 @@
      "t": "2026-10-21T08:00:00-03:00",
      "temp": 12.8,
      "hPa": 1023.7
+    },
+    {
+     "t": "2026-10-21T09:00:00-03:00",
+     "temp": 14.6,
+     "hPa": 1024.1
     }
    ],
    "sesgo": {
@@ -1665,7 +1677,7 @@
     "lon": -57.916594,
     "lluvia24h": 0.0,
     "lluvia72h": 0.0,
-    "t": "2026-10-21T08:30:00-03:00"
+    "t": "2026-10-21T08:45:00-03:00"
    },
    {
     "n": "Federación",
@@ -1882,11 +1894,11 @@
   },
   "Salto Grande": {
    "ultimo": {
-    "t": "2026-10-21T08:30:00-03:00",
+    "t": "2026-10-21T08:45:00-03:00",
     "nivel": 34.99,
     "lluvia": 0.0
    },
-   "nivelHace24h": 34.82,
+   "nivelHace24h": 34.83,
    "nivelHace72h": 34.2,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
