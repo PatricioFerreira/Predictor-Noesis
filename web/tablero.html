@@ -194,8 +194,8 @@ header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content
 .tbl th{font-size:11px;color:var(--muted);font-weight:600;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
 .tbl td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line-soft);color:#cfd4df}
 .tbl th:first-child,.tbl td:first-child{text-align:left;color:var(--fg)}
-.basinmap{margin-top:12px;background:#0b1018;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden}
-.basinmap svg{display:block;width:100%;height:auto}
+.basinmap{margin-top:12px;background:#060b14;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden}
+.basinmap svg{display:block;width:100%;height:auto}@media (max-width:760px){.basinmap{overflow-x:auto}.basinmap svg{min-width:760px}}
 .maplegend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
 .maplegend span{display:inline-flex;align-items:center;gap:6px}
 .maplegend i{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -466,7 +466,7 @@ function render(){
     <div class="eyebrow">Cuenca del río Uruguay · niveles del ${esc(r.aguasArriba.fecha)}</div>
     <h3 style="font-size:18px;margin-top:6px">De Iraí (Brasil) a Salto: dónde está cada estación</h3>
     <div class="basinmap">${basinSVG(st)}</div>
-    <div class="maplegend"><span><i style="background:var(--ok)"></i>normal (menos del 70 % de la cota de inundación)</span><span><i style="background:var(--warn)"></i>atención (70–100 %)</span><span><i style="background:var(--crit)"></i>sobre la cota de inundación</span><span>▼ pronóstico en baja</span></div>
+    <div class="maplegend"><span><i style="background:#3ddc97"></i>normal (menos del 80 % de la cota de inundación)</span><span><i style="background:#ff8a3d"></i>atención (80–100 %)</span><span><i style="background:#ff4d5e"></i>sobre la cota de inundación</span><span><i style="background:#4ea8ff"></i>telemetría CTM (sin cota publicada)</span><span>▼ pronóstico en baja</span></div>
     <p class="insight">El agua baja de noreste a suroeste. ${over} de ${st.length} estaciones están sobre su cota de inundación; las tres con pronóstico del Servicio Geológico de Brasil bajan (Uruguaiana de ${nf(st.at(-1).nivel/100,2)} a ${nf(st.at(-1).prev/100,2)} m). Lo que hoy pasa por Uruguaiana llega al embalse de Salto Grande en los días siguientes. Esquema orientativo, no a escala exacta.</p>
     ${r.ctm?`<div class="eyebrow" style="margin-top:16px">Tramo argentino-brasileño · ${esc(r.ctm.fuente)} · ${esc(r.ctm.fecha)}</div>
     <div style="overflow-x:auto;margin-top:8px"><table class="tbl num"><thead><tr><th>Estación (de arriba hacia abajo)</th>${r.ctm.dias.map(d=>`<th>${esc(d)}</th>`).join("")}<th>Caudal</th><th>Cambio</th></tr></thead><tbody>
@@ -752,36 +752,90 @@ const GEO={
 const RIVER=[[-51.9,-27.46],[-52.6,-27.25],[-53.25,-27.18],[-53.71,-27.17],[-54.08,-27.40],[-54.67,-27.57],[-55.02,-27.85],[-55.40,-27.98],[-55.64,-28.18],[-56.00,-28.66],[-56.55,-29.12],[-57.09,-29.75],[-57.61,-30.25],[-57.78,-30.79],[-57.90,-31.10],[-57.94,-31.27],[-57.97,-31.38],[-58.08,-32.32],[-58.31,-33.12],[-58.42,-33.88]];
 const URUGUAY=[[-57.61,-30.25],[-57.1,-30.12],[-56.47,-30.40],[-56.0,-30.75],[-55.55,-30.90],[-55.0,-31.3],[-54.15,-31.88],[-53.38,-32.58],[-53.1,-33.0],[-53.37,-33.74],[-53.8,-34.4],[-54.16,-34.66],[-54.95,-34.97],[-55.27,-34.86],[-56.16,-34.91],[-56.9,-34.45],[-57.84,-34.47],[-58.42,-33.88],[-58.31,-33.12],[-58.08,-32.32],[-57.97,-31.38],[-57.78,-30.79]];
 function basinSVG(st){
-  const W=900,H=560, lon0=-59.4,lon1=-51.4, lat0=-35.3,lat1=-26.3, k=Math.cos(31*Math.PI/180);
-  const sx=W/((lon1-lon0)*k), sy=H/(lat1-lat0), s=Math.min(sx,sy);
-  const ox=(W-(lon1-lon0)*k*s)/2;
-  const P=([lo,la])=>[ox+(lo-lon0)*k*s, (lat1-la)*s];
+  const r=DATA.rio, W=1000, H=860, F="Inter,system-ui,sans-serif", MO="JetBrains Mono,monospace";
+  /* proyección: zona del río, a la izquierda; columna de carteles a la derecha */
+  const lon0=-59.3,lon1=-52.6, lat0=-34.2,lat1=-26.9, k=Math.cos(30.5*Math.PI/180);
+  const s=Math.min(600/((lon1-lon0)*k), (H-60)/(lat1-lat0)), ox=10, oy=40;
+  const P=([lo,la])=>[ox+(lo-lon0)*k*s, oy+(lat1-la)*s];
   const path=pts=>pts.map((p,i)=>(i?"L":"M")+P(p).map(v=>v.toFixed(1)).join(" ")).join(" ");
-  const col=x=>{const q=x.nivel/x.inund;return q>=1?"#ff5d6c":q>=.7?"#ffc53d":"#3ddc97"};
-  const LAB={"Iraí":[10,-34,"start"],"Itapiranga":[-6,-34,"end"],"Porto Mauá":[-12,-30,"end"],"Porto Lucena":[14,-4,"start"],"Garruchos":[-14,-8,"end"],"São Borja":[14,8,"start"],"Itaqui":[-14,8,"end"],"Uruguaiana":[-14,2,"end"]};
-  const stations=st.map(x=>{const g=GEO[x.n]; if(!g) return ""; const [px,py]=P(g); const [ldx,ldy,an]=LAB[x.n]||[12,0,"start"];
-    return `<g><circle cx="${px}" cy="${py}" r="13" fill="${col(x)}" opacity=".18"/><circle cx="${px}" cy="${py}" r="6.5" fill="${col(x)}" stroke="#0b1018" stroke-width="2"/>
-    ${Math.abs(ldy)>20?`<line x1="${px}" y1="${py}" x2="${px+ldx*.6}" y2="${py+ldy+14}" stroke="#5c6478" stroke-width="1"/>`:""}
-    <text x="${px+ldx}" y="${py+ldy}" text-anchor="${an}" font-size="14" font-weight="700" fill="#e8ebf2" font-family="Inter,system-ui,sans-serif">${esc(x.n)}</text>
-    <text x="${px+ldx}" y="${py+ldy+15}" text-anchor="${an}" font-size="12.5" fill="#8a92a6" font-family="JetBrains Mono,monospace">${nf(x.nivel/100,2)} / ${nf(x.inund/100,1)} m${x.prev?" ▼":""}</text></g>`}).join("");
-  const city=(n,lo,la,anchor="start",dx=10,c="#cfd4df")=>{const [px,py]=P([lo,la]);return `<circle cx="${px}" cy="${py}" r="3.5" fill="${c}"/><text x="${px+dx}" y="${py+4}" text-anchor="${anchor}" font-size="12.5" fill="${c}" font-family="Inter,system-ui,sans-serif">${n}</text>`};
-  const [dx,dy]=P([-57.94,-31.27]);
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Esquema de la cuenca del río Uruguay con las estaciones de medición">
-    <rect width="${W}" height="${H}" fill="#0b1018"/>
-    <path d="${path(URUGUAY)} Z" fill="#141b27" stroke="#2c3546" stroke-width="1.2"/>
-    <text x="${P([-56.2,-32.6])[0]}" y="${P([-56.2,-32.6])[1]}" font-size="22" font-weight="800" fill="#2c3546" letter-spacing="4" font-family="Inter,system-ui,sans-serif">URUGUAY</text>
-    <text x="${P([-54.2,-29.4])[0]}" y="${P([-54.2,-29.4])[1]}" font-size="22" font-weight="800" fill="#232b3a" letter-spacing="4" font-family="Inter,system-ui,sans-serif">BRASIL</text>
-    <text x="${P([-59.3,-30.9])[0]}" y="${P([-59.3,-30.9])[1]}" font-size="22" font-weight="800" fill="#232b3a" letter-spacing="4" font-family="Inter,system-ui,sans-serif">ARGENTINA</text>
-    <path d="${path(RIVER)}" fill="none" stroke="#4ea8ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".18"/>
-    <path d="${path(RIVER)}" fill="none" stroke="#4ea8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <ellipse cx="${dx+2}" cy="${dy-14}" rx="7" ry="20" fill="#4ea8ff" opacity=".55" transform="rotate(-12 ${dx} ${dy})"/>
-    <line x1="${dx-12}" y1="${dy}" x2="${dx+12}" y2="${dy}" stroke="#ffa94d" stroke-width="4" stroke-linecap="round"/>
-    <text x="${dx+16}" y="${dy-6}" font-size="13" font-weight="700" fill="#ffa94d" font-family="Inter,system-ui,sans-serif">Represa Salto Grande</text>
-    ${city("Salto",-57.97,-31.38,"start",10,"#e8ebf2")}${city("Concordia",-58.02,-31.39,"end",-10)}${city("Paysandú",-58.08,-32.32,"start",10)}${city("Bella Unión",-57.61,-30.25,"start",10)}${city("Montevideo",-56.16,-34.91,"end",-10)}${city("Punta del Este",-54.95,-34.97,"start",10)}
-    ${stations}
-    <text x="${P([-52.4,-27.75])[0]}" y="${P([-52.4,-27.75])[1]}" font-size="12" fill="#8a92a6" font-family="Inter,system-ui,sans-serif">↑ viene de las nacientes</text>
-    <text x="16" y="${H-16}" font-size="12" fill="#5c6478" font-family="Inter,system-ui,sans-serif">Cada estación: nivel actual / cota de inundación</text>
-    <g transform="translate(${W-60},${H-70})"><path d="M0 -22 L7 0 L0 -5 L-7 0 Z" fill="#8a92a6"/><text x="0" y="16" text-anchor="middle" font-size="12" fill="#8a92a6" font-family="Inter,system-ui,sans-serif">N</text></g>
+  const RED="#ff4d5e", ORA="#ff8a3d", GRN="#3ddc97", BLU="#4ea8ff";
+  const GEO2={"Iraí":[-53.25,-27.18],"Itapiranga":[-53.71,-27.17],"Alto Uruguai":[-54.12,-27.33],"Porto Mauá":[-54.67,-27.57],"Porto Lucena":[-55.02,-27.85],
+    "Garruchos":[-55.64,-28.18],"São Borja":[-56.00,-28.66],"Itaqui":[-56.55,-29.12],"Uruguaiana":[-57.09,-29.75],
+    "El Soberbio":[-54.20,-27.30],"Santo Tomé":[-56.04,-28.55],"Yapeyú":[-56.82,-29.47],"Paso de los Libres":[-57.09,-29.71],"Monte Caseros":[-57.64,-30.25],
+    "Salto Grande":[-57.93,-31.27],"Puerto Concordia":[-58.02,-31.39],"Salto":[-57.96,-31.39]};
+  /* estaciones: Brasil (SGB, con cota de inundación) + telemetría CTM (Argentina y Uruguay) */
+  const E=[];
+  const BRsel=["Iraí","Porto Mauá","Garruchos","São Borja","Itaqui","Uruguaiana"];
+  for(const x of st||[]){ if(!GEO2[x.n]||x.nivel==null||!BRsel.includes(x.n)) continue; const q=x.inund?x.nivel/x.inund:null;
+    E.push({n:x.n,pais:"BR",v:x.nivel/100,lim:x.inund?x.inund/100:null,col:q==null?BLU:q>=1?RED:q>=.8?ORA:GRN,alerta:q!=null&&q>=.8,
+      sub:x.inund?`inunda a ${nf(x.inund/100,2)} m${x.tend==="baja"?" · ▼ baja":x.tend==="sube"?" · ▲ sube":""}`:"",prio:q==null?0:q}); }
+  const T=r.estacionesCTM||{};
+  const ctmSel=[["Paso de los Libres",null],["Salto Grande",null],["Puerto Concordia",11],["Salto",12]];
+  for(const [n,lim] of ctmSel){ const t=T[n]; if(!t||t.nivel==null) continue;
+    let col=BLU,al=false; if(n==="Salto"){col=rioNivel(t.nivel).c; al=t.nivel>=11} else if(lim){col=t.nivel>=lim+1?RED:t.nivel>=lim?ORA:BLU; al=t.nivel>=lim}
+    const tr=t.d24==null?"":t.d24>0.02?` · ▲ ${nf(t.d24*100,0)} cm/24 h`:t.d24<-0.02?` · ▼ ${nf(-t.d24*100,0)} cm/24 h`:" · estable";
+    E.push({n:n==="Salto"?"Salto (puerto)":n==="Salto Grande"?"Embalse Salto Grande":n==="Puerto Concordia"?"Concordia (puerto)":n,geo:n,pais:"CTM",v:t.nivel,col,alerta:al,
+      sub:(n==="Salto"?"evacuaciones a 12 m":lim?`alerta a ${nf(lim,0)} m`:"telemetría CTM")+tr,prio:0}); }
+  E.forEach(e=>{e.p=P(GEO2[e.geo||e.n])});
+  E.sort((a,b)=>a.p[1]-b.p[1]);
+  /* carteles en columna, ordenados de norte a sur, sin superponerse */
+  const bx=650,bw=330,bh=52,gap=10, top=100, n=E.length, slot=Math.min(bh+gap,(H-top-200)/Math.max(1,n));
+  E.forEach((e,i)=>{e.by=top+i*slot});
+  const sobre=E.filter(e=>e.col===RED).length, alerta=E.filter(e=>e.alerta).length;
+  const flechas=[[-53.0,-27.2],[-54.4,-27.45],[-55.3,-27.9],[-56.25,-28.85],[-57.35,-30.0],[-57.85,-30.6],[-58.1,-32.0]].map((p,i,a)=>{
+    const [x,y]=P(p), [x2,y2]=P(a[Math.min(i+1,a.length-1)]===p?[p[0]-.3,p[1]-.3]:RIVER.reduce((b,q)=>{const d=Math.hypot(q[0]-p[0],q[1]-p[1]);return d<b.d&&d>.15&&q[1]<p[1]?{d,q}:b},{d:9,q:[p[0]-.3,p[1]-.3]}).q);
+    const ang=Math.atan2(y2-y,x2-x)*180/Math.PI; return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(0)})"><path d="M-9 -6 L3 0 L-9 6" fill="none" stroke="#7fd0ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/></g>`}).join("");
+  const marcador=e=>{const [x,y]=e.p; return e.alerta?
+    `<g><circle cx="${x}" cy="${y}" r="17" fill="${e.col}" opacity=".22"/><circle cx="${x}" cy="${y}" r="11" fill="${e.col}" stroke="#fff" stroke-width="2"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="15" font-weight="900" fill="#fff" font-family="${F}">!</text></g>`:
+    `<g><circle cx="${x}" cy="${y}" r="9" fill="${e.col}" opacity=".25"/><circle cx="${x}" cy="${y}" r="5" fill="#fff" stroke="${e.col}" stroke-width="2.5"/></g>`};
+  const cartel=e=>{const [x,y]=e.p, cy=e.by+bh/2, fill=e.col===RED?"rgba(120,16,28,.88)":e.col===ORA?"rgba(110,52,10,.88)":"rgba(10,26,44,.9)";
+    return `<path d="M${x+12} ${y} C ${x+80} ${y}, ${bx-60} ${cy}, ${bx} ${cy}" fill="none" stroke="${e.col}" stroke-width="1.4" opacity=".7"/>
+    <rect x="${bx}" y="${e.by}" width="${bw}" height="${bh}" rx="8" fill="${fill}" stroke="${e.col}" stroke-width="1.6"/>
+    <text x="${bx+14}" y="${e.by+20}" font-size="14" font-weight="600" fill="#e8ebf2" font-family="${F}">${esc(e.n)}${e.pais==="BR"?' <tspan font-size="11" fill="#8a92a6">· BR</tspan>':""}</text>
+    <text x="${bx+14}" y="${e.by+39}" font-size="11.5" fill="#aab3c5" font-family="${F}">${esc(e.sub)}</text>
+    <text x="${bx+bw-14}" y="${e.by+33}" text-anchor="end" font-size="24" font-weight="800" fill="#fff" font-family="${F}">${nf(e.v,2)} <tspan font-size="14" font-weight="600" fill="#cfd4df">m</tspan></text>`};
+  const lab=(t,lo,la,sz=20,c="rgba(200,214,235,.28)",ls=6)=>{const [x,y]=P([lo,la]);return `<text x="${x}" y="${y}" font-size="${sz}" font-weight="800" fill="${c}" letter-spacing="${ls}" font-family="${F}">${t}</text>`};
+  const city=(n,lo,la,an="start",dx=12)=>{const [x,y]=P([lo,la]);return `<circle cx="${x}" cy="${y}" r="3" fill="#cfd4df"/><text x="${x+dx}" y="${y+4}" text-anchor="${an}" font-size="12" fill="#cfd4df" font-family="${F}">${n}</text>`};
+  const [dx,dy]=P([-57.93,-31.27]);
+  const lluv=((r.prevision||{}).lluviaCuenca||{}).puntos||[], lmax=lluv.length?Math.max(...lluv.map(p=>p.mm||0)):null;
+  const rep=r.represa||{}, info=[
+    lmax!=null?["lluvia",`Lluvia prevista en la cuenca alta: ${nf(lmax)} mm en 7 días`]:null,
+    rep.aporte24h?["represa",`Entra ${nf(rep.aporte24h)} m³/s · sale ${nf(rep.descarga24h)} m³/s`]:null,
+    rep.embalse?["nivel",`Embalse a ${nf(rep.embalse,2)} m${rep.embalseObjetivo?` → tiende a ${nf(rep.embalseObjetivo,2)} m`:""}`]:null].filter(Boolean);
+  const ico={lluvia:`<path d="M-9 2 a7 7 0 0 1 3-11 a8 8 0 0 1 14 2 a5 5 0 0 1 1 10 z" fill="#7fd0ff"/><path d="M-5 9 l-2 5 M0 9 l-2 5 M5 9 l-2 5" stroke="#7fd0ff" stroke-width="2" stroke-linecap="round"/>`,
+    represa:`<rect x="-11" y="-9" width="22" height="16" rx="2" fill="#7fd0ff"/><path d="M-7 -5 v10 M-2 -5 v10 M3 -5 v10 M8 -5 v10" stroke="#0b1424" stroke-width="2"/><path d="M-12 11 q3 -3 6 0 t6 0 t6 0 t6 0" stroke="#7fd0ff" stroke-width="2" fill="none"/>`,
+    nivel:`<path d="M0 -11 C6 -3 8 1 8 4 a8 8 0 0 1 -16 0 c0 -3 2 -7 8 -15z" fill="#7fd0ff"/>`};
+  const iy=H-150, infoBox=info.length?`<rect x="${bx}" y="${iy}" width="${bw}" height="${info.length*38+16}" rx="10" fill="rgba(10,22,40,.85)" stroke="#2a4466"/>
+    ${info.map(([ic,t],i)=>`<g transform="translate(${bx+26} ${iy+30+i*38})">${ico[ic]}</g><text x="${bx+50}" y="${iy+35+i*38}" font-size="12.5" fill="#dbe6f5" font-family="${F}">${esc(t)}</text>`).join("")}`:"";
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de la cuenca del río Uruguay con el nivel de cada estación">
+  <defs>
+    <radialGradient id="bgm" cx="35%" cy="40%" r="80%"><stop offset="0" stop-color="#16263d"/><stop offset=".6" stop-color="#0c1626"/><stop offset="1" stop-color="#060b14"/></radialGradient>
+    <filter id="relieve" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".022 .03" numOctaves="5" seed="11"/><feColorMatrix values="0 0 0 0 .25  0 0 0 0 .38  0 0 0 0 .5  0 0 0 .35 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glow2"><feGaussianBlur stdDeviation="14"/></filter>
+    <linearGradient id="agua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1f3a"/><stop offset="1" stop-color="#062a4a"/></linearGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#bgm)"/>
+  <clipPath id="mapclip"><rect width="632" height="${H}"/></clipPath><g clip-path="url(#mapclip)">
+  <rect width="632" height="${H}" fill="#fff" filter="url(#relieve)" opacity=".55"/>
+  <path d="${path([[-58.42,-33.88],[-57.84,-34.47],[-56.9,-34.45],[-56.16,-34.91],[-55.27,-34.86],[-54.95,-34.97],[-54.1,-34.6],[-53.3,-34.2],[-52.6,-34.2],[-52.6,-34.6],[-59.3,-34.6],[-59.3,-34.0],[-58.6,-34.05]])} Z" fill="url(#agua)" opacity=".95"/>
+  <path d="${path(URUGUAY)} Z" fill="rgba(70,110,150,.10)" stroke="#5f8fbf" stroke-width="1.3" stroke-dasharray="5 4" opacity=".75"/>
+  ${lab("BRASIL",-55.1,-29.6,22)}${lab("ARGENTINA",-59.2,-30.0,24)}${lab("URUGUAY",-56.7,-32.5,20)}${lab("CORRIENTES",-58.6,-28.7,12,"rgba(200,214,235,.32)",3)}${lab("MISIONES",-55.6,-27.0,12,"rgba(200,214,235,.32)",3)}${lab("ENTRE RÍOS",-59.2,-31.9,12,"rgba(200,214,235,.32)",3)}${lab("RÍO GRANDE DO SUL",-55.4,-30.6,12,"rgba(200,214,235,.32)",3)}
+  <path d="${path(RIVER)}" fill="none" stroke="#2f9bff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity=".35" filter="url(#glow2)"/>
+  <path d="${path(RIVER)}" fill="none" stroke="#5cc0ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="${path(RIVER)}" fill="none" stroke="#e6f6ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 14" opacity=".9"><animate attributeName="stroke-dashoffset" from="0" to="-32" dur="1.6s" repeatCount="indefinite"/></path>
+  ${flechas}</g>
+  <ellipse cx="${dx+2}" cy="${dy-16}" rx="8" ry="22" fill="#5cc0ff" opacity=".5" transform="rotate(-12 ${dx} ${dy})"/>
+  <g transform="translate(${dx-34} ${dy+6})"><rect x="-13" y="-10" width="26" height="14" rx="2" fill="#dfe9f7"/><path d="M-8 -7 v9 M-3 -7 v9 M2 -7 v9 M7 -7 v9" stroke="#0b1424" stroke-width="2"/></g>
+  ${city("Bella Unión",-57.61,-30.25)}${city("Paysandú",-58.08,-32.32)}${city("Montevideo",-56.16,-34.91,"end",-10)}
+  ${(()=>{const [x,y]=P([-57.6,-28.8]);return `<text x="${x}" y="${y}" font-size="15" font-weight="800" fill="#7fd0ff" letter-spacing="3" transform="rotate(-52 ${x} ${y})" font-family="${F}">RÍO URUGUAY</text>`})()}
+  ${E.map(cartel).join("")}${E.map(marcador).join("")}
+  <rect x="24" y="22" width="${sobre?190:150}" height="26" rx="4" fill="${sobre?"#d7263d":alerta?"#c45a12":"#1e3a5f"}"/><text x="36" y="40" font-size="13" font-weight="800" fill="#fff" letter-spacing="1.5" font-family="${F}">${sobre?"ALERTA HIDROLÓGICA":alerta?"ATENCIÓN":"SIN ALERTA"}</text>
+  <text x="${bx}" y="44" font-size="26" font-weight="900" fill="#fff" font-family="${F}">${sobre?`${sobre} estación${sobre>1?"es":""} sobre`:alerta?`${alerta} en atención`:"Río Uruguay"}</text>
+  <text x="${bx}" y="72" font-size="16" font-weight="700" fill="#7fd0ff" font-family="${F}">${sobre?"la cota de inundación":alerta?"cerca de su cota":"niveles normales en la cuenca"}</text>
+  ${infoBox}
+  <g transform="translate(36 ${H-46})"><path d="M0 -18 L6 0 L0 -4 L-6 0 Z" fill="#cfd4df"/><text x="0" y="14" text-anchor="middle" font-size="12" fill="#cfd4df" font-family="${F}">N</text></g>
+  ${(()=>{const km=s*k/111.32*100*0+0, px100=100/(111.32*Math.cos(30.5*Math.PI/180))*k*s; return `<g transform="translate(70 ${H-40})" font-family="${MO}" font-size="11" fill="#aab3c5"><line x1="0" x2="${(px100*2).toFixed(0)}" y1="0" y2="0" stroke="#aab3c5"/><line x1="0" x2="0" y1="-4" y2="4" stroke="#aab3c5"/><line x1="${px100.toFixed(0)}" x2="${px100.toFixed(0)}" y1="-4" y2="4" stroke="#aab3c5"/><line x1="${(px100*2).toFixed(0)}" x2="${(px100*2).toFixed(0)}" y1="-4" y2="4" stroke="#aab3c5"/><text x="0" y="18">0</text><text x="${px100.toFixed(0)}" y="18" text-anchor="middle">100</text><text x="${(px100*2).toFixed(0)}" y="18" text-anchor="middle">200 km</text></g>`})()}
   </svg>`;
 }
 
