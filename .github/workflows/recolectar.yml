@@ -6,6 +6,7 @@ on:
     paths: ["collector/**", "web/**", ".github/workflows/**"]
 permissions:
   contents: write
+  pages: write
 jobs:
   recolectar:
     runs-on: ubuntu-latest

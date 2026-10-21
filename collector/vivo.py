@@ -57,6 +57,9 @@ def publicar():
     sh("cd _site && rm -rf .git && git init -q -b gh-pages && git add -A && "
        "git -c user.name=recolector -c user.email=recolector@users.noreply.github.com commit -qm 'Página' && "
        f"git push -qf https://x-access-token:{os.environ.get('GITHUB_TOKEN', '')}@github.com/{os.environ.get('GITHUB_REPOSITORY', '')}.git gh-pages")
+    # pedirle a GitHub Pages que publique ya (por si el push con el token del workflow no dispara la publicación)
+    sh(f"curl -s -o /dev/null -w 'pages build %{{http_code}}\\n' -X POST -H 'Authorization: Bearer {os.environ.get('GITHUB_TOKEN', '')}' "
+       f"-H 'Accept: application/vnd.github+json' https://api.github.com/repos/{os.environ.get('GITHUB_REPOSITORY', '')}/pages/builds")
 
 
 def guardar_repo():
