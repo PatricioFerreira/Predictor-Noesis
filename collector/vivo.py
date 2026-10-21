@@ -51,6 +51,7 @@ def ahora_json():
 
 
 def publicar():
+    sh("git fetch -q origin main && git checkout origin/main -- web/ collector/fusionar.py 2>/dev/null || true")  # siempre la última versión de la página
     sh("python web/armar_sitio.py")
     sh("cp data/ahora.json _site/data/ 2>/dev/null || true")
     sh("cd _site && rm -rf .git && git init -q -b gh-pages && git add -A && "
