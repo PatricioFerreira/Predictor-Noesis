@@ -174,12 +174,12 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
             for M, arr in modz.items():
                 d = next((x for x in arr if x["fecha"] == f), None)
                 if not d or d.get("tmax") is None: continue
-                e = {k: d.get(k) for k in ("tmax", "tmin", "mm", "vientoKmh", "vientoDir")}
+                e = {k: d.get(k) for k in ("tmax", "tmin", "mm", "vientoKmh", "vientoDir", "humedad", "presionMin")}
                 if M == "ECMWF" and d.get("presionMin") is not None: e["presion"] = d["presionMin"]
                 fu[M.lower()] = e
             if f in inz:
                 i = inz[f]; p = i.get("prob")
-                fu["inumet"] = {"tmax": i.get("tmax"), "tmin": i.get("tmin"), "texto": i.get("texto"),
+                fu["inumet"] = {"tmax": i.get("tmax"), "tmin": i.get("tmin"), "texto": i.get("texto"), "prob": p,
                                 "lluvia": None if p is None else "Alta" if p >= 70 else "Media" if p >= 40 else "Baja" if p >= 15 else "Nula"}
             nu = {k: v for k, v in n.items() if k not in ("fecha", "pesos")}
             nu["presion"] = n.get("presionMin")

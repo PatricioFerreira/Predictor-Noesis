@@ -337,7 +337,7 @@ function pendingSince(){try{const t=+localStorage.getItem("pidio")||0;if(t&&DATA
 
 function render(){
   if(!DATA) return;
-  charts.forEach(c=>c.destroy()); charts=[];
+  charts.forEach(c=>c.destroy()); charts=[]; SRCCH=null;
   if(!DATA.zonas[ZONE]) ZONE="salto";
   buildTabs();
   const z=DATA.zonas[ZONE], d0=z.dias[0], r=DATA.rio, a=z.ahora||{}, act=z.actual||{...a,fuente:"modelo ECMWF"};
@@ -531,10 +531,10 @@ function render(){
 
   <div class="sec-title"><div><div class="eyebrow">Seguimiento</div><h2>Precisión, fuentes y consultas</h2></div></div>
   <section class="card">
-      <div class="eyebrow">Qué dice cada fuente · ${esc(z.nombre)}</div>
-      <div class="legend">${["nuestro",...srcKeys(z)].map(k=>`<span><i style="background:var(${srcVar(k)})"></i>${srcName(k)}</span>`).join("")}<span>línea llena: máxima · punteada: mínima</span></div>
-      <div class="chartbox"><canvas id="cSrc" aria-label="Temperaturas por fuente"></canvas></div>
-      <p class="insight">${insightSources(z)}</p>
+      <div class="eyebrow">Qué dice cada fuente · ${esc(z.nombre)} · <span id="srcVarN">${esc(PVARS.find(v=>v.k===PVAR).n)}</span></div>
+      <div class="legend" id="srcLeg"></div>
+      <div class="chartbox"><canvas id="cSrc" aria-label="Pronóstico de cada fuente"></canvas></div>
+      <p class="insight" id="srcIns"></p>
     </section>
 
   <section class="grid2b">
@@ -715,7 +715,7 @@ function podium(){
   return chips+`<div class="podium">${html}</div><div class="progress"><span style="width:${Math.min(100,nmax/14*100)}%"></span></div>
   <p class="insight">${esc(pv.n)}: ${esc(pv.txt)}, pronóstico hecho el día anterior contra lo medido, últimos 30 días (${nmax} días medidos). Con 5 días, nuestro pronóstico pesa más a la fuente que mejor acierta en cada variable y corrige su propio sesgo.</p>`;
 }
-document.addEventListener("click",e=>{const b=e.target.closest(".pvars button"); if(!b) return; PVAR=b.dataset.pv; try{localStorage.setItem("pvar",PVAR)}catch(e){}; const c=b.closest(".card"); const t=c.querySelector(".pvars"); if(t){const tmp=document.createElement("div"); tmp.innerHTML=podium(); c.querySelectorAll(".pvars,.podium,.progress,.insight").forEach(x=>x.remove()); c.append(...tmp.childNodes)}});
+document.addEventListener("click",e=>{const b=e.target.closest(".pvars button"); if(!b) return; PVAR=b.dataset.pv; try{localStorage.setItem("pvar",PVAR)}catch(e){}; try{srcChart()}catch(err){console.error(err)}; const c=b.closest(".card"); const t=c.querySelector(".pvars"); if(t){const tmp=document.createElement("div"); tmp.innerHTML=podium(); c.querySelectorAll(".pvars,.podium,.progress,.insight").forEach(x=>x.remove()); c.append(...tmp.childNodes)}});
 
 function insightSources(z){
   const ds=z.dias.filter(d=>d.fuentes.inumet&&d.fuentes.gfs&&d.fuentes.ecmwf);
@@ -923,16 +923,71 @@ function wireFlood(){
   sc.onpointermove=e=>{if(!dr)return;sc.scrollLeft=dr.l-(e.clientX-dr.x);sc.scrollTop=dr.t-(e.clientY-dr.y)};
   sc.onpointerup=sc.onpointercancel=()=>{dr=null;sc.classList.remove("drag")};
 }
+/* "Qué dice cada fuente": la gráfica sigue la variable elegida en el podio, y destaca a las tres mejores de esa variable */
+let CURZ=null, SRCCH=null;
+const SRCVAL={
+  temp:{u:"°C",dec:1,leyenda:"línea llena: máxima · punteada: mínima"},
+  lluvia:{u:"mm",dec:1,key:"mm",nk:"mm",leyenda:"milímetros de lluvia por día"},
+  viento:{u:"km/h",dec:0,key:"vientoKmh",nk:"vientoKmh",leyenda:"viento máximo del día"},
+  dir:{u:"°",dec:0,key:"vientoDir",nk:"vientoDir",leyenda:"dirección dominante del viento (de dónde sopla)"},
+  humedad:{u:"%",dec:0,key:"humedad",nk:"humedad",leyenda:"humedad media del día"},
+  pmin:{u:"hPa",dec:1,key:"presionMin",nk:"presionMin",leyenda:"presión mínima del día"}};
+const rumbo=g=>g==null?"–":["N","NE","E","SE","S","SO","O","NO"][Math.round(((g%360)+360)%360/45)%8];
+function srcChart(){
+  const z=CURZ; if(!z||!window.Chart||!$("#cSrc")) return;
+  const cfg=SRCVAL[PVAR]||SRCVAL.temp, pv=PVARS.find(v=>v.k===PVAR)||PVARS[0];
+  const val=(d,k,key)=>k==="nuestro"?(d.nuestro[key]??(key==="presionMin"?d.nuestro.presion:null)):(d.fuentes[k]?.[key]??(key==="presionMin"?d.fuentes[k]?.presion:null)??null);
+  const L=z.dias.map(d=>d.etiqueta);
+  const top=podioFilas().filter(r=>r.score!=null).slice(0,3).map(r=>r.k);
+  let keys=srcKeys(z); if(PVAR!=="temp") keys=keys.filter(k=>z.dias.some(d=>val(d,k,cfg.key)!=null));
+  keys.sort((a,b)=>(top.indexOf(a)<0?9:top.indexOf(a))-(top.indexOf(b)<0?9:top.indexOf(b)));
+  const peso=k=>k==="nuestro"?3:top.includes(k)?2.4:1.3, alfa=k=>k==="nuestro"||top.includes(k)||!top.length?1:.45;
+  const colA=(k,a)=>{const c=css(srcVar(k)); if(a>=1) return c; const m=c.match(/^#([0-9a-f]{6})$/i); if(!m) return c; const n=parseInt(m[1],16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`};
+  const ser=(k,key,dash,lbl)=>({label:lbl||srcName(k),data:z.dias.map(d=>val(d,k,key)),borderColor:colA(k,alfa(k)),backgroundColor:colA(k,alfa(k)),borderDash:dash?[5,4]:[],tension:.35,pointRadius:3,pointHoverRadius:5,borderWidth:peso(k),spanGaps:true});
+  let ds, yopt={grid:{color:css("--line-soft")}}, type="line";
+  if(PVAR==="temp"){
+    ds=[...["nuestro",...keys].map(k=>ser(k,"tmax",0,srcName(k)+" máx")),...["nuestro",...keys].map(k=>ser(k,"tmin",1,srcName(k)+" mín"))];
+    yopt.ticks={callback:v=>v+"°"};
+  } else if(PVAR==="lluvia"){
+    type="bar"; ds=["nuestro",...keys].map(k=>({label:srcName(k),data:z.dias.map(d=>val(d,k,"mm")),backgroundColor:colA(k,k==="nuestro"?1:alfa(k)*.85),borderRadius:3,maxBarThickness:10}));
+    yopt.beginAtZero=true; yopt.ticks={callback:v=>v+" mm"};
+  } else if(PVAR==="dir"){
+    ds=["nuestro",...keys].map(k=>({...ser(k,cfg.key),showLine:false,pointRadius:k==="nuestro"?6:top.includes(k)?5:3.5,pointStyle:k==="nuestro"?"rectRot":"circle"}));
+    yopt={min:0,max:360,ticks:{stepSize:45,callback:v=>rumbo(v)},grid:{color:css("--line-soft")}};
+  } else {
+    ds=["nuestro",...keys].map(k=>ser(k,cfg.key));
+    if(PVAR==="humedad"){yopt.suggestedMin=40;yopt.suggestedMax=100;yopt.ticks={callback:v=>v+" %"}}
+    else if(PVAR==="viento"){yopt.beginAtZero=true;yopt.ticks={callback:v=>v+" km/h"}}
+    else yopt.ticks={callback:v=>nf(v,0)};
+  }
+  if(PVAR!=="lluvia"&&ds[0]&&PVAR!=="dir"){const g=$("#cSrc").getContext("2d").createLinearGradient(0,0,0,260); g.addColorStop(0,"rgba(61,220,151,.18)"); g.addColorStop(1,"rgba(61,220,151,0)"); ds[0].fill="origin"; ds[0].backgroundColor=g;}
+  const tip={backgroundColor:"#0d1017",borderColor:css("--line"),borderWidth:1,padding:10};
+  const fmt=v=>v==null?"–":PVAR==="dir"?`${rumbo(v)} (${nf(v,0)}°)`:`${nf(v,cfg.dec)} ${cfg.u}`;
+  if(SRCCH){SRCCH.destroy(); const i=charts.indexOf(SRCCH); if(i>=0) charts.splice(i,1);}
+  SRCCH=new Chart($("#cSrc"),{type,data:{labels:L,datasets:ds},
+    options:{maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{...tip,filter:i=>i.parsed.y!=null,callbacks:{label:c=>` ${c.dataset.label}: ${fmt(c.parsed.y)}`}}},scales:{y:yopt,x:{grid:{display:false}}}}});
+  charts.push(SRCCH);
+  if($("#srcVarN")) $("#srcVarN").textContent=pv.n;
+  if($("#srcLeg")) $("#srcLeg").innerHTML=["nuestro",...keys].map(k=>`<span style="opacity:${alfa(k)<1?.6:1}"><i style="background:var(${srcVar(k)})"></i>${srcName(k)}${top.includes(k)?` <b style="color:${["#ffc53d","#c9d1dc","#e0915a"][top.indexOf(k)]}">${top.indexOf(k)+1}º</b>`:""}</span>`).join("")+`<span>${cfg.leyenda}${top.length?" · en color fuerte, las 3 que mejor aciertan en "+pv.n.toLowerCase():""}</span>`;
+  if($("#srcIns")){
+    let txt="";
+    if(PVAR==="temp") txt=insightSources(z);
+    else if(!keys.length) txt=`Todavía no hay valores por fuente para ${pv.n.toLowerCase()}; aparecen con la próxima actualización de los datos.`;
+    else { const rng=z.dias.map(d=>{const v=keys.map(k=>val(d,k,cfg.key)).filter(x=>x!=null); if(v.length<2) return null;
+        let r; if(PVAR==="dir"){const s=v.slice().sort((a,b)=>a-b); let gap=0; for(let i=0;i<s.length;i++){const g=((s[(i+1)%s.length]-s[i])+360)%360||(s.length===1?360:0); gap=Math.max(gap,g)} r=360-gap} else r=Math.max(...v)-Math.min(...v);
+        return {d,r}}).filter(Boolean);
+      const w=rng.reduce((a,b)=>b.r>a.r?b:a,rng[0]||{r:0});
+      txt=w&&w.d?`El día con más desacuerdo en ${pv.n.toLowerCase()} es el ${w.d.etiqueta}: ${PVAR==="dir"?nf(w.r,0)+"°":nf(w.r,cfg.dec)+" "+cfg.u} entre la fuente más alta y la más baja.`:"";
+      if(top.length) txt+=top[0]==="nuestro"?` En ${pv.n.toLowerCase()}, nuestro pronóstico es el que mejor viene acertando.`:` La que mejor viene acertando en ${pv.n.toLowerCase()} es ${srcName(top[0])}.`; }
+    $("#srcIns").textContent=txt;
+  }
+}
 function drawCharts(z,r){
   if(!window.Chart) return;
   Chart.defaults.color=css("--muted"); Chart.defaults.font.family="Inter, system-ui, sans-serif"; Chart.defaults.borderColor=css("--line-soft");
   const L=z.dias.map(d=>d.etiqueta);
-  const ser=(k,key,dash)=>({label:`${srcName(k)} ${key==="tmax"?"máx":"mín"}`,data:z.dias.map(d=>k==="nuestro"?d.nuestro[key]:(d.fuentes[k]?.[key]??null)),borderColor:css(srcVar(k)),backgroundColor:css(srcVar(k)),borderDash:dash?[5,4]:[],tension:.35,pointRadius:3,pointHoverRadius:5,borderWidth:k==="nuestro"?3:2,spanGaps:true});
-  const ctx=$("#cSrc").getContext("2d"); const g=ctx.createLinearGradient(0,0,0,260); g.addColorStop(0,"rgba(61,220,151,.18)"); g.addColorStop(1,"rgba(61,220,151,0)");
-  const ours=ser("nuestro","tmax"); ours.fill="origin"; ours.backgroundColor=g;
+  CURZ=z; srcChart();
   const tip={backgroundColor:"#0d1017",borderColor:css("--line"),borderWidth:1,padding:10};
-  charts.push(new Chart(ctx,{type:"line",data:{labels:L,datasets:[ours,...srcKeys(z).map(k=>ser(k,"tmax")),ser("nuestro","tmin",1),...srcKeys(z).map(k=>ser(k,"tmin",1))]},
-    options:{maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{...tip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y==null?"–":nf(c.parsed.y,1)} °C`}}},scales:{y:{ticks:{callback:v=>v+"°"},grid:{color:css("--line-soft")}},x:{grid:{display:false}}}}}));
   const PH=(z.presionHist||[]).map(p=>({ms:+new Date(p.t),hPa:p.hPa})).sort((x,y)=>x.ms-y.ms);
   if($("#cPres")){const c2=$("#cPres").getContext("2d"); const g2=c2.createLinearGradient(0,0,0,200); g2.addColorStop(0,"rgba(78,168,255,.22)"); g2.addColorStop(1,"rgba(78,168,255,0)");
     const H=3600e3, now=Date.now(), h0=Math.floor(now/H)*H, hours=[]; for(let t=h0-24*H;t<=h0+3*H;t+=H) hours.push(t);
