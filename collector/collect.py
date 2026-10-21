@@ -310,7 +310,7 @@ def ctm_estaciones(dias=8, estaciones=None, horario=True):
             out[nom] = {"id": cod, "ultimo": {"t": ult[0].isoformat(), "nivel": ult[1], "lluvia": ult[2]},
                         "nivelHace24h": nivel_en(24), "nivelHace72h": nivel_en(72),
                         "lluvia24h": lluvia(24), "lluvia72h": lluvia(72),
-                        "dias": [{"fecha": d, "max": max(v), "min": min(v), "ultimo": v[-1], "lluvia": round(lluvia_d.get(d, 0), 1)} for d, v in sorted(diario.items())],
+                        "dias": [{"fecha": d, "max": max(v), "min": min(v), "ultimo": v[-1], "media": round(sum(v) / len(v), 2), "lluvia": round(lluvia_d.get(d, 0), 1)} for d, v in sorted(diario.items())],
                         "horario": horario_l if horario else []}
             if horario: DIAG.append(f"CTM {nom}: {len(filas)} datos")
         except Exception as e:

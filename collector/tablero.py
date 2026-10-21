@@ -222,7 +222,16 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
             if k: c = c + pend * (0.8 ** k) + (0.04 * sube_arriba if k >= 2 else 0)
             ancho = 0.04 + 0.07 * k
             arriba = ancho + (0.1 * (k - 3) * min(lluvia_prev, 150) / 100 if k >= 4 and lluvia_prev >= 30 else 0)
-            dias_r.append({"f": f"{DIAS[f.weekday()]} {f.day}", "c": round(c, 2), "min": round(c - ancho, 2), "max": round(c + arriba, 2)})
+            dias_r.append({"f": f"{DIAS[f.weekday()]} {f.day}", "fecha": f.isoformat(), "c": round(c, 2), "min": round(c - ancho, 2), "max": round(c + arriba, 2)})
+        # verificación contra lo medido y corrección aprendida (historial en GitHub)
+        import rioverif as RV
+        verif_rio, comp_rio, corregido = [], [], False
+        try:
+            verif_rio, comp_rio = RV.verificar(ahora.date())
+            corregido = RV.corregir(dias_r, verif_rio)
+            RV.guardar(ahora.date(), dias_r, s.get("dias", []))
+        except Exception as e:
+            errores.append(f"rioverif: {e}")
         tend = "baja" if pend < -0.02 else "sube" if pend > 0.02 else "se mantiene"
         lectura = (f"El río en el puerto de Salto está en {c2(h)} m y {tend}"
                    + (f" unos {abs(pend) * 100:.0f} cm por día" if tend != "se mantiene" else "")
@@ -231,11 +240,12 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
             lectura += f" Ojo: se prevén hasta {lluvia_prev} mm en la cuenca alta en la semana, y esa agua llega a Salto unos días después."
         elif dias_r[-1]["max"] < UMBRAL_EVAC:
             lectura += " Lejos de los 12 m en que empiezan las evacuaciones."
-        rio["prevision"] = {"dias": dias_r, "lectura": lectura,
+        rio["prevision"] = {"dias": dias_r, "lectura": lectura, "verificacion": verif_rio, "comparacion": comp_rio[-60:], "corregido": corregido,
                             "lluviaCuenca": {"periodo": f"{ahora:%d/%m} al {(ahora + dt.timedelta(days=7)):%d/%m} · ECMWF (MET Norway)",
                                              "puntos": [{"n": f"{k}, ECMWF", "mm": v} for k, v in lluvia_cuenca.items()]},
                             "metodo": "Estimación propia automática: parte de la altura medida en el puerto (telemetría CTM), sigue la tendencia de los últimos 3 días amortiguada, "
-                                      "suma si aguas arriba (Garruchos, Santo Tomé, Paso de los Libres) está subiendo y abre el rango hacia arriba si se prevé lluvia fuerte en la cuenca alta."}
+                                      "suma si aguas arriba (Garruchos, Santo Tomé, Paso de los Libres) está subiendo y abre el rango hacia arriba si se prevé lluvia fuerte en la cuenca alta. "
+                                      "Cada día se guarda la previsión y se compara con lo medido; con 5 o más comparaciones por anticipación se corrige el sesgo y el ancho del rango."}
     # documentos leídos automáticamente (CTM, Brasil, NOAA)
     com = docs.get("comunicado") or {}
     if com.get("pronostico"):

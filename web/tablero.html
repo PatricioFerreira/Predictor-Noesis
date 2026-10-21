@@ -423,8 +423,14 @@ function render(){
     <div class="card">
       <div class="eyebrow">Río en el puerto de Salto · últimas mediciones y próximos 7 días</div>
       ${r.prevision?`<div class="hzmain"><div class="chartbox" style="height:230px"><canvas id="cPrev" aria-label="Altura prevista del río"></canvas></div>
-      <div class="legend"><span><i style="background:var(--fg);border-radius:50%;width:8px;height:8px"></i>medido</span><span><i style="background:var(--river)"></i>previsto</span><span><i style="background:rgba(78,168,255,.35);height:8px"></i>rango posible</span><span><i style="background:var(--alert)"></i>12 m: inicio de evacuaciones</span></div></div><div class="hzside">
+      <div class="legend"><span><i style="background:var(--fg);border-radius:50%;width:8px;height:8px"></i>medido</span><span><i style="background:var(--river)"></i>previsto</span><span><i style="background:var(--warn);width:8px;height:8px;clip-path:polygon(50% 0,100% 100%,0 100%)"></i>lo que habíamos previsto 1 día antes</span><span><i style="background:rgba(78,168,255,.35);height:8px"></i>rango posible</span><span><i style="background:var(--alert)"></i>12 m: inicio de evacuaciones</span></div></div><div class="hzside">
       <p class="insight">${esc(r.prevision.lectura)}</p>
+      ${(r.prevision.verificacion||[]).length?`<div class="eyebrow" style="margin-top:14px">Qué tan bien venimos acertando · últimos 30 días${r.prevision.corregido?" · previsión ya corregida con esto":""}</div>
+      <div style="overflow-x:auto"><table class="tbl num" style="margin-top:8px;min-width:0"><thead><tr><th>Con anticipación de</th>${r.prevision.verificacion.map(v=>`<th>${v.dias} día${v.dias>1?"s":""}</th>`).join("")}</tr></thead><tbody>
+      <tr><td>Error medio</td>${r.prevision.verificacion.map(v=>`<td>± ${nf(v.error*100,0)} cm</td>`).join("")}</tr>
+      <tr><td>Tendencia del error</td>${r.prevision.verificacion.map(v=>`<td>${v.sesgo>0.02?"alto "+nf(v.sesgo*100,0)+" cm":v.sesgo<-0.02?"bajo "+nf(-v.sesgo*100,0)+" cm":"parejo"}</td>`).join("")}</tr>
+      <tr><td>Medido dentro del rango</td>${r.prevision.verificacion.map(v=>`<td>${v.dentro} %</td>`).join("")}</tr>
+      <tr><td>Comparaciones</td>${r.prevision.verificacion.map(v=>`<td>${v.n}</td>`).join("")}</tr></tbody></table></div>`:`<p class="help">La comparación de la previsión con lo medido empieza mañana: cada día se guarda lo previsto y se contrasta con la altura real del puerto.</p>`}
       `:`<p class="insight">Sin previsión todavía.</p>`}<p class="help">${esc((r.prevision||{}).metodo||"")}</p>${r.prevision?"</div>":""}
     </div>
   </section>
@@ -853,6 +859,7 @@ function drawCharts(z,r){
   if(pv&&$("#cPrev")){const M=(r.puerto.serie||[]).filter(p=>p.tipo==="medido").slice(-6), n=M.length, D=(M.length&&M.at(-1).f===hoyDM())?pv.dias.slice(1):pv.dias, lab=[...M.map(p=>p.f),...D.map(d=>d.f)];
     const pad=a=>[...Array(n).fill(null),...a];
     charts.push(new Chart($("#cPrev"),{type:"line",data:{labels:lab,datasets:[
+      {label:"previsto 1 día antes",data:[...M.map(p=>{const c=(pv.comparacion||[]).find(x=>x.anticipacion===1&&x.fecha.slice(8,10)+"/"+x.fecha.slice(5,7)===p.f);return c?c.previsto:null}),...Array(D.length).fill(null)],showLine:false,pointStyle:"triangle",pointRadius:6,borderColor:css("--warn"),backgroundColor:css("--warn")},
       {label:"medido",data:[...M.map(p=>p.h),...Array(D.length).fill(null)],borderColor:css("--river"),backgroundColor:css("--fg"),borderDash:[2,3],borderWidth:1.5,pointRadius:5,pointHoverRadius:6},
       {label:"máximo",data:pad(D.map(d=>d.max)),borderColor:"transparent",backgroundColor:"rgba(78,168,255,.18)",fill:"+1",pointRadius:0,tension:.35},
       {label:"mínimo",data:pad(D.map(d=>d.min)),borderColor:"transparent",pointRadius:0,tension:.35},
