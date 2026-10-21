@@ -1,6 +1,8 @@
 mkdir -p probe/out
 O="Origin: https://patricioferreira.github.io"
-for u in "https://aviationweather.gov/api/data/metar?ids=SUSO&format=json&hours=2" "https://api.open-meteo.com/v1/forecast?latitude=-31.4&longitude=-57.97&current=temperature_2m" "https://www.saltogrande.org/datos_estacion.php?estacion=A501258E" "https://www.ogimet.com/cgi-bin/getsynop?block=86360&begin=202610210000" "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=-31.4&lon=-57.97" "https://www.saltogrande.org/datos_horarios.php"; do
-  echo "== $u" >> probe/out/cors.txt
-  curl -s -D - -o /dev/null -H "$O" "$u" | grep -i -E "^HTTP|access-control" >> probe/out/cors.txt
+: > probe/out/cors2.txt
+for u in "https://tgftp.nws.noaa.gov/data/observations/metar/stations/SUSO.TXT" "https://aviationweather.gov/cgi-bin/data/metar.php?ids=SUSO" "https://aviationweather.gov/api/data/metar?ids=SUSO" "https://www.inumet.gub.uy/reportes/estadoActual/datos_inumet_ui_publica.mch" "https://www.inumet.gub.uy/reportes/estadoActual/estadoActualDatosHorarios.mch" "https://www.inumet.gub.uy/reportes/pronosticos/pronosticoV4.json" "https://api.open-meteo.com/v1/forecast?latitude=-31.4&longitude=-57.97&current=temperature_2m&models=metar"; do
+  echo "== $u" >> probe/out/cors2.txt
+  curl -s -D - -o /tmp/b -H "$O" "$u" | grep -i -E "^HTTP|access-control|content-type" >> probe/out/cors2.txt
+  head -c 300 /tmp/b >> probe/out/cors2.txt; echo >> probe/out/cors2.txt
 done
