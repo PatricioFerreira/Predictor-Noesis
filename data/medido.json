@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-21T12:47:06.930246+00:00",
+ "generado": "2026-10-21T12:56:08.158528+00:00",
  "zonas": {
   "salto": {
    "estacion": "SUSO",
@@ -618,87 +618,9 @@
    }
   },
   "montevideo": {
-   "estacion": "SUMU",
-   "actual": {
-    "t": "2026-10-21T09:00:00-03:00",
-    "hora": "09:00",
-    "temp": 16,
-    "presion": 1023.5,
-    "humedad": 68,
-    "vientoKmh": 20,
-    "vientoDir": 80,
-    "nubosidad": 3,
-    "fenomeno": null,
-    "cielo": "nube",
-    "fuente": "METAR SUMU (aeropuerto)",
-    "previsto": 14.2,
-    "desvio": 1.8,
-    "presionPrevista": 1023.2,
-    "desvioPresion": 0.3,
-    "previstoCorregido": 14.1
-   },
-   "dias": [
-    {
-     "fecha": "2026-10-17",
-     "tmax": 13,
-     "tmin": 12,
-     "n": 14,
-     "completo": false,
-     "mm": null,
-     "vientoKmh": 28,
-     "vientoDir": 185,
-     "humedad": 69,
-     "presionMin": 1020
-    },
-    {
-     "fecha": "2026-10-18",
-     "tmax": 14,
-     "tmin": 11,
-     "n": 25,
-     "completo": true,
-     "mm": null,
-     "vientoKmh": 33,
-     "vientoDir": 169,
-     "humedad": 72,
-     "presionMin": 1020
-    },
-    {
-     "fecha": "2026-10-19",
-     "tmax": 14.3,
-     "tmin": 6.1,
-     "n": 24,
-     "completo": true,
-     "mm": 0.0,
-     "vientoKmh": 19,
-     "vientoDir": 145,
-     "humedad": 77,
-     "presionMin": 1021.6
-    },
-    {
-     "fecha": "2026-10-20",
-     "tmax": 16.6,
-     "tmin": 6,
-     "n": 27,
-     "completo": true,
-     "mm": 0.0,
-     "vientoKmh": 31,
-     "vientoDir": 95,
-     "humedad": 77,
-     "presionMin": 1019.7
-    },
-    {
-     "fecha": "2026-10-21",
-     "tmax": 15.1,
-     "tmin": 9.5,
-     "n": 10,
-     "completo": false,
-     "mm": 0.0,
-     "vientoKmh": 20,
-     "vientoDir": 85,
-     "humedad": 75,
-     "presionMin": 1021.8
-    }
-   ],
+   "estacion": null,
+   "actual": null,
+   "dias": [],
    "synop": [
     {
      "t": "2026-10-19T04:00:00-03:00",
