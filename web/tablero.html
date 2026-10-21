@@ -234,7 +234,8 @@ header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content
 .risklegend i{width:14px;height:10px;border-radius:2px;display:inline-block}
 .pending{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px dashed var(--line);background:var(--bg);font-size:13px;color:var(--muted)}
 
-.alerts{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.alerts{display:flex;flex-direction:column;gap:10px;margin-top:12px}.alerts-h{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:stretch}
+.grid-ge{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:16px;align-items:start}@media (max-width:820px){.grid-ge{grid-template-columns:1fr}}
 .al{display:grid;grid-template-columns:4px 1fr;gap:12px;background:var(--bg);border:1px solid var(--line-soft);border-radius:12px;padding:12px 14px 12px 0;overflow:hidden}
 .al::before{content:"";border-radius:0 3px 3px 0}
 .al.verde::before{background:var(--ok)} .al.rojo::before{background:var(--crit)} .al.naranja::before{background:var(--alert)} .al.amarillo::before{background:var(--warn)}
@@ -506,26 +507,11 @@ function render(){
     <div class="streets">${r.callesCortadas12m.map(c=>`<span>${esc(c)}</span>`).join("")}</div>
   </section>
 
-  <div class="sec-title"><div><div class="eyebrow">Avisos</div><h2>Alertas y clima de la temporada</h2></div></div>
-  <section class="grid2">
+  <div class="sec-title"><div><div class="eyebrow">Avisos</div><h2>Alertas unificadas</h2></div></div>
+  <section class="grid1">
     <div class="card">
       <div class="eyebrow">Alertas unificadas</div>
-      <div class="alerts">${DATA.alertas.map(x=>`<div class="al ${x.nivel}"><div><b>${esc(x.titulo)}</b><p>${esc(x.texto)}</p><div class="src2">${esc(x.fuente)} · ${esc(x.fecha)}${x.link?` · <a href="${esc(x.link)}" target="_blank" rel="noopener">ver detalle</a>`:""}</div></div></div>`).join("")}</div>
-    </div>
-    <div class="card enso">
-      <div class="eyebrow">Clima de la temporada · ${esc(DATA.enso.fuente||"NOAA")}</div>
-      ${(()=>{const E=DATA.enso, c1=v=>v==null?"–":(v>0?"+":"")+nf(v,1), reg=[["Niño 1+2","frente a Perú y Ecuador",E.nino12],["Niño 3","Pacífico este",E.nino3],["Niño 3.4","centro (el que se usa para declararlo)",E.nino34],["Niño 4","Pacífico oeste",E.nino4]];
-        const col=v=>v==null?"var(--muted)":v>=1.5?"var(--alert)":v>=0.5?"var(--warn)":v<=-0.5?"var(--river)":"var(--ok)";
-        const s=(E.serie34||[]), W=300,Hh=54; let sp="";
-        if(s.length>2){const vs=s.flatMap(x=>[x.v,x.v12]), mn=Math.min(0,...vs), mx=Math.max(...vs), X=i=>i/(s.length-1)*W, Y=v=>Hh-4-(v-mn)/(mx-mn||1)*(Hh-8);
-          sp=`<svg viewBox="0 0 ${W} ${Hh}" class="ensosp" preserveAspectRatio="none" aria-label="Anomalía semanal de los últimos 6 meses"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)"/><polyline points="${s.map((x,i)=>X(i)+","+Y(x.v12)).join(" ")}" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/><polyline points="${s.map((x,i)=>X(i)+","+Y(x.v)).join(" ")}" fill="none" stroke="var(--alert)" stroke-width="2.2" vector-effect="non-scaling-stroke"/></svg>`}
-        return `<h3>${esc(E.estado==="Neutral"?"Sin El Niño ni La Niña":(E.estado+(E.fuerza?" "+E.fuerza:"")))}</h3>
-      <p>${esc(E.explica)}</p>
-      <div class="ensoreg">${reg.map(([n,d,v])=>`<div><div class="l">${n}</div><div class="v num" style="color:${col(v)}">${c1(v)} <small>°C</small></div><div class="help">${d}</div></div>`).join("")}</div>
-      ${sp?`<div class="ensoleg"><span><i style="background:var(--alert)"></i>Niño 3.4</span><span><i style="background:var(--warn)"></i>Niño 1+2</span><span>últimos 6 meses, anomalía semanal</span></div>${sp}`:""}
-      <div class="ensoreg ensoreg3">${E.oni?`<div><div class="l">ONI (promedio 3 meses)</div><div class="v num">${c1(E.oni.valor)} <small>°C · ${esc(E.oni.periodo)}</small></div></div>`:""}${E.soi?`<div><div class="l">Índice de Oscilación del Sur</div><div class="v num">${nf(E.soi.valor,1)}</div><div class="help">${E.soi.valor<=-1?"muy negativo: atmósfera acoplada a El Niño":E.soi.valor>=1?"positivo: típico de La Niña":"cercano a lo normal"}</div></div>`:""}${(E.discusion?.probabilidades||[]).length?`<div><div class="l">Chance de evento histórico (≥ +2,5 °C)</div><div class="v num" style="font-size:15px">${E.discusion.probabilidades.map(p=>`${esc(p.periodo)} ${p.p} %`).join(" · ")}</div></div>`:""}</div>
-      <p>${esc(E.efecto||"")}</p>
-      <p class="insight">${esc(E.discusion?.resumen||"")} ${esc(E.comparables||"")} Datos semanales del ${esc(E.fecha)}${E.discusion?.fecha?"; discusión mensual de NOAA del "+esc(E.discusion.fecha):""}.</p>`})()}
+      <div class="alerts alerts-h">${DATA.alertas.map(x=>`<div class="al ${x.nivel}"><div><b>${esc(x.titulo)}</b><p>${esc(x.texto)}</p><div class="src2">${esc(x.fuente)} · ${esc(x.fecha)}${x.link?` · <a href="${esc(x.link)}" target="_blank" rel="noopener">ver detalle</a>`:""}</div></div></div>`).join("")}</div>
     </div>
   </section>
 
@@ -563,9 +549,26 @@ function render(){
     <div class="answer" id="ans" aria-live="polite"></div>
   </section>
 
-  <section class="card gauge gauge-end">
+  <section class="grid-ge">
+    <div class="card gauge gauge-end">
       <div class="eyebrow">Medidor contra la historia</div>
       ${gaugeSVG(r)}
+    </div>
+    <div class="card enso">
+      <div class="eyebrow">Clima de la temporada · ${esc(DATA.enso.fuente||"NOAA")}</div>
+      ${(()=>{const E=DATA.enso, c1=v=>v==null?"–":(v>0?"+":"")+nf(v,1), reg=[["Niño 1+2","frente a Perú y Ecuador",E.nino12],["Niño 3","Pacífico este",E.nino3],["Niño 3.4","centro (el que se usa para declararlo)",E.nino34],["Niño 4","Pacífico oeste",E.nino4]];
+        const col=v=>v==null?"var(--muted)":v>=1.5?"var(--alert)":v>=0.5?"var(--warn)":v<=-0.5?"var(--river)":"var(--ok)";
+        const s=(E.serie34||[]), W=300,Hh=54; let sp="";
+        if(s.length>2){const vs=s.flatMap(x=>[x.v,x.v12]), mn=Math.min(0,...vs), mx=Math.max(...vs), X=i=>i/(s.length-1)*W, Y=v=>Hh-4-(v-mn)/(mx-mn||1)*(Hh-8);
+          sp=`<svg viewBox="0 0 ${W} ${Hh}" class="ensosp" preserveAspectRatio="none" aria-label="Anomalía semanal de los últimos 6 meses"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)"/><polyline points="${s.map((x,i)=>X(i)+","+Y(x.v12)).join(" ")}" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/><polyline points="${s.map((x,i)=>X(i)+","+Y(x.v)).join(" ")}" fill="none" stroke="var(--alert)" stroke-width="2.2" vector-effect="non-scaling-stroke"/></svg>`}
+        return `<h3>${esc(E.estado==="Neutral"?"Sin El Niño ni La Niña":(E.estado+(E.fuerza?" "+E.fuerza:"")))}</h3>
+      <p>${esc(E.explica)}</p>
+      <div class="ensoreg">${reg.map(([n,d,v])=>`<div><div class="l">${n}</div><div class="v num" style="color:${col(v)}">${c1(v)} <small>°C</small></div><div class="help">${d}</div></div>`).join("")}</div>
+      ${sp?`<div class="ensoleg"><span><i style="background:var(--alert)"></i>Niño 3.4</span><span><i style="background:var(--warn)"></i>Niño 1+2</span><span>últimos 6 meses, anomalía semanal</span></div>${sp}`:""}
+      <div class="ensoreg ensoreg3">${E.oni?`<div><div class="l">ONI (promedio 3 meses)</div><div class="v num">${c1(E.oni.valor)} <small>°C · ${esc(E.oni.periodo)}</small></div></div>`:""}${E.soi?`<div><div class="l">Índice de Oscilación del Sur</div><div class="v num">${nf(E.soi.valor,1)}</div><div class="help">${E.soi.valor<=-1?"muy negativo: atmósfera acoplada a El Niño":E.soi.valor>=1?"positivo: típico de La Niña":"cercano a lo normal"}</div></div>`:""}${(E.discusion?.probabilidades||[]).length?`<div><div class="l">Chance de evento histórico (≥ +2,5 °C)</div><div class="v num" style="font-size:15px">${E.discusion.probabilidades.map(p=>`${esc(p.periodo)} ${p.p} %`).join(" · ")}</div></div>`:""}</div>
+      <p>${esc(E.efecto||"")}</p>
+      <p class="insight">${esc(E.discusion?.resumen||"")} ${esc(E.comparables||"")} Datos semanales del ${esc(E.fecha)}${E.discusion?.fecha?"; discusión mensual de NOAA del "+esc(E.discusion.fecha):""}.</p>`})()}
+    </div>
   </section>
 
   <section class="card">
