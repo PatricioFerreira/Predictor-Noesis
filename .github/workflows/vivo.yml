@@ -1,0 +1,26 @@
+name: Recolector en vivo
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: vivo
+  cancel-in-progress: false
+jobs:
+  vivo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet netCDF4 numpy pdfplumber
+      - name: Recolectar cada 5 / 15 / 60 minutos durante casi 6 horas
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name recolector; git config user.email recolector@users.noreply.github.com
+          python collector/vivo.py

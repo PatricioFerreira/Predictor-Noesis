@@ -427,7 +427,8 @@ def sesgos(dias=7):
                   "presion": round(sum(a["p"]) / len(a["p"]), 2) if len(a["p"]) >= 8 else 0.0, "nPresion": len(a["p"]), "dias": dias}
     return out
 
-def main():
+def main(ligero=False):
+    """ligero=True: corrida rápida (cada 15 min) que no repite lo pesado (lluvia de 77 estaciones, documentos, 24 h de la represa)."""
     salida = {"generado": dt.datetime.now(dt.timezone.utc).isoformat(), "zonas": {}, "errores": []}
     for nombre, z in ZONAS.items():
         zz = {}
@@ -543,12 +544,13 @@ def main():
             a["previstoCorregido"] = round(a["previsto"] - b["temp"], 1)
     # --- represa: temperatura ambiente horaria
     try:
-        rep = ctm_horario()
+        rep = ctm_horario(3 if ligero else 24)
     except Exception as e:
         rep = []; salida["errores"].append(f"ctm horario: {e}")
     # --- lluvia medida en toda la cuenca (telemetría CTM)
     cuenca = None
     try:
+        if ligero: raise RuntimeError("ligero")
         mapa = ctm_mapa()
         otros = {}
         for m in mapa:
@@ -567,7 +569,7 @@ def main():
             cuenca = {"n": len(ests), "promedio24h": round(sum(l24) / len(l24), 1), "promedio72h": round(sum(l72) / len(l72), 1),
                       "max72h": max(ests, key=lambda e: e["lluvia72h"] or 0), "estaciones": sorted(ests, key=lambda e: -(e["lluvia72h"] or 0))}
     except Exception as e:
-        salida["errores"].append(f"cuenca: {e}"); traceback.print_exc()
+        if str(e) != "ligero": salida["errores"].append(f"cuenca: {e}"); traceback.print_exc()
     salida["diagnostico"] = DIAG
     with open("data/latest.json", "w") as f:
         json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
@@ -643,7 +645,7 @@ def main():
         json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
     try:
         import tablero as T, documentos as DOC
-        docs = DOC.todos(salida["errores"])
+        docs = {} if ligero else DOC.todos(salida["errores"])
         parche = T.armar(ahora_loc, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, salida["errores"], docs)
         with open("data/tablero.json", "w") as f:
             json.dump(parche, f, ensure_ascii=False, separators=(",", ":"))

@@ -298,7 +298,7 @@ footer{color:var(--faint);font-size:12px;display:flex;flex-direction:column;gap:
   </header>
   <main id="app"><div class="card empty" id="loading">Cargando el último pronóstico…</div></main>
   <footer>
-    <div>Se actualiza solo cada hora o dos. Pronóstico experimental de uso personal: ante emergencias, seguir a SINAE, CECOED e INUMET.</div>
+    <div>Se actualiza solo: el pronóstico cada 15 minutos y lo medido cada 5 (en la versión web). Pronóstico experimental de uso personal: ante emergencias, seguir a SINAE, CECOED e INUMET.</div>
     <div id="gen"></div>
   </footer>
 </div>
@@ -331,7 +331,7 @@ function setStatus(){
   const m=(Date.now()-new Date(DATA.actualizado))/60000;
   const pend=pendingSince();
   $("#status").innerHTML = pend ? `Actualizando… lo pediste ${ago(new Date(pend).toISOString())}. Tarda unos minutos; la pantalla cambia sola.` :
-    `<span class="${m>200?"stale":""}">Datos de ${ago(DATA.actualizado)}</span> · se actualiza solo ${WEB?"cada hora":"cada 2 h"}`;
+    `<span class="${m>200?"stale":""}">Pronóstico de ${ago(DATA.actualizado)}</span>${WEB&&DATA.ahoraGenerado?` · lo medido ${ago(DATA.ahoraGenerado)}`:""} · ${WEB?"se actualiza cada 15 min (lo medido cada 5)":"se actualiza solo cada 2 h"}`;
 }
 function pendingSince(){try{const t=+localStorage.getItem("pidio")||0;if(t&&DATA&&new Date(DATA.actualizado)>t){localStorage.removeItem("pidio");return 0}return Date.now()-t<15*60000?t:0}catch(e){return 0}}
 
@@ -1006,10 +1006,19 @@ async function zonaWeb(c){
   const resumen=`Hoy máxima de ${Math.round(n0.tmax)}° y mínima de ${Math.round(n0.tmin)}°${n0.probLluvia>=50?", con lluvia probable":", sin lluvia"}. `+(lluv.length?`Lluvia probable: ${lluv.join(", ")}.`:"Semana sin lluvias importantes.");
   return {nombre:c.nombre,region:c.region,pais:c.pais,lat:c.lat,lon:c.lon,extra:true,actual,ahora:actual,prox12h:{simbolo:WMO(cmax,dia),mm:+mm12.toFixed(1)},vientoRotacion:rot,presionHist:pres,dias,resumen};
 }
+function aplicarAhora(doc,ah){ if(!doc||!ah) return;
+  for(const [z,v] of Object.entries(ah.zonas||{})){ const Z=doc.zonas?.[z]; if(!Z) continue;
+    if(v.actual&&v.actual.t){ const viejo=Z.actual||{}, tN=v.actual.t, tV=viejo._t||""; if(!tV||tN>=tV){ const a={...v.actual}; a._t=a.t; delete a.t; Z.actual=a } }
+    if(v.represa) Z.represa=v.represa }
+  const s=ah.rio?.salto; if(s&&s.nivel!=null&&doc.rio){ doc.rio.puerto=doc.rio.puerto||{}; const u=doc.rio.puerto.ultimaMedicion||{};
+    if(!u.fecha||s.t.slice(0,16)>=u.fecha){ doc.rio.puerto.ultimaMedicion={altura:s.nivel,fecha:s.t.slice(0,16),nota:"Telemetría CTM (cada 15 min)"}; if(doc.rio.estacionesCTM?.Salto) doc.rio.estacionesCTM.Salto.nivel=s.nivel } }
+  if(ah.generado&&ah.generado>(doc.actualizado||"")) doc.ahoraGenerado=ah.generado; }
+async function cargarAhora(){ try{ const r=await fetch("data/ahora.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) return; const ah=await r.json(); if(DATA){ aplicarAhora(DATA,ah); render() } return ah }catch(e){} }
 async function cargarWeb(){
   try{
     const r=await fetch("data/completo.json?t="+Date.now(),{cache:"no-store"}); if(!r.ok) throw 0;
     const nuevo=await r.json();
+    try{ const ra=await fetch("data/ahora.json?t="+Date.now(),{cache:"no-store"}); if(ra.ok) aplicarAhora(nuevo,await ra.json()) }catch(e){}
     for(const [k,c] of Object.entries(CIUDADES)){ try{ nuevo.zonas[k]=(DATA&&DATA.zonas[k]&&DATA.zonas[k]._t>Date.now()-30*60000)?DATA.zonas[k]:Object.assign(await zonaWeb(c),{_t:Date.now()}) }catch(e){} }
     DATA=nuevo; render();
   }catch(e){ const l=$("#loading"); if(l) l.textContent="No se pudieron leer los datos. Probá recargar." }
@@ -1019,7 +1028,8 @@ async function cargarWeb(){
 (async()=>{ try{ mcp=await window.claude?.use("mcp") }catch(e){} })();
 if(WEB){ try{CIUDADES=JSON.parse(localStorage.getItem("ciudades")||"{}")}catch(e){CIUDADES={}}
   $("#refresh").querySelector("span").textContent="Recargar datos"; $("#refresh").title="Vuelve a leer los datos del recolector (se actualizan solos cada hora)";
-  cargarWeb(); setInterval(cargarWeb,10*60000); }
+  cargarWeb(); setInterval(cargarWeb,15*60000); setInterval(cargarAhora,5*60000);
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") cargarWeb() }); }
 else (async()=>{
   let db=null; try{ db=await window.claude?.use("db") }catch(e){}
   if(!db){ $("#loading").textContent="No se pudo acceder a los datos del tablero. Abrilo con tu cuenta de Claude."; return }
