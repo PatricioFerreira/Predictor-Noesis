@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-22T19:03:29.987574+00:00",
+ "generado": "2026-10-22T20:03:29.989070+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -209,48 +209,48 @@
    },
    "viento": {
     "ecmwf": {
-     "mae": 6.0,
-     "sesgo": -6.0,
+     "mae": 8.0,
+     "sesgo": -8.0,
      "n": 2
     },
     "gfs": {
-     "mae": 2.0,
-     "sesgo": -2.0,
+     "mae": 4.0,
+     "sesgo": -4.0,
      "n": 2
     },
     "icon": {
-     "mae": 2.75,
-     "sesgo": -2.75,
+     "mae": 4.75,
+     "sesgo": -4.75,
      "n": 2
     },
     "gem": {
-     "mae": 2.7,
-     "sesgo": 2.7,
+     "mae": 2.9,
+     "sesgo": 0.7,
      "n": 2
     },
     "jma": {
-     "mae": 3.6,
-     "sesgo": -3.6,
+     "mae": 5.6,
+     "sesgo": -5.6,
      "n": 2
     },
     "arpege": {
-     "mae": 4.65,
-     "sesgo": -4.65,
+     "mae": 6.65,
+     "sesgo": -6.65,
      "n": 2
     },
     "ukmo": {
-     "mae": 6.55,
-     "sesgo": -6.55,
+     "mae": 8.55,
+     "sesgo": -8.55,
      "n": 2
     },
     "smn": {
-     "mae": 4.5,
-     "sesgo": -4.5,
+     "mae": 6.5,
+     "sesgo": -6.5,
      "n": 2
     },
     "nuestro": {
-     "mae": 3.0,
-     "sesgo": -3.0,
+     "mae": 5.0,
+     "sesgo": -5.0,
      "n": 2
     }
    },
