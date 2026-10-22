@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-22T11:02:58.129217+00:00",
+ "generado": "2026-10-22T12:02:58.130424+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -824,53 +824,53 @@
    },
    "tmin": {
     "ecmwf": {
-     "mae": 0.7,
-     "sesgo": -0.1,
-     "n": 2
-    },
-    "gfs": {
-     "mae": 1.65,
-     "sesgo": -1.65,
-     "n": 2
-    },
-    "icon": {
-     "mae": 1.4,
-     "sesgo": 1.4,
-     "n": 2
-    },
-    "gem": {
      "mae": 0.75,
      "sesgo": -0.15,
      "n": 2
     },
+    "gfs": {
+     "mae": 1.7,
+     "sesgo": -1.7,
+     "n": 2
+    },
+    "icon": {
+     "mae": 1.35,
+     "sesgo": 1.35,
+     "n": 2
+    },
+    "gem": {
+     "mae": 0.8,
+     "sesgo": -0.2,
+     "n": 2
+    },
     "jma": {
-     "mae": 3.95,
-     "sesgo": 3.95,
+     "mae": 3.9,
+     "sesgo": 3.9,
      "n": 2
     },
     "arpege": {
-     "mae": 4.75,
-     "sesgo": 4.75,
+     "mae": 4.7,
+     "sesgo": 4.7,
      "n": 2
     },
     "ukmo": {
-     "mae": 1.1,
-     "sesgo": 1.1,
+     "mae": 1.05,
+     "sesgo": 1.05,
      "n": 2
     },
     "smn": {
-     "mae": 1.0,
-     "sesgo": 0.6,
+     "mae": 0.95,
+     "sesgo": 0.55,
      "n": 2
     },
     "inumet": {
-     "mae": 2.65,
-     "sesgo": 2.65,
+     "mae": 2.6,
+     "sesgo": 2.6,
      "n": 2
     },
     "nuestro": {
-     "mae": 1.4,
-     "sesgo": 1.4,
+     "mae": 1.35,
+     "sesgo": 1.35,
      "n": 2
     }
    },
