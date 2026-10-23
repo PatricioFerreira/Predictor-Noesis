@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-23T03:00:05.138688+00:00",
+ "generado": "2026-10-23T03:45:05.139807+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -686,43 +686,43 @@
    },
    "humedad": {
     "ecmwf": {
-     "mae": 2.33,
-     "sesgo": 2.33,
+     "mae": 2.0,
+     "sesgo": 2.0,
      "n": 3
     },
     "gfs": {
-     "mae": 6.0,
-     "sesgo": -6.0,
+     "mae": 6.33,
+     "sesgo": -6.33,
      "n": 3
     },
     "icon": {
-     "mae": 0.67,
-     "sesgo": 0.0,
+     "mae": 1.0,
+     "sesgo": -0.33,
      "n": 3
     },
     "gem": {
-     "mae": 12.0,
-     "sesgo": -12.0,
+     "mae": 12.33,
+     "sesgo": -12.33,
      "n": 3
     },
     "jma": {
-     "mae": 5.67,
-     "sesgo": 5.67,
+     "mae": 5.33,
+     "sesgo": 5.33,
      "n": 3
     },
     "arpege": {
-     "mae": 2.33,
-     "sesgo": 2.33,
+     "mae": 2.0,
+     "sesgo": 2.0,
      "n": 3
     },
     "ukmo": {
-     "mae": 9.67,
-     "sesgo": -9.67,
+     "mae": 10.0,
+     "sesgo": -10.0,
      "n": 3
     },
     "nuestro": {
-     "mae": 2.67,
-     "sesgo": -2.67,
+     "mae": 3.0,
+     "sesgo": -3.0,
      "n": 3
     }
    },
@@ -975,95 +975,95 @@
    },
    "viento": {
     "ecmwf": {
-     "mae": 16.87,
-     "sesgo": -16.87,
+     "mae": 17.2,
+     "sesgo": -17.2,
      "n": 3
     },
     "gfs": {
-     "mae": 12.83,
-     "sesgo": -12.83,
+     "mae": 13.17,
+     "sesgo": -13.17,
      "n": 3
     },
     "icon": {
-     "mae": 14.03,
-     "sesgo": -14.03,
+     "mae": 14.37,
+     "sesgo": -14.37,
      "n": 3
     },
     "gem": {
+     "mae": 9.67,
+     "sesgo": -9.67,
+     "n": 3
+    },
+    "jma": {
+     "mae": 12.23,
+     "sesgo": -12.23,
+     "n": 3
+    },
+    "arpege": {
+     "mae": 6.67,
+     "sesgo": -3.8,
+     "n": 3
+    },
+    "ukmo": {
+     "mae": 19.23,
+     "sesgo": -19.23,
+     "n": 3
+    },
+    "smn": {
      "mae": 9.33,
      "sesgo": -9.33,
      "n": 3
     },
-    "jma": {
-     "mae": 11.9,
-     "sesgo": -11.9,
-     "n": 3
-    },
-    "arpege": {
-     "mae": 7.0,
-     "sesgo": -3.47,
-     "n": 3
-    },
-    "ukmo": {
-     "mae": 18.9,
-     "sesgo": -18.9,
-     "n": 3
-    },
-    "smn": {
-     "mae": 9.0,
-     "sesgo": -9.0,
-     "n": 3
-    },
     "nuestro": {
-     "mae": 12.0,
-     "sesgo": -12.0,
+     "mae": 12.33,
+     "sesgo": -12.33,
      "n": 3
     }
    },
    "dir": {
     "ecmwf": {
-     "mae": 2.33,
-     "sesgo": 2.33,
+     "mae": 2.67,
+     "sesgo": 1.33,
      "n": 3
     },
     "gfs": {
-     "mae": 1.67,
-     "sesgo": 1.67,
+     "mae": 0.67,
+     "sesgo": 0.67,
      "n": 3
     },
     "icon": {
-     "mae": 3.67,
-     "sesgo": 1.0,
+     "mae": 4.67,
+     "sesgo": 0.0,
      "n": 3
     },
     "gem": {
-     "mae": 1.67,
-     "sesgo": 0.33,
-     "n": 3
-    },
-    "jma": {
-     "mae": 7.0,
-     "sesgo": 7.0,
-     "n": 3
-    },
-    "arpege": {
-     "mae": 4.67,
+     "mae": 2.67,
      "sesgo": -0.67,
      "n": 3
     },
+    "jma": {
+     "mae": 6.0,
+     "sesgo": 6.0,
+     "n": 3
+    },
+    "arpege": {
+     "mae": 5.67,
+     "sesgo": -1.67,
+     "n": 3
+    },
     "ukmo": {
-     "mae": 7.33,
-     "sesgo": -7.33,
+     "mae": 8.33,
+     "sesgo": -8.33,
      "n": 3
     },
     "smn": {
-     "mae": 13.33,
-     "sesgo": 6.67,
+     "mae": 12.33,
+     "sesgo": 5.67,
      "n": 3
     },
     "nuestro": {
-     "mae": 1.33,
-     "sesgo": 1.33,
+     "mae": 1.0,
+     "sesgo": 0.33,
      "n": 3
     }
    },
