@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-24T10:04:38.122424+00:00",
+ "generado": "2026-10-24T11:04:38.124229+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -58,53 +58,53 @@
    },
    "tmin": {
     "ecmwf": {
-     "mae": 0.6,
-     "sesgo": 0.2,
+     "mae": 0.58,
+     "sesgo": 0.18,
      "n": 4
     },
     "gfs": {
-     "mae": 1.15,
-     "sesgo": 0.25,
+     "mae": 1.18,
+     "sesgo": 0.23,
      "n": 4
     },
     "icon": {
-     "mae": 1.1,
-     "sesgo": 0.9,
+     "mae": 1.07,
+     "sesgo": 0.87,
      "n": 4
     },
     "gem": {
-     "mae": 1.4,
-     "sesgo": 1.3,
+     "mae": 1.38,
+     "sesgo": 1.28,
      "n": 4
     },
     "jma": {
-     "mae": 1.8,
-     "sesgo": 1.8,
+     "mae": 1.78,
+     "sesgo": 1.78,
      "n": 4
     },
     "arpege": {
-     "mae": 1.15,
-     "sesgo": 1.15,
+     "mae": 1.12,
+     "sesgo": 1.12,
      "n": 4
     },
     "ukmo": {
-     "mae": 0.98,
-     "sesgo": 0.18,
+     "mae": 0.95,
+     "sesgo": 0.15,
      "n": 4
     },
     "smn": {
-     "mae": 1.77,
-     "sesgo": -1.62,
+     "mae": 1.8,
+     "sesgo": -1.65,
      "n": 4
     },
     "inumet": {
-     "mae": 2.65,
-     "sesgo": -2.65,
+     "mae": 2.67,
+     "sesgo": -2.67,
      "n": 4
     },
     "nuestro": {
-     "mae": 0.53,
-     "sesgo": 0.18,
+     "mae": 0.5,
+     "sesgo": 0.15,
      "n": 4
     }
    },
@@ -256,48 +256,48 @@
    },
    "dir": {
     "ecmwf": {
-     "mae": 26.5,
-     "sesgo": -23.5,
+     "mae": 26.25,
+     "sesgo": -23.25,
      "n": 4
     },
     "gfs": {
-     "mae": 32.75,
-     "sesgo": -7.25,
+     "mae": 32.5,
+     "sesgo": -7.0,
      "n": 4
     },
     "icon": {
-     "mae": 30.25,
-     "sesgo": -13.75,
+     "mae": 30.0,
+     "sesgo": -13.5,
      "n": 4
     },
     "gem": {
-     "mae": 57.5,
-     "sesgo": -6.5,
+     "mae": 57.25,
+     "sesgo": -6.25,
      "n": 4
     },
     "jma": {
-     "mae": 42.25,
-     "sesgo": 6.75,
+     "mae": 42.0,
+     "sesgo": 7.0,
      "n": 4
     },
     "arpege": {
-     "mae": 34.0,
-     "sesgo": 3.5,
+     "mae": 33.75,
+     "sesgo": 3.75,
      "n": 4
     },
     "ukmo": {
-     "mae": 49.0,
-     "sesgo": -1.5,
+     "mae": 48.75,
+     "sesgo": -1.25,
      "n": 4
     },
     "smn": {
-     "mae": 64.75,
-     "sesgo": -24.75,
+     "mae": 64.5,
+     "sesgo": -24.5,
      "n": 4
     },
     "nuestro": {
-     "mae": 43.0,
-     "sesgo": -8.0,
+     "mae": 42.75,
+     "sesgo": -7.75,
      "n": 4
     }
    },
@@ -441,53 +441,53 @@
    },
    "tmin": {
     "ecmwf": {
-     "mae": 0.9,
-     "sesgo": -0.5,
+     "mae": 0.8,
+     "sesgo": -0.4,
      "n": 3
     },
     "gfs": {
-     "mae": 1.17,
-     "sesgo": 0.23,
+     "mae": 1.07,
+     "sesgo": 0.33,
      "n": 3
     },
     "icon": {
-     "mae": 1.83,
-     "sesgo": 1.83,
-     "n": 3
-    },
-    "gem": {
-     "mae": 1.47,
-     "sesgo": 1.47,
-     "n": 3
-    },
-    "jma": {
-     "mae": 3.6,
-     "sesgo": 3.6,
-     "n": 3
-    },
-    "arpege": {
-     "mae": 4.2,
-     "sesgo": 4.2,
-     "n": 3
-    },
-    "ukmo": {
-     "mae": 2.0,
+     "mae": 1.93,
      "sesgo": 1.93,
      "n": 3
     },
+    "gem": {
+     "mae": 1.57,
+     "sesgo": 1.57,
+     "n": 3
+    },
+    "jma": {
+     "mae": 3.7,
+     "sesgo": 3.7,
+     "n": 3
+    },
+    "arpege": {
+     "mae": 4.3,
+     "sesgo": 4.3,
+     "n": 3
+    },
+    "ukmo": {
+     "mae": 2.03,
+     "sesgo": 2.03,
+     "n": 3
+    },
     "smn": {
-     "mae": 1.33,
-     "sesgo": 1.02,
+     "mae": 1.3,
+     "sesgo": 1.1,
      "n": 4
     },
     "inumet": {
-     "mae": 1.65,
-     "sesgo": -0.65,
+     "mae": 1.58,
+     "sesgo": -0.58,
      "n": 4
     },
     "nuestro": {
-     "mae": 1.58,
-     "sesgo": 0.82,
+     "mae": 1.6,
+     "sesgo": 0.9,
      "n": 4
     }
    },
@@ -1022,48 +1022,48 @@
    },
    "dir": {
     "ecmwf": {
-     "mae": 17.75,
-     "sesgo": -16.25,
+     "mae": 17.5,
+     "sesgo": -16.5,
      "n": 4
     },
     "gfs": {
-     "mae": 30.0,
-     "sesgo": 12.5,
+     "mae": 30.25,
+     "sesgo": 12.25,
      "n": 4
     },
     "icon": {
-     "mae": 23.75,
-     "sesgo": -21.75,
+     "mae": 23.5,
+     "sesgo": -22.0,
      "n": 4
     },
     "gem": {
-     "mae": 14.25,
-     "sesgo": -5.75,
+     "mae": 14.0,
+     "sesgo": -6.0,
      "n": 4
     },
     "jma": {
-     "mae": 18.5,
-     "sesgo": 7.5,
+     "mae": 18.25,
+     "sesgo": 7.25,
      "n": 4
     },
     "arpege": {
-     "mae": 12.5,
-     "sesgo": -11.5,
+     "mae": 12.25,
+     "sesgo": -11.75,
      "n": 4
     },
     "ukmo": {
-     "mae": 46.75,
-     "sesgo": 15.75,
+     "mae": 47.0,
+     "sesgo": 15.5,
      "n": 4
     },
     "smn": {
-     "mae": 25.25,
-     "sesgo": 10.75,
+     "mae": 25.0,
+     "sesgo": 10.5,
      "n": 4
     },
     "nuestro": {
-     "mae": 16.5,
-     "sesgo": -2.5,
+     "mae": 16.25,
+     "sesgo": -2.75,
      "n": 4
     }
    },
