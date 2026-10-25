@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-25T15:03:54.451786+00:00",
+ "generado": "2026-10-25T16:03:54.453117+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -58,53 +58,53 @@
    },
    "tmin": {
     "ecmwf": {
-     "mae": 0.36,
-     "sesgo": -0.2,
+     "mae": 0.42,
+     "sesgo": -0.26,
      "n": 5
     },
     "gfs": {
-     "mae": 1.06,
-     "sesgo": -0.46,
+     "mae": 1.0,
+     "sesgo": -0.52,
      "n": 5
     },
     "icon": {
-     "mae": 0.48,
-     "sesgo": 0.28,
+     "mae": 0.46,
+     "sesgo": 0.22,
      "n": 5
     },
     "gem": {
-     "mae": 1.02,
-     "sesgo": 0.3,
+     "mae": 0.96,
+     "sesgo": 0.24,
      "n": 5
     },
     "jma": {
-     "mae": 1.02,
-     "sesgo": 1.02,
+     "mae": 0.96,
+     "sesgo": 0.96,
      "n": 5
     },
     "arpege": {
-     "mae": 0.66,
-     "sesgo": 0.66,
+     "mae": 0.6,
+     "sesgo": 0.6,
      "n": 5
     },
     "ukmo": {
-     "mae": 0.56,
-     "sesgo": -0.12,
+     "mae": 0.5,
+     "sesgo": -0.18,
      "n": 5
     },
     "smn": {
-     "mae": 2.3,
-     "sesgo": -1.14,
+     "mae": 2.36,
+     "sesgo": -1.2,
      "n": 5
     },
     "inumet": {
-     "mae": 2.68,
-     "sesgo": -2.68,
+     "mae": 2.74,
+     "sesgo": -2.74,
      "n": 5
     },
     "nuestro": {
-     "mae": 0.3,
-     "sesgo": -0.26,
+     "mae": 0.36,
+     "sesgo": -0.32,
      "n": 5
     }
    },
@@ -1022,48 +1022,48 @@
    },
    "dir": {
     "ecmwf": {
-     "mae": 12.8,
-     "sesgo": -9.6,
+     "mae": 14.6,
+     "sesgo": -7.8,
      "n": 5
     },
     "gfs": {
-     "mae": 39.2,
-     "sesgo": 16.0,
+     "mae": 41.0,
+     "sesgo": 17.8,
      "n": 5
     },
     "icon": {
-     "mae": 16.0,
-     "sesgo": -12.0,
+     "mae": 14.2,
+     "sesgo": -10.2,
      "n": 5
     },
     "gem": {
-     "mae": 26.8,
-     "sesgo": 2.0,
+     "mae": 28.6,
+     "sesgo": 3.8,
      "n": 5
     },
     "jma": {
-     "mae": 31.0,
-     "sesgo": 14.2,
-     "n": 5
-    },
-    "arpege": {
-     "mae": 20.8,
-     "sesgo": -5.2,
-     "n": 5
-    },
-    "ukmo": {
-     "mae": 50.0,
+     "mae": 32.8,
      "sesgo": 16.0,
      "n": 5
     },
+    "arpege": {
+     "mae": 22.6,
+     "sesgo": -3.4,
+     "n": 5
+    },
+    "ukmo": {
+     "mae": 51.8,
+     "sesgo": 17.8,
+     "n": 5
+    },
     "smn": {
-     "mae": 38.6,
-     "sesgo": 3.0,
+     "mae": 40.4,
+     "sesgo": 4.8,
      "n": 5
     },
     "nuestro": {
-     "mae": 26.0,
-     "sesgo": 2.4,
+     "mae": 27.8,
+     "sesgo": 4.2,
      "n": 5
     }
    },
