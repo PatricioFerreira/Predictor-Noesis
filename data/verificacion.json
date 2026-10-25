@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-25T16:03:54.453117+00:00",
+ "generado": "2026-10-25T17:03:54.454567+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -256,48 +256,48 @@
    },
    "dir": {
     "ecmwf": {
-     "mae": 35.8,
-     "sesgo": -35.8,
+     "mae": 36.4,
+     "sesgo": -36.4,
      "n": 5
     },
     "gfs": {
-     "mae": 24.0,
-     "sesgo": -22.0,
+     "mae": 23.4,
+     "sesgo": -22.6,
      "n": 5
     },
     "icon": {
-     "mae": 27.2,
-     "sesgo": -27.2,
+     "mae": 27.8,
+     "sesgo": -27.8,
      "n": 5
     },
     "gem": {
-     "mae": 43.6,
-     "sesgo": -21.2,
+     "mae": 43.0,
+     "sesgo": -21.8,
      "n": 5
     },
     "jma": {
-     "mae": 32.4,
-     "sesgo": -11.6,
+     "mae": 31.8,
+     "sesgo": -12.2,
      "n": 5
     },
     "arpege": {
-     "mae": 24.8,
-     "sesgo": -13.2,
+     "mae": 24.2,
+     "sesgo": -13.8,
      "n": 5
     },
     "ukmo": {
-     "mae": 38.8,
-     "sesgo": -19.2,
+     "mae": 38.2,
+     "sesgo": -19.8,
      "n": 5
     },
     "smn": {
-     "mae": 56.0,
-     "sesgo": -42.4,
+     "mae": 55.4,
+     "sesgo": -43.0,
      "n": 5
     },
     "nuestro": {
-     "mae": 33.2,
-     "sesgo": -23.6,
+     "mae": 32.6,
+     "sesgo": -24.2,
      "n": 5
     }
    },
@@ -1022,48 +1022,48 @@
    },
    "dir": {
     "ecmwf": {
-     "mae": 14.6,
-     "sesgo": -7.8,
+     "mae": 15.4,
+     "sesgo": -7.0,
      "n": 5
     },
     "gfs": {
-     "mae": 41.0,
-     "sesgo": 17.8,
+     "mae": 41.8,
+     "sesgo": 18.6,
      "n": 5
     },
     "icon": {
-     "mae": 14.2,
-     "sesgo": -10.2,
+     "mae": 14.6,
+     "sesgo": -9.4,
      "n": 5
     },
     "gem": {
-     "mae": 28.6,
-     "sesgo": 3.8,
+     "mae": 29.4,
+     "sesgo": 4.6,
      "n": 5
     },
     "jma": {
-     "mae": 32.8,
-     "sesgo": 16.0,
+     "mae": 33.6,
+     "sesgo": 16.8,
      "n": 5
     },
     "arpege": {
-     "mae": 22.6,
-     "sesgo": -3.4,
+     "mae": 23.4,
+     "sesgo": -2.6,
      "n": 5
     },
     "ukmo": {
-     "mae": 51.8,
-     "sesgo": 17.8,
+     "mae": 52.6,
+     "sesgo": 18.6,
      "n": 5
     },
     "smn": {
-     "mae": 40.4,
-     "sesgo": 4.8,
+     "mae": 41.2,
+     "sesgo": 5.6,
      "n": 5
     },
     "nuestro": {
-     "mae": 27.8,
-     "sesgo": 4.2,
+     "mae": 28.6,
+     "sesgo": 5.0,
      "n": 5
     }
    },
