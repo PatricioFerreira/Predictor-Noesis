@@ -6,7 +6,7 @@ El visor público sigue mostrando la telemetría cada 15 min. Este módulo hace 
 "Ver dados" del visor (RelatorioService.gerarRelatorioVerDados, últimas 24 h) para unas pocas estaciones.
 Sin navegador: llamadas DWR "plaincall" por HTTP, una sesión por corrida.
 """
-import re, html, random, string, datetime as dt, urllib.request, urllib.parse, http.cookiejar
+import os, csv, re, html, random, string, datetime as dt, urllib.request, urllib.parse, http.cookiejar
 
 BASE = "https://sace.sgb.gov.br/uruguai"
 UA = "Mozilla/5.0 (predictor-noesis; github.com/PatricioFerreira/Predictor-Noesis)"
@@ -14,6 +14,7 @@ UA = "Mozilla/5.0 (predictor-noesis; github.com/PatricioFerreira/Predictor-Noesi
 ESTACIONES = [("Iraí", 37), ("Itapiranga", 36), ("Alto Uruguai", 57), ("Porto Mauá", 56), ("Porto Lucena", 35),
               ("Garruchos", 34), ("São Borja", 33), ("Itaqui", 32), ("Uruguaiana", 29)]
 UTC3 = dt.timezone(dt.timedelta(hours=-3))
+HISTORIAL = "data/historial/sgb-niveles-horario.csv"  # nivel en cm, promedio por hora, hora local UTC-3
 
 
 def _js_str(s):
@@ -90,9 +91,33 @@ def _tabla(h):
     return sorted(filas), cotas
 
 
-def niveles(errores=None):
+def guardar_historial(series, ruta=HISTORIAL):
+    """Suma al CSV los promedios horarios nuevos (las horas que ya estaban se pisan con el dato más completo)."""
+    cols = [n for n, _ in ESTACIONES]
+    tabla = {}
+    if os.path.exists(ruta):
+        for r in csv.DictReader(open(ruta)):
+            tabla[r["t"]] = {c: r.get(c, "") for c in cols}
+    for nombre, filas in series.items():
+        horas = {}
+        for t, v in filas:
+            horas.setdefault(t.astimezone(UTC3).strftime("%Y-%m-%dT%H:00"), []).append(v)
+        if len(horas) < 3: continue
+        bordes = {min(horas), max(horas)}
+        for h, vs in horas.items():
+            if h in bordes: continue  # primera y última hora de la consulta pueden venir incompletas
+            tabla.setdefault(h, {c: "" for c in cols})[nombre] = round(sum(vs) / len(vs), 1)
+    os.makedirs(os.path.dirname(ruta), exist_ok=True)
+    with open(ruta, "w", newline="") as f:
+        w = csv.writer(f); w.writerow(["t"] + cols)
+        for h in sorted(tabla):
+            w.writerow([h] + [tabla[h].get(c, "") for c in cols])
+    return len(tabla)
+
+
+def niveles(errores=None, guardar=True):
     s = _Sesion()
-    est, ultima = [], None
+    est, ultima, series = [], None, {}
     for nombre, pid in ESTACIONES:
         try:
             filas, cotas = _tabla(s.ver_dados(pid))
@@ -100,6 +125,7 @@ def niveles(errores=None):
             if errores is not None: errores.append(f"sace {nombre}: {e}")
             continue
         if not filas: continue
+        series[nombre] = filas
         t, v = filas[-1]
         e = {"n": nombre, "nivel": int(round(v)), "t": t.astimezone(UTC3).strftime("%Y-%m-%dT%H:%M")}
         if cotas.get("inundacion"): e["inund"] = int(cotas["inundacion"])
@@ -114,6 +140,11 @@ def niveles(errores=None):
         ultima = max(ultima, t) if ultima else t
     if not est:
         raise RuntimeError("el SACE no devolvió niveles")
+    if guardar:
+        try:
+            guardar_historial(series)
+        except Exception as e:
+            if errores is not None: errores.append(f"sace historial: {e}")
     return {"fuente": "SGB · SACE (telemetría cada 15 min)", "fecha": ultima.astimezone(UTC3).strftime("%d/%m %H:%M"),
             "estaciones": est, "link": BASE + "/"}
 
@@ -121,4 +152,4 @@ def niveles(errores=None):
 if __name__ == "__main__":
     import json
     err = []
-    print(json.dumps(niveles(err), ensure_ascii=False, indent=1)); print("errores:", err)
+    print(json.dumps(niveles(err, guardar=False), ensure_ascii=False, indent=1)); print("errores:", err)
