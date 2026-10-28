@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths: [".github/workflows/diag-sgb.yml"]
+permissions:
+  contents: write
 jobs:
   diag:
     runs-on: ubuntu-latest
@@ -16,6 +18,7 @@ jobs:
       - run: pip install --quiet pdfplumber
       - name: Probar las direcciones del SGB
         run: |
+          exec > >(tee -a /tmp/diag.txt) 2>&1
           for u in https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php https://www.sgb.gov.br/sace/uruguai/ https://www.sgb.gov.br/sace/ https://www.sgb.gov.br/sace/boletins/Uruguai/ ; do
             echo "=== $u"; curl -sS -L -m 60 -A "Mozilla/5.0 (predictor-noesis)" -o /tmp/r -w "HTTP %{http_code} · %{content_type} · %{size_download} bytes · final %{url_effective}\n" "$u" || echo "CURL FALLÓ $?"
             file /tmp/r; head -c 600 /tmp/r | tr -c '[:print:]\n' '.'; echo
@@ -23,6 +26,7 @@ jobs:
           done
       - name: Correr el lector del recolector
         run: |
+          exec > >(tee -a /tmp/diag.txt) 2>&1
           cd collector && python - <<'PY'
           import traceback, documentos as D
           try:
@@ -36,3 +40,9 @@ jobs:
           except Exception:
               traceback.print_exc()
           PY
+      - name: Guardar el resultado en el repo
+        if: always()
+        run: |
+          mkdir -p data/diag && cp /tmp/diag.txt data/diag/sgb.txt
+          git config user.name recolector; git config user.email recolector@users.noreply.github.com
+          git add data/diag/sgb.txt && git commit -m "Diagnóstico SGB" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
