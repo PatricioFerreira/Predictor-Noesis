@@ -198,9 +198,49 @@ def enso():
     return out
 
 
+BR_SACE_ID = {"Manoel Viana": 30, "Quaraí": 27, "Iraí": 37, "Porto Mauá": 56, "Garruchos BR": 34, "Itaqui": 32}
+BR_CACHE = "data/brasil-reciente.json"
+
+
+def brasil_serie():
+    """Últimos 6-7 días de las estaciones de Brasil que usa el modelo del río, promedio por hora (cm, hora local).
+    Primero la telemetría de la ANA; para las estaciones que falten, el visor SACE del SGB (mismos sensores).
+    Se guarda en data/brasil-reciente.json para las corridas livianas."""
+    import json, historia_ana as HA, ajustar_rio as AR
+    series, fuente = {}, {}
+    try:
+        crudo = HA.niveles_recientes(7, {k: HA.ESTACIONES[k] for k in AR.BR})
+    except Exception as e:
+        print("brasil ANA:", e); crudo = {}
+    for k in AR.BR:
+        if len(crudo.get(k, [])) >= 300: series[k] = crudo[k]; fuente[k] = "ANA"
+    faltan = [k for k in AR.BR if k not in series]
+    if faltan:
+        try:
+            import sace
+            ses = sace._Sesion()
+            for k in faltan:
+                try:
+                    filas, _ = sace._tabla(ses.ver_dados(BR_SACE_ID[k], 168))
+                    loc = [(t.astimezone(sace.UTC3).replace(tzinfo=None), v) for t, v in filas]
+                    if len(loc) >= 300: series[k] = loc; fuente[k] = "SGB"
+                except Exception as e:
+                    print("brasil SACE", k, e)
+        except Exception as e:
+            print("brasil SACE:", e)
+    horario = {}
+    for k, filas in series.items():
+        h = {}
+        for t, v in filas: h.setdefault(t.strftime("%Y-%m-%dT%H"), []).append(v)
+        horario[k] = {x: round(sum(v) / len(v), 1) for x, v in h.items()}
+    out = {"generado": dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).isoformat(timespec="minutes"), "fuente": fuente, "horario": horario}
+    json.dump(out, open(BR_CACHE, "w"), ensure_ascii=False)
+    return out
+
+
 def todos(errores):
     res = {}
-    for nombre, fn in (("comunicado", comunicado), ("ctm", caudales_niveles), ("sgb", sgb), ("enso", enso)):
+    for nombre, fn in (("comunicado", comunicado), ("ctm", caudales_niveles), ("sgb", sgb), ("enso", enso), ("brasil", brasil_serie)):
         try:
             res[nombre] = fn()
         except Exception as e:

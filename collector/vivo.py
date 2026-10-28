@@ -72,7 +72,7 @@ def recargar_codigo():
     if not despues or despues == getattr(recargar_codigo, "ultimo", antes): return
     recargar_codigo.ultimo = despues
     try:
-        for m in ("sace", "documentos", "rioverif", "verif", "tablero", "collect"):
+        for m in ("sace", "historia_ana", "ajustar_rio", "documentos", "rioverif", "verif", "tablero", "collect"):
             if m in sys.modules: importlib.reload(sys.modules[m])
         C = sys.modules["collect"]
         print("código del recolector recargado", despues[:8], flush=True)

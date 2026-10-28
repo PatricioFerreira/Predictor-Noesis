@@ -15,12 +15,12 @@ ESTACIONES = {"Iraí": "74100000", "Itapiranga": "74329000", "Alto Uruguai": "74
               "Manoel Viana": "76560000", "Passo Mariano Pinto": "76800000", "Uruguaiana": "77150000", "Quaraí": "77500000"}
 
 
-def bajar(cod, ini, fin):
+def bajar(cod, ini, fin, intentos=3, timeout=180):
     q = {"codEstacao": cod, "dataInicio": ini.strftime("%d/%m/%Y"), "dataFim": fin.strftime("%d/%m/%Y")}
     url = "https://telemetriaws1.ana.gov.br/ServiceANA.asmx/DadosHidrometeorologicos?" + urllib.parse.urlencode(q)
-    for intento in range(3):
+    for intento in range(intentos):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=180) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
                 t = r.read().decode("utf-8", "replace")
             break
         except Exception as e:
@@ -43,7 +43,7 @@ def niveles_recientes(dias=6, estaciones=None):
     hoy = dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))).replace(tzinfo=None)
     out = {}
     for nom, cod in (estaciones or ESTACIONES).items():
-        out[nom] = sorted(bajar(cod, hoy - dt.timedelta(days=dias), hoy + dt.timedelta(days=1)))
+        out[nom] = sorted(bajar(cod, hoy - dt.timedelta(days=dias), hoy + dt.timedelta(days=1), intentos=1, timeout=60))  # en vivo: rápido, sin insistir
     return out
 
 

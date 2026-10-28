@@ -88,6 +88,7 @@ def _medias24(est):
         ser[n] = {x["t"][:13]: x["nivel"] for x in (est.get(n) or {}).get("horario", []) if x.get("nivel") is not None}
     if not ser["Salto"]: raise RuntimeError("sin serie horaria de Salto")
     t_ult = dt.datetime.fromisoformat(max(ser["Salto"]) + ":00")
+    _medias24.t_ult = t_ult
     def media(n, fin):
         v = [ser[n].get((fin - dt.timedelta(hours=j)).strftime("%Y-%m-%dT%H")) for j in range(24)]
         v = [x for x in v if x is not None]
@@ -96,12 +97,38 @@ def _medias24(est):
     return {n: [media(n, t_ult - dt.timedelta(hours=24 * q)) for q in (0, 1, 2)] for n in EST_MODELO}
 
 
-def modelo_rio(est):
-    """Previsión del promedio diario en el puerto para D+1..D+6 con el modelo de data/modelo-rio.json, o None."""
+def _rasgos_brasil(M, br, t_ult):
+    """Rasgos de Brasil para el modelo (m), o None si falta algo. br = {"horario": {estación: {"YYYY-MM-DDTHH": cm}}}."""
+    cfg = M.get("brasil")
+    if not cfg or not br: return None
+    hor = br.get("horario") or {}
+    def media(c, fin):
+        v = [hor.get(c, {}).get((fin - dt.timedelta(hours=j)).strftime("%Y-%m-%dT%H")) for j in range(24)]
+        v = [x for x in v if x is not None]
+        return sum(v) / len(v) / 100.0 if len(v) >= 20 else None
+    out = []
+    for c in cfg["estaciones"]:
+        for L in cfg["ventanas"]:
+            a, b = media(c, t_ult - dt.timedelta(hours=L)), media(c, t_ult - dt.timedelta(hours=L + 24))
+            if a is None or b is None: return None
+            out.append(a - b)
+    return out
+
+
+def modelo_rio(est, br=None):
+    """Previsión del promedio diario en el puerto para D+1..D+6 con el modelo de data/modelo-rio.json, o None.
+    Si hay datos recientes de Brasil (ANA o SGB) usa el modelo con Brasil; si no, el modelo sin Brasil."""
     try:
         M = json.load(open(MODELO_RIO))
     except FileNotFoundError:
         return None
+    if br is None:
+        try:
+            br = json.load(open("data/brasil-reciente.json"))
+            if (dt.datetime.now(dt.timezone(dt.timedelta(hours=-3))) - dt.datetime.fromisoformat(br["generado"])).total_seconds() > 3 * 3600:
+                br = None  # más de 3 h sin actualizar: no se usa
+        except Exception:
+            br = None
     m = _medias24(est)
     ply = [(m["Yapeyú"][q] + m["Paso de los Libres"][q]) / 2 for q in range(3)]
     x = {"dS24": m["Salto"][0] - m["Salto"][1],
@@ -110,8 +137,20 @@ def modelo_rio(est):
          "dMC24": m["Monte Caseros"][0] - m["Monte Caseros"][1], "dMC48": m["Monte Caseros"][1] - m["Monte Caseros"][2],
          "dSG24": m["Salto Grande"][0] - m["Salto Grande"][1], "dSG48": m["Salto Grande"][1] - m["Salto Grande"][2]}
     base = m["Salto"][0]
-    out = {"dias": {}, "mae": {}, "mae_ant": {}, "datos": M.get("datos", ""), "rasgos": x, "base": base}
+    t_ult = _medias24.t_ult
+    xb = _rasgos_brasil(M, br, t_ult)
+    out = {"dias": {}, "mae": {}, "mae_ant": {}, "datos": M.get("datos", ""), "rasgos": x, "base": base,
+           "brasil": (sorted(set((br or {}).get("fuente", {}).values())) or ["?"]) if xb is not None else None}
     for k, hz in M["horizontes"].items():
+        if xb is not None and k in M["brasil"]["horizontes"]:
+            hb = M["brasil"]["horizontes"][k]
+            vals = [x[f] for f in M["rasgos"]] + xb
+            z = [(v - mu) / sd for v, mu, sd in zip(vals, hb["mu"], hb["sd"])]
+            d = hb["w"][0] + sum(w * v for w, v in zip(hb["w"][1:], z))
+            c = base + d
+            out["dias"][int(k)] = (c, c + hb["p10"], c + hb["p90"])
+            out["mae"][int(k)] = hz["mae_cv"]; out["mae_ant"][int(k)] = hz["mae_anterior"]
+            continue
         z = [(x[f] - mu) / sd for f, mu, sd in zip(M["rasgos"], hz["mu"], hz["sd"])]
         d = hz["w"][0] + sum(w * v for w, v in zip(hz["w"][1:], z))
         c = base + d
@@ -274,7 +313,7 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
         lluvia_prev = max(lluvia_cuenca.values()) if lluvia_cuenca else 0
         mod = None
         try:
-            mod = modelo_rio(est)
+            mod = modelo_rio(est, docs.get("brasil"))
         except Exception as e:
             errores.append(f"modelo río: {e}")
         dias_r = []; c = h
@@ -325,12 +364,15 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
                       "Cada valor es el promedio del día (el puerto sube y baja dentro del día según opera la represa). "
                       f"Probado con meses que el modelo no vio: error medio de {mod['mae'][1] * 100:.0f} cm a 1 día y {mod['mae'][2] * 100:.0f} cm a 2 días "
                       f"(la fórmula anterior: {mod['mae_ant'][1] * 100:.0f} y {mod['mae_ant'][2] * 100:.0f} cm). El rango cubre 8 de cada 10 casos. "
-                      "Si se prevé lluvia fuerte en la cuenca alta, el rango se abre hacia arriba desde el cuarto día.")
+                      "Si se prevé lluvia fuerte en la cuenca alta, el rango se abre hacia arriba desde el cuarto día. "
+                      + (f"Hoy suma además 6 estaciones de Brasil (Iraí, Porto Mauá, Garruchos, Itaqui, Manoel Viana en el Ibicuí y Quaraí; datos {' y '.join(mod['brasil'])}), "
+                         "que mejoran sobre todo los días 4 a 6." if mod.get("brasil") else
+                         "Hoy sin las estaciones de Brasil (no respondieron): se usa el modelo sin Brasil, que está ajustado para andar solo."))
         else:
             metodo = ("Estimación automática: parte de la altura medida en el puerto (telemetría CTM), sigue la tendencia de los últimos 3 días amortiguada, "
                       "suma si aguas arriba (Garruchos, Santo Tomé, Paso de los Libres) está subiendo y abre el rango hacia arriba si se prevé lluvia fuerte en la cuenca alta.")
         rio["prevision"] = {"dias": dias_r, "lectura": lectura, "verificacion": verif_rio, "comparacion": comp_rio[-60:], "corregido": corregido,
-                            "modelo": "regresión aguas arriba" if mod else "tendencia",
+                            "modelo": ("regresión aguas arriba + Brasil" if mod.get("brasil") else "regresión aguas arriba") if mod else "tendencia",
                             "lluviaCuenca": {"periodo": f"{ahora:%d/%m} al {(ahora + dt.timedelta(days=7)):%d/%m} · ECMWF (MET Norway)",
                                              "puntos": [{"n": f"{k}, ECMWF", "mm": v} for k, v in lluvia_cuenca.items()]},
                             "metodo": metodo + " Cada día se guarda la previsión y se compara con lo medido; con 5 o más comparaciones por anticipación se corrige el sesgo y el ancho del rango."}
