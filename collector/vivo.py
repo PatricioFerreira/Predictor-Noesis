@@ -4,7 +4,7 @@
 - Cada hora (en punto): corrida completa (incluye documentos y lluvia de la cuenca) y guarda todo en el repositorio.
 La página se publica en la rama gh-pages, siempre con un único commit (no crece el historial).
 """
-import os, sys, json, time, subprocess, datetime as dt, traceback
+import os, sys, json, time, subprocess, importlib, datetime as dt, traceback
 sys.path.insert(0, os.path.dirname(__file__))
 import collect as C
 
@@ -62,6 +62,24 @@ def publicar():
        f"-H 'Accept: application/vnd.github+json' https://api.github.com/repos/{os.environ.get('GITHUB_REPOSITORY', '')}/pages/builds")
 
 
+def recargar_codigo():
+    """Trae el código del recolector de main y lo recarga, así un cambio entra en la próxima corrida completa
+    (una por hora) sin esperar a que termine esta tanda de casi 6 horas."""
+    global C
+    antes = subprocess.run("git rev-parse HEAD:collector", shell=True, capture_output=True, text=True).stdout.strip()
+    sh("git fetch -q origin main && git checkout origin/main -- collector/ 2>/dev/null || true")
+    despues = subprocess.run("git rev-parse origin/main:collector", shell=True, capture_output=True, text=True).stdout.strip()
+    if not despues or despues == getattr(recargar_codigo, "ultimo", antes): return
+    recargar_codigo.ultimo = despues
+    try:
+        for m in ("sace", "documentos", "rioverif", "verif", "tablero", "collect"):
+            if m in sys.modules: importlib.reload(sys.modules[m])
+        C = sys.modules["collect"]
+        print("código del recolector recargado", despues[:8], flush=True)
+    except Exception:
+        traceback.print_exc()  # si algo falla al recargar, sigue con lo que ya estaba cargado
+
+
 def guardar_repo():
     sh("git add data/ && (git diff --cached --quiet || git -c user.name=recolector -c user.email=recolector@users.noreply.github.com "
        "commit -qm \"Datos $(date -u +%Y-%m-%dT%H:%MZ)\") && git pull -q --rebase -X theirs origin main; git push -q origin HEAD:main || true")
@@ -77,6 +95,7 @@ while time.time() - inicio < DURACION:
     now = dt.datetime.now(LOC)
     try:
         if now.hour != ultima_hora:
+            recargar_codigo()
             C.main(ligero=False); ultima_hora = now.hour; ultimo_completo = t0
             guardar_repo()
         elif t0 - ultimo_completo >= 15 * 60 - 30:
