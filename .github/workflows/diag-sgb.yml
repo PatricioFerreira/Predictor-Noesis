@@ -1,0 +1,38 @@
+name: Diagnóstico boletín Brasil (SGB)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diag-sgb.yml"]
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet pdfplumber
+      - name: Probar las direcciones del SGB
+        run: |
+          for u in https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php https://www.sgb.gov.br/sace/uruguai/ https://www.sgb.gov.br/sace/ https://www.sgb.gov.br/sace/boletins/Uruguai/ ; do
+            echo "=== $u"; curl -sS -L -m 60 -A "Mozilla/5.0 (predictor-noesis)" -o /tmp/r -w "HTTP %{http_code} · %{content_type} · %{size_download} bytes · final %{url_effective}\n" "$u" || echo "CURL FALLÓ $?"
+            file /tmp/r; head -c 600 /tmp/r | tr -c '[:print:]\n' '.'; echo
+            grep -o -i 'href="[^"]*\(pdf\|boletim\)[^"]*"' /tmp/r | head -30
+          done
+      - name: Correr el lector del recolector
+        run: |
+          cd collector && python - <<'PY'
+          import traceback, documentos as D
+          try:
+              r = D.sgb(); print("OK", r["fecha"], len(r["estaciones"]), "estaciones")
+          except Exception:
+              traceback.print_exc()
+          try:
+              b = D._bytes("https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php")
+              print("bytes", len(b), b[:8])
+              t = D._pdf_texto(b, paginas=1); print(t[:2500])
+          except Exception:
+              traceback.print_exc()
+          PY
