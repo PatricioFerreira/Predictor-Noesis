@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SACE Níveis das Estações</title>
+    <!-- Google Analytics apenas em produção -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1912PWNFT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Q1912PWNFT');
+    </script> 
+        <link href="img/sgbfavicon.ico" rel="shortcut icon">
+    <script src="./scripts/jquery-3.7.1.js"></script>
+    <link rel="stylesheet" href="./templates/styles.css">
+    <link rel="stylesheet" href="./templates/bootstrap.min.css">
+    <script src="./scripts/bootstrap.bundle.min.js"></script>
+    <style>
+        .bacia-nome {
+            display: inline-block;
+            width: 155px;
+        }
+        .bacia-td {
+            text-align: left;
+            font-weight: bold;
+        }
+        .bolinha {
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+            width: 1em;
+            height: 1em;
+            vertical-align: middle;
+            margin-bottom: 2px;
+        }
+        tr.bacia-oculta {
+            display: none;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <header style="display: flex; align-items: center; gap: 2px; padding: 10px 0;">
+    <meta name="robots" content="noindex, nofollow" />
+    <img id="logo_sgb" src="./img/topo_logocprm_v2.png" style="height: 40px; width: auto; vertical-align: middle; margin-right: -60px;"/>
+    <h1 style="font-size: 1rem; font-weight: bold; margin: 0; padding: 0; vertical-align: middle;">SACE  Níveis das Estações</h1>
+</header>
+
+    <div class="container text-center py-5">
+
+        <div class="p-3 mx-auto">
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Bacia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background:transparent;"></span>
+                            <span class="bacia-nome">Brasil</span>
+                            <a href="./estacoes_mapa.php?bacia=brasil" target="_self">Mapa</a> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Acre</span>
+                            <a href="./estacoes_mapa.php?bacia=acre" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=acre" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #ff0033;" title="Cota de inundação"></span>
+                            <span class="bacia-nome">Amazonas</span>
+                            <a href="./estacoes_mapa.php?bacia=amazonas" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=amazonas" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Araguaia</span>
+                            <a href="./estacoes_mapa.php?bacia=araguaia" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=araguaia" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #ff0033;" title="Cota de inundação"></span>
+                            <span class="bacia-nome">Branco</span>
+                            <a href="./estacoes_mapa.php?bacia=branco" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=branco" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Caí</span>
+                            <a href="./estacoes_mapa.php?bacia=cai" target="_self">Mapa</a> 
+                            <a href="./estacoes_lista.php?bacia=cai" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Doce</span>
+                            <a href="./estacoes_mapa.php?bacia=doce" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=doce" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Guaíba</span>
+                            <a href="./estacoes_mapa.php?bacia=guaiba" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=guaiba" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Itapecuru</span>
+                            <a href="./estacoes_mapa.php?bacia=itapecuru" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=itapecuru" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #ff6600;" title="Cota de alerta"></span>
+                            <span class="bacia-nome">Madeira</span>
+                            <a href="./estacoes_mapa.php?bacia=madeira" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=madeira" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Mundaú</span>
+                            <a href="./estacoes_mapa.php?bacia=mundau" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=mundau" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Muriaé</span>
+                            <a href="./estacoes_mapa.php?bacia=muriae" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=muriae" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Paraguai (Pantanal)</span>
+                            <a href="./estacoes_mapa.php?bacia=paraguai" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=paraguai" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Parnaíba</span>
+                            <a href="./estacoes_mapa.php?bacia=parnaiba" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=parnaiba" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Pomba</span>
+                            <a href="./estacoes_mapa.php?bacia=pomba" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=pomba" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">São Francisco</span>
+                            <a href="./estacoes_mapa.php?bacia=saofrancisco" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=saofrancisco" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Taquari</span>
+                            <a href="./estacoes_mapa.php?bacia=taquari" target="_self">Mapa</a> 
+                            <a href="./estacoes_lista.php?bacia=taquari" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Uruguai</span>
+                            <a href="./estacoes_mapa.php?bacia=uruguai" target="_self">Mapa</a> 
+                            <a href="./estacoes_lista.php?bacia=uruguai" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Velhas</span>
+                            <a href="./estacoes_mapa.php?bacia=velhas" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=velhas" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bacia-td">
+                            <span class="bolinha" style="background-color: #00FF33;" title="Normal"></span>
+                            <span class="bacia-nome">Xingu</span>
+                            <a href="./estacoes_mapa.php?bacia=xingu" target="_self">Mapa</a>
+                            <a href="./estacoes_lista.php?bacia=xingu" target="_self">Lista</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+    </div>
+
+    <footer style="display: flex; font-size: 11px; align-items: center; justify-content: center; height: 30px;">
+    <p style="margin: 0;">2026 SGB</p>
+</footer>
+</body>
+</html>
