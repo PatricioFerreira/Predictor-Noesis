@@ -263,7 +263,7 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
     except Exception:
         pass
     sobre = [e for e in sg if e.get("nivel") and e.get("inund") and e["nivel"] >= e["inund"]]
-    cerca = [e for e in sg if e.get("nivel") and e.get("inund") and 0.8 * e["inund"] <= e["nivel"] < e["inund"]]
+    cerca = [e for e in sg if e.get("nivel") and e.get("inund") and e.get("alerta", 0.8 * e["inund"]) <= e["nivel"] < e["inund"]]
     if sobre or cerca:
         baja = all(e.get("tend") == "baja" for e in sobre + cerca if e.get("tend"))
         lista = ", ".join(f"{e['n']} ({e['nivel'] / 100:.2f} m de {e['inund'] / 100:.2f} m)".replace(".", ",") for e in (sobre or cerca))
@@ -271,7 +271,7 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
                         "titulo": ("Río Uruguay sobre la cota de inundación en Brasil" if sobre else "Río Uruguay cerca de la cota de inundación en Brasil"),
                         "texto": f"{lista}." + (" Con tendencia a bajar." if baja else " Atención a la evolución en los próximos días."),
                         "fuente": "Serviço Geológico do Brasil", "fecha": (docs.get("sgb") or {}).get("fecha", ""),
-                        "link": "https://www.sgb.gov.br/sace/uruguai/"})
+                        "link": (docs.get("sgb") or {}).get("link", "https://sace.sgb.gov.br/uruguai/")})
     try:
         av = _get("https://www.inumet.gub.uy/aviso")
         if re.search(r"No hay aviso", av, re.I):

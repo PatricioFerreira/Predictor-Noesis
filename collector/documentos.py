@@ -89,6 +89,17 @@ SGB_EST = [("Iraí", "Iraí"), ("Itapiranga", "Itapiranga"), ("Alto Uruguai", "A
 
 
 def sgb():
+    """Primero la telemetría del visor SACE (sace.sgb.gov.br); si falla, el boletín PDF de siempre."""
+    errs = []
+    try:
+        import sace
+        return sace.niveles(errs)
+    except Exception as e:
+        print("sace:", e, errs)
+    return sgb_pdf()
+
+
+def sgb_pdf():
     t = _pdf_texto(_bytes("https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php"), paginas=1)
     m = re.search(r"Data de referência dos dados neste boletim:\s*(\d\d)/(\d\d)/\d{4} (\d\d:\d\d)", t)
     est = []
@@ -193,5 +204,5 @@ def todos(errores):
         try:
             res[nombre] = fn()
         except Exception as e:
-            errores.append(f"{nombre}: {e}")
+            errores.append(f"{nombre}: {e}"); print(f"documentos {nombre}: {e}")
     return res
