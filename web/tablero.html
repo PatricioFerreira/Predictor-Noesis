@@ -1009,14 +1009,15 @@ function drawCharts(z,r){
   const pv=r.prevision;
   if(pv&&$("#cPrev")){const M=(r.puerto.serie||[]).filter(p=>p.tipo==="medido").slice(-6), n=M.length, D=(M.length&&M.at(-1).f===hoyDM())?pv.dias.slice(1):pv.dias, lab=[...M.map(p=>p.f),...D.map(d=>d.f)];
     const pad=a=>[...Array(n).fill(null),...a];
+    const ult=n?M.at(-1).h:null, une=a=>{const r=pad(a); if(ult!=null) r[n-1]=ult; return r};  /* la previsión arranca en la última medición: línea continua */
     charts.push(new Chart($("#cPrev"),{type:"line",data:{labels:lab,datasets:[
       {label:"previsto 48 h antes",data:[...M.map(p=>{const c=(pv.comparacion||[]).find(x=>x.anticipacion===2&&x.fecha.slice(8,10)+"/"+x.fecha.slice(5,7)===p.f);return c?c.previsto:null}),...Array(D.length).fill(null)],showLine:false,pointStyle:"triangle",pointRadius:6,borderColor:css("--warn"),backgroundColor:css("--warn")},
       {label:"medido",data:[...M.map(p=>p.h),...Array(D.length).fill(null)],borderColor:css("--river"),backgroundColor:css("--fg"),borderDash:[2,3],borderWidth:1.5,pointRadius:5,pointHoverRadius:6},
-      {label:"máximo",data:pad(D.map(d=>d.max)),borderColor:"transparent",backgroundColor:"rgba(78,168,255,.18)",fill:"+1",pointRadius:0,tension:.35},
-      {label:"mínimo",data:pad(D.map(d=>d.min)),borderColor:"transparent",pointRadius:0,tension:.35},
-      {label:"previsto",data:pad(D.map(d=>d.c)),borderColor:css("--river"),backgroundColor:css("--river"),borderWidth:3,pointRadius:3,tension:.35},
+      {label:"máximo",data:une(D.map(d=>d.max)),borderColor:"transparent",backgroundColor:"rgba(78,168,255,.18)",fill:"+1",pointRadius:0,tension:.35},
+      {label:"mínimo",data:une(D.map(d=>d.min)),borderColor:"transparent",pointRadius:0,tension:.35},
+      {label:"previsto",data:une(D.map(d=>d.c)),borderColor:css("--river"),backgroundColor:css("--river"),borderWidth:3,pointRadius:3,tension:.35},
       {label:"evacuaciones",data:lab.map(()=>12),borderColor:css("--alert"),borderDash:[6,4],borderWidth:1.5,pointRadius:0}]},
-      options:{maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{...tip,filter:i=>i.dataset.label!=="evacuaciones"&&i.parsed.y!=null,callbacks:{label:c=>` ${c.dataset.label}: ${nf(c.parsed.y,2)} m`}}},scales:{y:{suggestedMin:9.8,suggestedMax:12.3,ticks:{callback:v=>nf(v,1)+" m"}},x:{grid:{display:false}}}}}));}
+      options:{maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{...tip,filter:i=>i.dataset.label!=="evacuaciones"&&i.parsed.y!=null&&!(i.dataIndex===n-1&&["máximo","mínimo","previsto"].includes(i.dataset.label)),callbacks:{label:c=>` ${c.dataset.label}: ${nf(c.parsed.y,2)} m`}}},scales:{y:{suggestedMin:9.8,suggestedMax:12.3,ticks:{callback:v=>nf(v,1)+" m"}},x:{grid:{display:false}}}}}));}
 }
 
 /* Consulta a Claude */
