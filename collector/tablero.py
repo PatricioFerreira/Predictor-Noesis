@@ -76,6 +76,63 @@ def resumen_texto(dias):
     return " ".join(partes[:2])
 
 
+METODO_RIO_DESDE = "2026-10-29"  # primer día con el modelo aguas arriba: la verificación de la previsión del río arranca acá
+MODELO_RIO = "data/modelo-rio.json"
+EST_MODELO = ("Salto", "Santo Tomé", "Yapeyú", "Paso de los Libres", "Monte Caseros", "Salto Grande")
+
+
+def _medias24(est):
+    """Medias de 24 h por estación en la última hora con dato de Salto, 24 h antes y 48 h antes (telemetría horaria de CTM)."""
+    ser = {}
+    for n in EST_MODELO:
+        ser[n] = {x["t"][:13]: x["nivel"] for x in (est.get(n) or {}).get("horario", []) if x.get("nivel") is not None}
+    if not ser["Salto"]: raise RuntimeError("sin serie horaria de Salto")
+    t_ult = dt.datetime.fromisoformat(max(ser["Salto"]) + ":00")
+    def media(n, fin):
+        v = [ser[n].get((fin - dt.timedelta(hours=j)).strftime("%Y-%m-%dT%H")) for j in range(24)]
+        v = [x for x in v if x is not None]
+        if len(v) < 20: raise RuntimeError(f"faltan datos horarios de {n}")
+        return sum(v) / len(v)
+    return {n: [media(n, t_ult - dt.timedelta(hours=24 * q)) for q in (0, 1, 2)] for n in EST_MODELO}
+
+
+def modelo_rio(est):
+    """Previsión del promedio diario en el puerto para D+1..D+6 con el modelo de data/modelo-rio.json, o None."""
+    try:
+        M = json.load(open(MODELO_RIO))
+    except FileNotFoundError:
+        return None
+    m = _medias24(est)
+    ply = [(m["Yapeyú"][q] + m["Paso de los Libres"][q]) / 2 for q in range(3)]
+    x = {"dS24": m["Salto"][0] - m["Salto"][1],
+         "dST24": m["Santo Tomé"][0] - m["Santo Tomé"][1], "dST48": m["Santo Tomé"][1] - m["Santo Tomé"][2],
+         "dPLY24": ply[0] - ply[1], "dPLY48": ply[1] - ply[2],
+         "dMC24": m["Monte Caseros"][0] - m["Monte Caseros"][1], "dMC48": m["Monte Caseros"][1] - m["Monte Caseros"][2],
+         "dSG24": m["Salto Grande"][0] - m["Salto Grande"][1], "dSG48": m["Salto Grande"][1] - m["Salto Grande"][2]}
+    base = m["Salto"][0]
+    out = {"dias": {}, "mae": {}, "mae_ant": {}, "datos": M.get("datos", ""), "rasgos": x, "base": base}
+    for k, hz in M["horizontes"].items():
+        z = [(x[f] - mu) / sd for f, mu, sd in zip(M["rasgos"], hz["mu"], hz["sd"])]
+        d = hz["w"][0] + sum(w * v for w, v in zip(hz["w"][1:], z))
+        c = base + d
+        out["dias"][int(k)] = (c, c + hz["p10"], c + hz["p90"])
+        out["mae"][int(k)] = hz["mae_cv"]; out["mae_ant"][int(k)] = hz["mae_anterior"]
+    # qué empuja la previsión a 2 días (para la lectura)
+    hz = M["horizontes"]["2"]
+    aporte = {f: w * (x[f] - mu) / sd for f, w, mu, sd in zip(M["rasgos"], hz["w"][1:], hz["mu"], hz["sd"])}
+    nombres = {"ST": "Santo Tomé", "PLY": "Yapeyú y Paso de los Libres", "MC": "Monte Caseros", "SG": "el embalse de Salto Grande", "S": "el propio puerto"}
+    grupos = {}
+    for f, v in aporte.items():
+        g = re.sub(r"^d|\d+$", "", f); grupos[g] = grupos.get(g, 0) + v
+    g, v = max(grupos.items(), key=lambda kv: abs(kv[1]))
+    if abs(v) >= 0.08 and g != "S":
+        serie = ply if g == "PLY" else m[{"ST": "Santo Tomé", "MC": "Monte Caseros", "SG": "Salto Grande"}[g]]
+        cambio = serie[0] - serie[1]
+        out["explica"] = (f"Lo que más pesa: {nombres[g]} {'subió' if cambio > 0 else 'bajó'} {abs(cambio) * 100:.0f} cm en el último día, "
+                          f"y eso suele {'subir' if v > 0 else 'bajar'} el puerto unos {abs(v) * 100:.0f} cm en dos días.")
+    return out
+
+
 def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, docs=None):
     docs = docs or {}
     """Devuelve el parche del documento tablero/actual."""
@@ -207,45 +264,68 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
         rio["represa"] = {"fecha": t.strftime("%d/%m %H:%M"), "embalse": u.get("embalse"), "aguasAbajo": u.get("restitucion"),
                           "turbinado": round(u["turbinado"] * 1000) if u.get("turbinado") and u["turbinado"] < 100 else u.get("turbinado"),
                           "vertido": round(u["vertido"] * 1000) if u.get("vertido") and u["vertido"] < 100 else u.get("vertido")}
-    # previsión simple del río (tendencia medida amortiguada + aviso por lluvia prevista en la cuenca)
+    # previsión del río: modelo ajustado con un año de telemetría de CTM (data/modelo-rio.json, ver collector/ajustar_rio.py);
+    # si falta algún dato, la fórmula anterior (tendencia medida amortiguada)
     if s and s["ultimo"].get("nivel") is not None:
         h = s["ultimo"]["nivel"]
         h72 = s.get("nivelHace72h"); h24 = s.get("nivelHace24h")
         pend = ((h - h72) / 3) if h72 is not None else ((h - h24) if h24 is not None else 0)
         pend = max(-0.25, min(0.25, pend))
+        lluvia_prev = max(lluvia_cuenca.values()) if lluvia_cuenca else 0
+        mod = None
+        try:
+            mod = modelo_rio(est)
+        except Exception as e:
+            errores.append(f"modelo río: {e}")
+        dias_r = []; c = h
         up = [est.get(k, {}) for k in ("Garruchos", "Santo Tomé", "Paso de los Libres")]
         sube_arriba = sum(1 for v in up if v.get("ultimo", {}).get("nivel") is not None and v.get("nivelHace24h") is not None and v["ultimo"]["nivel"] > v["nivelHace24h"] + 0.05)
-        lluvia_prev = max(lluvia_cuenca.values()) if lluvia_cuenca else 0
-        dias_r = []; c = h
         for k in range(7):
             f = (ahora + dt.timedelta(days=k)).date()
+            extra = 0.1 * (k - 3) * min(lluvia_prev, 150) / 100 if k >= 4 and lluvia_prev >= 30 else 0  # lluvia fuerte prevista en la cuenca alta
+            if k and mod and k in mod["dias"]:
+                c, lo, hi = mod["dias"][k]
+                dias_r.append({"f": f"{DIAS[f.weekday()]} {f.day}", "fecha": f.isoformat(), "c": round(c, 2), "min": round(lo, 2), "max": round(hi + extra, 2)})
+                continue
             if k: c = c + pend * (0.8 ** k) + (0.04 * sube_arriba if k >= 2 else 0)
             ancho = 0.04 + 0.07 * k
-            arriba = ancho + (0.1 * (k - 3) * min(lluvia_prev, 150) / 100 if k >= 4 and lluvia_prev >= 30 else 0)
-            dias_r.append({"f": f"{DIAS[f.weekday()]} {f.day}", "fecha": f.isoformat(), "c": round(c, 2), "min": round(c - ancho, 2), "max": round(c + arriba, 2)})
-        # verificación contra lo medido y corrección aprendida (historial en GitHub)
+            dias_r.append({"f": f"{DIAS[f.weekday()]} {f.day}", "fecha": f.isoformat(), "c": round(c, 2), "min": round(c - ancho, 2), "max": round(c + ancho + extra, 2)})
+        # verificación contra lo medido y corrección aprendida (historial en GitHub); solo previsiones del método vigente
         import rioverif as RV
         verif_rio, comp_rio, corregido = [], [], False
         try:
-            verif_rio, comp_rio = RV.verificar(ahora.date())
+            verif_rio, comp_rio = RV.verificar(ahora.date(), desde=METODO_RIO_DESDE if mod else None)
             corregido = RV.corregir(dias_r, verif_rio)
             RV.guardar(ahora.date(), dias_r, s.get("dias", []))
         except Exception as e:
             errores.append(f"rioverif: {e}")
         tend = "baja" if pend < -0.02 else "sube" if pend > 0.02 else "se mantiene"
+        d2 = dias_r[2] if len(dias_r) > 2 else dias_r[-1]
         lectura = (f"El río en el puerto de Salto está en {c2(h)} m y {tend}"
                    + (f" unos {abs(pend) * 100:.0f} cm por día" if tend != "se mantiene" else "")
-                   + f"; para el {DIAS_L[(ahora + dt.timedelta(days=6)).weekday()]} se espera alrededor de {c2(dias_r[-1]['c'])} m.")
+                   + f"; para el {DIAS_L[dt.date.fromisoformat(d2['fecha']).weekday()]} se espera un promedio de {c2(d2['c'])} m"
+                   + f" (probablemente entre {c2(d2['min'])} y {c2(d2['max'])} m).")
+        if mod and mod.get("explica"):
+            lectura += " " + mod["explica"]
         if lluvia_prev >= 50:
             lectura += f" Ojo: se prevén hasta {lluvia_prev} mm en la cuenca alta en la semana, y esa agua llega a Salto unos días después."
         elif dias_r[-1]["max"] < UMBRAL_EVAC:
             lectura += " Lejos de los 12 m en que empiezan las evacuaciones."
+        if mod:
+            metodo = ("Modelo propio ajustado con un año de telemetría de CTM (" + mod["datos"] + "): parte del promedio de las últimas 24 h en el puerto "
+                      "y suma lo que anticipan los cambios de las últimas 48 h en Santo Tomé, Yapeyú y Paso de los Libres, Monte Caseros y el embalse de Salto Grande. "
+                      "Cada valor es el promedio del día (el puerto sube y baja dentro del día según opera la represa). "
+                      f"Probado con meses que el modelo no vio: error medio de {mod['mae'][1] * 100:.0f} cm a 1 día y {mod['mae'][2] * 100:.0f} cm a 2 días "
+                      f"(la fórmula anterior: {mod['mae_ant'][1] * 100:.0f} y {mod['mae_ant'][2] * 100:.0f} cm). El rango cubre 8 de cada 10 casos. "
+                      "Si se prevé lluvia fuerte en la cuenca alta, el rango se abre hacia arriba desde el cuarto día.")
+        else:
+            metodo = ("Estimación automática: parte de la altura medida en el puerto (telemetría CTM), sigue la tendencia de los últimos 3 días amortiguada, "
+                      "suma si aguas arriba (Garruchos, Santo Tomé, Paso de los Libres) está subiendo y abre el rango hacia arriba si se prevé lluvia fuerte en la cuenca alta.")
         rio["prevision"] = {"dias": dias_r, "lectura": lectura, "verificacion": verif_rio, "comparacion": comp_rio[-60:], "corregido": corregido,
+                            "modelo": "regresión aguas arriba" if mod else "tendencia",
                             "lluviaCuenca": {"periodo": f"{ahora:%d/%m} al {(ahora + dt.timedelta(days=7)):%d/%m} · ECMWF (MET Norway)",
                                              "puntos": [{"n": f"{k}, ECMWF", "mm": v} for k, v in lluvia_cuenca.items()]},
-                            "metodo": "Estimación propia automática: parte de la altura medida en el puerto (telemetría CTM), sigue la tendencia de los últimos 3 días amortiguada, "
-                                      "suma si aguas arriba (Garruchos, Santo Tomé, Paso de los Libres) está subiendo y abre el rango hacia arriba si se prevé lluvia fuerte en la cuenca alta. "
-                                      "Cada día se guarda la previsión y se compara con lo medido; con 5 o más comparaciones por anticipación se corrige el sesgo y el ancho del rango."}
+                            "metodo": metodo + " Cada día se guarda la previsión y se compara con lo medido; con 5 o más comparaciones por anticipación se corrige el sesgo y el ancho del rango."}
     # documentos leídos automáticamente (CTM, Brasil, NOAA)
     com = docs.get("comunicado") or {}
     if com.get("pronostico"):

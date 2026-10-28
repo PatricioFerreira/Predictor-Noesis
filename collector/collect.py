@@ -300,7 +300,7 @@ def ctm_estaciones(dias=8, estaciones=None, horario=True):
             def lluvia(horas):
                 v = [f[2] for f in filas if f[2] is not None and f[0] > ult[0] - dt.timedelta(hours=horas)]
                 return round(sum(v), 1) if v else None
-            horario_l = [{"t": f[0].isoformat(), "nivel": f[1]} for f in filas if f[0].minute == 0 and f[1] is not None][-72:]
+            horario_l = [{"t": f[0].isoformat(), "nivel": f[1]} for f in filas if f[0].minute == 0 and f[1] is not None][-120:]
             diario = {}; lluvia_d = {}
             for f in filas:
                 if f[2] is not None: lluvia_d[f[0].date().isoformat()] = lluvia_d.get(f[0].date().isoformat(), 0) + f[2]

@@ -34,14 +34,15 @@ def guardar(hoy, dias_prev, dias_med):
                          for d in dias_med if d["fecha"] < hoy.isoformat() and d["fecha"] not in ya])
 
 
-def verificar(hoy, dias=30):
+def verificar(hoy, dias=30, desde=None):
+    """desde: fecha ISO de emisión mínima (para verificar solo las previsiones del método vigente)."""
     med = {r["fecha"]: float(r["medio"]) for r in _leer(MED)}
     lim = (hoy - dt.timedelta(days=dias)).isoformat()
     por = {}
     comp = []
     for r in _leer(PREV):
         f = r["fecha_objetivo"]
-        if f not in med or f < lim: continue
+        if f not in med or f < lim or (desde and r["emitido"] < desde): continue
         k = int(r["anticipacion"]); c, mn, mx = float(r["c"]), float(r["min"]), float(r["max"])
         e = c - med[f]
         a = por.setdefault(k, {"err": [], "dentro": 0})
