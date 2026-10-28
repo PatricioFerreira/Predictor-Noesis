@@ -16,23 +16,22 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --quiet pdfplumber
-      - name: Buscar la dirección nueva
+      - name: Bajar las páginas nuevas
         run: |
           exec > >(tee -a /tmp/diag.txt) 2>&1
+          mkdir -p /tmp/pag; cd /tmp/pag
           A="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36"
-          for u in https://sace.sgb.gov.br/uruguai/ https://sace.sgb.gov.br/uruguai/ultimo_boletim.php https://sace.sgb.gov.br/ https://sace.sgb.gov.br/guaiba/ \
-                   https://www.sgb.gov.br/sace/boletins/Uruguai/20261008_07-20261008%20-%20083642.pdf https://www.sgb.gov.br/sala-de-imprensa \
-                   https://www.sgb.gov.br/w/rs-niveis-do-rio-uruguai-e-afluentes-mantem-tendencia-de-declinio-na-fronteira-oeste \
-                   https://www.sgb.gov.br/w/bacia-do-rio-uruguai-niveis-dos-rios-seguem-elevados ; do
-            echo; echo "=== $u"; curl -sS -L -m 60 -A "$A" -o /tmp/r -w "HTTP %{http_code} · %{content_type} · %{size_download} bytes · final %{url_effective}\n" "$u" || echo "CURL FALLÓ"
-            file -b /tmp/r
-            grep -o -i -E '(href|src|action)="[^"]*(sace|boletim|boletin|uruguai|\.pdf|alerta|hidro)[^"]*"' /tmp/r | sort -u | head -40
-            grep -o -i -E 'https?://[a-z0-9.-]*sgb[a-z0-9./_?=&%-]*' /tmp/r | sort -u | head -30
-            grep -o -E '[0-9]{2}/[0-9]{2}/2026[^<]{0,40}' /tmp/r | head -5
-          done
+          get(){ echo "=== $2 <- $1"; curl -sS -L -m 60 -A "$A" -o "$2" -w "HTTP %{http_code} · %{content_type} · %{size_download} bytes · final %{url_effective}\n" "$1" || echo "CURL FALLÓ"; }
+          get "https://sace.sgb.gov.br/" raiz.html
+          get "https://sace.sgb.gov.br/estacoes_lista.php?bacia=uruguai" lista.html
+          get "https://sace.sgb.gov.br/estacoes_mapa.php?bacia=uruguai" mapa.html
+          get "https://sace.sgb.gov.br/uruguai/" uruguai.html
+          get "https://sace.sgb.gov.br/uruguai/jsJawrPath/telas/publicacao/boletim/boletimScript.js" boletimScript.js
+          get "https://sace.sgb.gov.br/uruguai/jsJawrPath/telas/publicacao/textoBoletim/textoBoletimScript.js" textoBoletimScript.js
+          get "https://www.sgb.gov.br/w/rs-monitoramento-no-rio-uruguai-aponta-estabilizacao-em-sao-borja-e-elevacao-dos-niveis-em-itaqui-e-uruguaiana" nota.html
       - name: Guardar el resultado en el repo
         if: always()
         run: |
-          mkdir -p data/diag && cp /tmp/diag.txt data/diag/sgb.txt
+          mkdir -p data/diag && cp /tmp/diag.txt data/diag/sgb.txt; cp -r /tmp/pag data/diag/ || true
           git config user.name recolector; git config user.email recolector@users.noreply.github.com
-          git add data/diag/sgb.txt && git commit -m "Diagnóstico SGB" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          git add data/diag && git commit -m "Diagnóstico SGB" && for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
