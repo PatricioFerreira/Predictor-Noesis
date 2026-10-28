@@ -1,8 +1,0 @@
-callCount=1
-page=/uruguai/
-httpSessionId=
-scriptSessionId=
-c0-scriptName=BoletimService
-c0-methodName=obtemUltimoBoletim
-c0-id=0
-batchId=0
