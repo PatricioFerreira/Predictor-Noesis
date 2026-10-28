@@ -301,16 +301,24 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
             errores.append(f"rioverif: {e}")
         tend = "baja" if pend < -0.02 else "sube" if pend > 0.02 else "se mantiene"
         d2 = dias_r[2] if len(dias_r) > 2 else dias_r[-1]
-        lectura = (f"El río en el puerto de Salto está en {c2(h)} m y {tend}"
-                   + (f" unos {abs(pend) * 100:.0f} cm por día" if tend != "se mantiene" else "")
-                   + f"; para el {DIAS_L[dt.date.fromisoformat(d2['fecha']).weekday()]} se espera un promedio de {c2(d2['c'])} m"
+        pasado = ({"baja": f"en los últimos 3 días bajó unos {abs(pend) * 100:.0f} cm por día", "sube": f"en los últimos 3 días subió unos {abs(pend) * 100:.0f} cm por día"}
+                  .get(tend, "en los últimos 3 días se mantuvo"))
+        va = d2["c"] - h
+        giro = (tend == "baja" and va > 0.1) or (tend == "sube" and va < -0.1)
+        lectura = (f"El río en el puerto de Salto está en {c2(h)} m; {pasado}. "
+                   + ("Pero se espera que cambie: " if giro else "")
+                   + f"para el {DIAS_L[dt.date.fromisoformat(d2['fecha']).weekday()]} se prevé un promedio de {c2(d2['c'])} m"
                    + f" (probablemente entre {c2(d2['min'])} y {c2(d2['max'])} m).")
         if mod and mod.get("explica"):
             lectura += " " + mod["explica"]
         if lluvia_prev >= 50:
             lectura += f" Ojo: se prevén hasta {lluvia_prev} mm en la cuenca alta en la semana, y esa agua llega a Salto unos días después."
-        elif dias_r[-1]["max"] < UMBRAL_EVAC:
+        elif max(d["max"] for d in dias_r) < UMBRAL_EVAC - 1:
             lectura += " Lejos de los 12 m en que empiezan las evacuaciones."
+        else:
+            alto = max(dias_r, key=lambda d: d["max"])
+            lectura += (f" El extremo alto del rango llega a {c2(alto['max'])} m el {DIAS_L[dt.date.fromisoformat(alto['fecha']).weekday()]};"
+                        " las evacuaciones empiezan en 12 m.")
         if mod:
             metodo = ("Modelo propio ajustado con un año de telemetría de CTM (" + mod["datos"] + "): parte del promedio de las últimas 24 h en el puerto "
                       "y suma lo que anticipan los cambios de las últimas 48 h en Santo Tomé, Yapeyú y Paso de los Libres, Monte Caseros y el embalse de Salto Grande. "
