@@ -1,0 +1,14 @@
+prueba Salto 31 días: 0 datos
+prueba Salto 15 días: 1480 datos (2026-10-28 09:45:00 a 2026-10-13 00:00:00)
+prueba Salto 8 días: 808 datos (2026-10-28 09:45:00 a 2026-10-20 00:00:00)
+prueba Salto 4 días: 424 datos (2026-10-28 09:45:00 a 2026-10-24 00:00:00)
+el servidor no devolvió tramos completos; se usa 4 días
+Garruchos: 11662 datos
+Santo Tomé: 44100 datos
+Yapeyú: 44104 datos
+Paso de los Libres: 44099 datos
+Monte Caseros: 44102 datos
+Salto Grande: 44075 datos
+Salto: 44103 datos
+Puerto Concordia: 44103 datos
+filas 8843 desde 2025-10-25 00:00:00
