@@ -1,0 +1,8 @@
+SACE Uruguaiana 168 h: 645 filas · 21/10/2026 12:30 a 28/10/2026 12:30 · 5 s
+SACE Uruguaiana 720 h: 2741 filas · 28/09/2026 12:30 a 28/10/2026 12:30 · 8 s
+SACE Uruguaiana 2160 h: 8257 filas · 30/07/2026 12:30 a 28/10/2026 12:30 · 21 s
+SACE 8760 h: error The read operation timed out
+ANA ao=77150000&dataInicio=01%2F09%2F2026&dataFim=30%2F09%2F2026: 928643 bytes · 2910 niveles · 2026-09-01 00:00:00  a 2026-09-30 23:45:00  · muestra ['622.00', '621.00', '621.00']
+ANA cao=7715000&dataInicio=01%2F09%2F2026&dataFim=30%2F09%2F2026: 1188 bytes · 0 niveles ·  a  · muestra []
+   inicio respuesta: <?xml version="1.0" encoding="utf-8"?> <DataTable xmlns="http://MRCS/"> <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"> <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:MainDataTable="ErrorTable
+ANA ao=77150000&dataInicio=01%2F11%2F2025&dataFim=30%2F11%2F2025: 933234 bytes · 2930 niveles · 2025-11-01 00:00:00  a 2025-11-30 23:45:00  · muestra ['277.00', '277.00', '276.00']
