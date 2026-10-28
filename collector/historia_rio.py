@@ -39,34 +39,48 @@ def bajar(cod, desde, hasta):
     return filas
 
 
-def main(meses=24):
+LOG = "data/historial/ctm-historia-log.txt"
+CLAVE = ["Garruchos", "Santo Tomé", "Yapeyú", "Paso de los Libres", "Monte Caseros", "Salto Grande", "Salto", "Puerto Concordia"]
+
+
+def main(meses=12):
+    log = open(LOG, "w")
+    def p(*x):
+        print(*x, flush=True); print(*x, file=log, flush=True)
     hoy = dt.datetime.now(LOC).replace(tzinfo=None)
-    serie = {}  # hora -> {estacion: [valores]}
-    for nom in ORDEN:
+    # 1) qué largo de tramo acepta el servidor
+    tramo = None
+    for dias in (31, 15, 8, 4):
+        f = bajar(CTM_EST["Salto"], hoy - dt.timedelta(days=dias), hoy)
+        p(f"prueba Salto {dias} días: {len(f)} datos" + (f" ({f[0][0]} a {f[-1][0]})" if f else ""))
+        if f and (f[-1][0] - f[0][0]).days >= dias - 2:
+            tramo = dias; break
+        time.sleep(1.5)
+    if not tramo:
+        p("el servidor no devolvió tramos completos; se usa 4 días"); tramo = 4
+    serie = {}
+    for nom in [k for k in ORDEN if k in CLAVE]:
         cod = CTM_EST.get(nom)
-        if not cod: continue
-        n = 0
-        fin = hoy
-        for m in range(meses):
-            ini = fin - dt.timedelta(days=31)
+        n, vacios, fin = 0, 0, hoy
+        while fin > hoy - dt.timedelta(days=30.5 * meses):
+            ini = fin - dt.timedelta(days=tramo)
             filas = bajar(cod, ini, fin)
-            n += len(filas)
+            n += len(filas); vacios = 0 if filas else vacios + 1
             for t, v in filas:
                 serie.setdefault(t.replace(minute=0), {}).setdefault(nom, []).append(v)
             fin = ini
-            time.sleep(1.5)
-            if not filas and m >= 2:  # sin datos tan atrás: cortar
-                break
-        print(f"{nom}: {n} datos", flush=True)
-    os.makedirs(os.path.dirname(SALIDA), exist_ok=True)
+            time.sleep(1.2)
+            if vacios >= 4: break  # varios tramos seguidos sin datos: no hay más historia
+        p(f"{nom}: {n} datos")
     with open(SALIDA, "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["t"] + ORDEN)
+        cols = [k for k in ORDEN if k in CLAVE]
+        w.writerow(["t"] + cols)
         for t in sorted(serie):
             d = serie[t]
-            w.writerow([t.strftime("%Y-%m-%dT%H:00")] + [round(sum(d[k]) / len(d[k]), 3) if k in d else "" for k in ORDEN])
-    print("filas", len(serie), "desde", min(serie) if serie else None)
+            w.writerow([t.strftime("%Y-%m-%dT%H:00")] + [round(sum(d[k]) / len(d[k]), 3) if k in d else "" for k in cols])
+    p("filas", len(serie), "desde", min(serie) if serie else None)
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]) if len(sys.argv) > 1 else 24)
+    main(int(sys.argv[1]) if len(sys.argv) > 1 else 12)
