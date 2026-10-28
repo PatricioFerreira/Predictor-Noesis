@@ -1,0 +1,102 @@
+=== https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php
+HTTP 404 · text/html; charset=iso-8859-1 · 299 bytes · final https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php
+/tmp/r: HTML document, ASCII text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /publique/cgi/cgilua.exe/sys/start.htm was not found on this server.</p>
+<hr>
+<address>Apache Server at www.sgb.gov.br Port 80</address>
+</body></html>
+
+=== https://www.sgb.gov.br/sace/uruguai/
+HTTP 404 · text/html; charset=iso-8859-1 · 299 bytes · final https://www.sgb.gov.br/sace/uruguai/
+/tmp/r: HTML document, ASCII text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /publique/cgi/cgilua.exe/sys/start.htm was not found on this server.</p>
+<hr>
+<address>Apache Server at www.sgb.gov.br Port 80</address>
+</body></html>
+
+=== https://www.sgb.gov.br/sace/
+HTTP 403 · text/html; charset=iso-8859-1 · 271 bytes · final https://www.sgb.gov.br/sace/
+/tmp/r: HTML document, ASCII text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access /sace/
+on this server.</p>
+<hr>
+<address>Apache Server at www.sgb.gov.br Port 80</address>
+</body></html>
+
+=== https://www.sgb.gov.br/sace/boletins/Uruguai/
+HTTP 404 · text/html; charset=iso-8859-1 · 299 bytes · final https://www.sgb.gov.br/sace/boletins/Uruguai/
+/tmp/r: HTML document, ASCII text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /publique/cgi/cgilua.exe/sys/start.htm was not found on this server.</p>
+<hr>
+<address>Apache Server at www.sgb.gov.br Port 80</address>
+</body></html>
+
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/home/runner/work/Predictor-Noesis/Predictor-Noesis/collector/documentos.py", line 92, in sgb
+    t = _pdf_texto(_bytes("https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php"), paginas=1)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Predictor-Noesis/Predictor-Noesis/collector/documentos.py", line 13, in _bytes
+    with urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=timeout) as r:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 404: Not Found
+Traceback (most recent call last):
+  File "<stdin>", line 7, in <module>
+  File "/home/runner/work/Predictor-Noesis/Predictor-Noesis/collector/documentos.py", line 13, in _bytes
+    with urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=timeout) as r:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 404: Not Found
