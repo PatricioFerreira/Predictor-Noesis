@@ -16,30 +16,20 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install --quiet pdfplumber
-      - name: Probar las direcciones del SGB
+      - name: Buscar la dirección nueva
         run: |
           exec > >(tee -a /tmp/diag.txt) 2>&1
-          for u in https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php https://www.sgb.gov.br/sace/uruguai/ https://www.sgb.gov.br/sace/ https://www.sgb.gov.br/sace/boletins/Uruguai/ ; do
-            echo "=== $u"; curl -sS -L -m 60 -A "Mozilla/5.0 (predictor-noesis)" -o /tmp/r -w "HTTP %{http_code} · %{content_type} · %{size_download} bytes · final %{url_effective}\n" "$u" || echo "CURL FALLÓ $?"
-            file /tmp/r; head -c 600 /tmp/r | tr -c '[:print:]\n' '.'; echo
-            grep -o -i 'href="[^"]*\(pdf\|boletim\)[^"]*"' /tmp/r | head -30
+          A="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36"
+          for u in https://sace.sgb.gov.br/uruguai/ https://sace.sgb.gov.br/uruguai/ultimo_boletim.php https://sace.sgb.gov.br/ https://sace.sgb.gov.br/guaiba/ \
+                   https://www.sgb.gov.br/sace/boletins/Uruguai/20261008_07-20261008%20-%20083642.pdf https://www.sgb.gov.br/sala-de-imprensa \
+                   https://www.sgb.gov.br/w/rs-niveis-do-rio-uruguai-e-afluentes-mantem-tendencia-de-declinio-na-fronteira-oeste \
+                   https://www.sgb.gov.br/w/bacia-do-rio-uruguai-niveis-dos-rios-seguem-elevados ; do
+            echo; echo "=== $u"; curl -sS -L -m 60 -A "$A" -o /tmp/r -w "HTTP %{http_code} · %{content_type} · %{size_download} bytes · final %{url_effective}\n" "$u" || echo "CURL FALLÓ"
+            file -b /tmp/r
+            grep -o -i -E '(href|src|action)="[^"]*(sace|boletim|boletin|uruguai|\.pdf|alerta|hidro)[^"]*"' /tmp/r | sort -u | head -40
+            grep -o -i -E 'https?://[a-z0-9.-]*sgb[a-z0-9./_?=&%-]*' /tmp/r | sort -u | head -30
+            grep -o -E '[0-9]{2}/[0-9]{2}/2026[^<]{0,40}' /tmp/r | head -5
           done
-      - name: Correr el lector del recolector
-        run: |
-          exec > >(tee -a /tmp/diag.txt) 2>&1
-          cd collector && python - <<'PY'
-          import traceback, documentos as D
-          try:
-              r = D.sgb(); print("OK", r["fecha"], len(r["estaciones"]), "estaciones")
-          except Exception:
-              traceback.print_exc()
-          try:
-              b = D._bytes("https://www.sgb.gov.br/sace/uruguai/ultimo_boletim.php")
-              print("bytes", len(b), b[:8])
-              t = D._pdf_texto(b, paginas=1); print(t[:2500])
-          except Exception:
-              traceback.print_exc()
-          PY
       - name: Guardar el resultado en el repo
         if: always()
         run: |
