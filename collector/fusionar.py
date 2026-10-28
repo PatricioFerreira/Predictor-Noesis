@@ -36,10 +36,8 @@ def main(a, t, out):
     for k, v in p.get("rio", {}).items():
         if k in ("puerto", "represa") and isinstance(doc["rio"].get(k), dict):
             merge(doc["rio"][k], v)
-        elif k == "prevision" and isinstance(doc["rio"].get(k), dict):
-            despues = doc["rio"][k].get("despues")
-            doc["rio"][k] = v
-            if despues: doc["rio"][k]["despues"] = despues
+        elif k == "prevision":
+            doc["rio"][k] = v  # el texto "despues" lo escribía la tarea a mano y quedaba viejo: ya no se conserva
         else:
             doc["rio"][k] = v
     viejas = [x for x in doc.get("alertas", []) if x.get("fuente") not in AUTO and not str(x.get("fuente", "")).startswith(("ECMWF", "CARU"))]

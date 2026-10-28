@@ -348,7 +348,7 @@ function render(){
   const rainW=z.dias.reduce((s,d)=>s+(d.nuestro.mm||0),0);
   const ps=z.presionSerie||[], pNow=a.presion, pMin=ps.length?ps.reduce((x,y)=>y.hPa<x.hPa?y:x):null;
   const dP=pMin&&pNow?pMin.hPa-pNow:0;
-  const st=r.aguasArriba.estaciones, over=st.filter(s=>s.nivel>=s.inund).length;
+  const st=r.aguasArriba.estaciones, over=st.filter(s=>s.nivel>=s.inund).length, hSGB=edadSGB(r.aguasArriba.fecha), viejoSGB=hSGB!=null&&hSGB>36;
   const dmax=z.dias[1].nuestro.tmax-d0.nuestro.tmax;
   const fu=DATA.fuentes||[], nPro=fu.filter(f=>f.rol==="pronóstico"&&f.estado==="activa").length, nAct=fu.filter(f=>f.estado==="activa").length;
 
@@ -424,7 +424,7 @@ function render(){
     <div class="card">
       <div class="eyebrow">Río en el puerto de Salto · últimas mediciones y próximos 7 días</div>
       ${r.prevision?`<div class="hzmain"><div class="chartbox" style="height:230px"><canvas id="cPrev" aria-label="Altura prevista del río"></canvas></div>
-      <div class="legend"><span><i style="background:var(--fg);border-radius:50%;width:8px;height:8px"></i>medido</span><span><i style="background:var(--river)"></i>previsto</span><span><i style="background:var(--warn);width:8px;height:8px;clip-path:polygon(50% 0,100% 100%,0 100%)"></i>lo que habíamos previsto 1 día antes</span><span><i style="background:rgba(78,168,255,.35);height:8px"></i>rango posible</span><span><i style="background:var(--alert)"></i>12 m: inicio de evacuaciones</span></div></div><div class="hzside">
+      <div class="legend"><span><i style="background:var(--fg);border-radius:50%;width:8px;height:8px"></i>medido</span><span><i style="background:var(--river)"></i>previsto</span><span><i style="background:var(--warn);width:8px;height:8px;clip-path:polygon(50% 0,100% 100%,0 100%)"></i>lo que habíamos previsto 2 días antes (48 h)</span><span><i style="background:rgba(78,168,255,.35);height:8px"></i>rango posible</span><span><i style="background:var(--alert)"></i>12 m: inicio de evacuaciones</span></div></div><div class="hzside">
       <p class="insight">${esc(r.prevision.lectura)}</p>
       ${(r.prevision.verificacion||[]).length?`<div class="eyebrow" style="margin-top:14px">Qué tan bien venimos acertando · últimos 30 días${r.prevision.corregido?" · previsión ya corregida con esto":""}</div>
       <div style="overflow-x:auto"><table class="tbl num" style="margin-top:8px;min-width:0"><thead><tr><th>Con anticipación de</th>${r.prevision.verificacion.map(v=>`<th>${v.dias} día${v.dias>1?"s":""}</th>`).join("")}</tr></thead><tbody>
@@ -464,11 +464,12 @@ function render(){
 
   <div class="sec-title"><div><div class="eyebrow">Río Uruguay</div><h2>La cuenca y la ciudad</h2></div><p>Alturas en escala local del puerto · cota oficial = local + 1,1 m</p></div>
   <section class="card">
-    <div class="eyebrow">Cuenca del río Uruguay · niveles del ${esc(r.aguasArriba.fecha)}</div>
+    <div class="eyebrow">Cuenca del río Uruguay · niveles del ${esc(r.aguasArriba.fecha)}${viejoSGB?` · <span class="stale">sin actualizar hace ${nf(Math.floor(hSGB/24))} día${Math.floor(hSGB/24)===1?"":"s"}</span>`:""}</div>
+    ${viejoSGB?`<div class="pending" style="border-color:rgba(255,197,61,.5);margin-top:10px"><b style="color:var(--warn)">Boletín de Brasil desactualizado.</b> El Servicio Geológico de Brasil no publicó un boletín nuevo desde el ${esc(r.aguasArriba.fecha)}; los niveles de las estaciones brasileñas son de esa fecha, por eso en el esquema aparecen en gris y no generan alerta. No entran en la previsión del puerto de Salto, que usa la telemetría de CTM (Garruchos, Santo Tomé, Paso de los Libres y Salto, cada 15 min).</div>`:""}
     <h3 style="font-size:18px;margin-top:6px">De Iraí (Brasil) a Salto: dónde está cada estación</h3>
-    <div class="basinmap">${basinSVG(st)}</div>
+    <div class="basinmap">${basinSVG(st,viejoSGB)}</div>
     <div class="maplegend"><span><i style="background:#3ddc97"></i>normal (menos del 80 % de la cota de inundación)</span><span><i style="background:#ff8a3d"></i>atención (80–100 %)</span><span><i style="background:#ff4d5e"></i>sobre la cota de inundación</span><span><i style="background:#4ea8ff"></i>telemetría CTM (sin cota publicada)</span><span>▼ pronóstico en baja</span></div>
-    <p class="insight">El agua baja de noreste a suroeste. ${over} de ${st.length} estaciones están sobre su cota de inundación; las tres con pronóstico del Servicio Geológico de Brasil bajan (Uruguaiana de ${nf(st.at(-1).nivel/100,2)} a ${nf(st.at(-1).prev/100,2)} m). Lo que hoy pasa por Uruguaiana llega al embalse de Salto Grande en los días siguientes. Esquema orientativo, no a escala exacta.</p>
+    <p class="insight">El agua baja de noreste a suroeste. ${viejoSGB?`Según el último boletín de Brasil (${esc(r.aguasArriba.fecha)}), `:""}${over} de ${st.length} estaciones ${viejoSGB?"estaban":"están"} sobre su cota de inundación; las tres con pronóstico del Servicio Geológico de Brasil bajan (Uruguaiana de ${nf(st.at(-1).nivel/100,2)} a ${nf(st.at(-1).prev/100,2)} m). ${viejoSGB?"":"Lo que hoy pasa por Uruguaiana llega al embalse de Salto Grande en los días siguientes."} Esquema orientativo, no a escala exacta.</p>
     ${r.ctm?`<div class="eyebrow" style="margin-top:16px">Tramo argentino-brasileño · ${esc(r.ctm.fuente)} · ${esc(r.ctm.fecha)}</div>
     <div style="overflow-x:auto;margin-top:8px"><table class="tbl num"><thead><tr><th>Estación (de arriba hacia abajo)</th>${r.ctm.dias.map(d=>`<th>${esc(d)}</th>`).join("")}<th>Caudal</th><th>Cambio</th></tr></thead><tbody>
     ${r.ctm.estaciones.map(e=>{const q=e.q, ch=q?(q.at(-1)-q[0])/q[0]*100:null;return `<tr><td>${esc(e.n)}</td>${e.niv.map(v=>`<td>${nf(v,2)} m</td>`).join("")}<td>${q?nf(q.at(-1))+" m³/s":"–"}</td><td class="${ch==null?"":ch<0?"down":"up"}">${ch==null?"–":(ch<0?"▼ ":"▲ ")+nf(Math.abs(ch))+" %"}</td></tr>`}).join("")}
@@ -661,6 +662,7 @@ function rioNivel(v){if(v==null) return {c:"var(--muted)",t:""};
   if(v>=10) return {c:"#4ea8ff",t:"azul: entre 10 y 11 m, río alto sin riesgo"};
   return {c:"#3ddc97",t:"verde: menos de 10 m, normal"};}
 function hoyDM(){const n=new Date();return String(n.getDate()).padStart(2,"0")+"/"+String(n.getMonth()+1).padStart(2,"0")}
+function edadSGB(f){const m=/^(\d\d)\/(\d\d) (\d\d):(\d\d)/.exec(f||""); if(!m) return null; const n=new Date(); let d=new Date(n.getFullYear(),+m[2]-1,+m[1],+m[3],+m[4]); if(d-n>864e5) d.setFullYear(d.getFullYear()-1); return (n-d)/36e5}
 function rioMed(r){const u=(r.puerto||{}).ultimaMedicion; if(!u||!u.fecha) return null; const f=String(u.fecha); const d=f.length>=10&&f[4]==="-"?f.slice(8,10)+"/"+f.slice(5,7):""; return d===hoyDM()?{h:u.altura,hora:f.slice(11,16)}:null}
 function rioHoy(r){const p=r.puerto||{}, d=(r.prevision&&r.prevision.dias||[])[0], m=rioMed(r);
   if(m) return {h:m.h,nota:"medido "+m.hora};
@@ -755,7 +757,7 @@ const GEO={
   "São Borja":[-56.00,-28.66],"Itaqui":[-56.55,-29.12],"Uruguaiana":[-57.09,-29.75]};
 const RIVER=[[-51.9,-27.46],[-52.6,-27.25],[-53.25,-27.18],[-53.71,-27.17],[-54.08,-27.40],[-54.67,-27.57],[-55.02,-27.85],[-55.40,-27.98],[-55.64,-28.18],[-56.00,-28.66],[-56.55,-29.12],[-57.09,-29.75],[-57.61,-30.25],[-57.78,-30.79],[-57.90,-31.10],[-57.94,-31.27],[-57.97,-31.38],[-58.08,-32.32],[-58.31,-33.12],[-58.42,-33.88]];
 const URUGUAY=[[-57.61,-30.25],[-57.1,-30.12],[-56.47,-30.40],[-56.0,-30.75],[-55.55,-30.90],[-55.0,-31.3],[-54.15,-31.88],[-53.38,-32.58],[-53.1,-33.0],[-53.37,-33.74],[-53.8,-34.4],[-54.16,-34.66],[-54.95,-34.97],[-55.27,-34.86],[-56.16,-34.91],[-56.9,-34.45],[-57.84,-34.47],[-58.42,-33.88],[-58.31,-33.12],[-58.08,-32.32],[-57.97,-31.38],[-57.78,-30.79]];
-function basinSVG(st){
+function basinSVG(st,viejo){
   const r=DATA.rio, W=1000, H=960, F="Inter,system-ui,sans-serif", MO="JetBrains Mono,monospace";
   /* proyección: zona del río, a la izquierda; columna de carteles a la derecha */
   const {lon0,lat1,k,s,ox,oy}=GEOMAP.proj;
@@ -770,8 +772,8 @@ function basinSVG(st){
   const E=[];
   const BRsel=["Iraí","Porto Mauá","Garruchos","São Borja","Itaqui","Uruguaiana"];
   for(const x of st||[]){ if(!GEO2[x.n]||x.nivel==null||!BRsel.includes(x.n)) continue; const q=x.inund?x.nivel/x.inund:null;
-    E.push({n:x.n,pais:"BR",v:x.nivel/100,lim:x.inund?x.inund/100:null,col:q==null?BLU:q>=1?RED:q>=.8?ORA:GRN,alerta:q!=null&&q>=.8,
-      sub:x.inund?`inunda a ${nf(x.inund/100,2)} m${x.tend==="baja"?" · ▼ baja":x.tend==="sube"?" · ▲ sube":""}`:"",prio:q==null?0:q}); }
+    E.push({n:x.n,pais:"BR",v:x.nivel/100,lim:x.inund?x.inund/100:null,col:viejo?"#6b7385":q==null?BLU:q>=1?RED:q>=.8?ORA:GRN,alerta:!viejo&&q!=null&&q>=.8,
+      sub:x.inund?`inunda a ${nf(x.inund/100,2)} m${viejo?" · dato del "+esc((r.aguasArriba||{}).fecha||"").slice(0,5):x.tend==="baja"?" · ▼ baja":x.tend==="sube"?" · ▲ sube":""}`:"",prio:q==null?0:q}); }
   const T=r.estacionesCTM||{};
   const ctmSel=[["Paso de los Libres",null],["Salto Grande",null],["Puerto Concordia",11],["Salto",12]];
   for(const [n,lim] of ctmSel){ const t=T[n]; if(!t||t.nivel==null) continue;
@@ -863,10 +865,10 @@ function basinSVG(st){
   <g transform="translate(${dx-34} ${dy+6})"><rect x="-13" y="-10" width="26" height="14" rx="2" fill="#dfe9f7"/><path d="M-8 -7 v9 M-3 -7 v9 M2 -7 v9 M7 -7 v9" stroke="#0b1424" stroke-width="2"/></g>
   ${city("Bella Unión",-57.61,-30.25)}${city("Paysandú",-58.08,-32.32)}${city("Montevideo",-56.16,-34.91)}
   ${E.map(cartel).join("")}${E.map(marcador).join("")}
-  ${(()=>{const br=E.filter(e=>e.pais==="BR"), brA=br.some(e=>e.col===RED)?"alerta":br.some(e=>e.alerta)?"atencion":"normal";
+  ${(()=>{const br=E.filter(e=>e.pais==="BR"), brA=viejo?"sin dato":br.some(e=>e.col===RED)?"alerta":br.some(e=>e.alerta)?"atencion":"normal";
     const niv=(n,al,at)=>{const t=T[n]; if(!t||t.nivel==null) return "sin dato"; return t.nivel>=al?"alerta":t.nivel>=at?"atencion":"normal"};
     const uy=niv("Salto",12,11), ar=niv("Puerto Concordia",12,11);
-    const C={alerta:["#d7263d","ALERTA"],atencion:["#c45a12","ATENCIÓN"],normal:["#1f6b45","NORMAL"],"sin dato":["#334155","SIN DATO"]};
+    const C={alerta:["#d7263d","ALERTA"],atencion:["#c45a12","ATENCIÓN"],normal:["#1f6b45","NORMAL"],"sin dato":["#334155",viejo?"SIN DATOS NUEVOS":"SIN DATO"]};
     const chips=[["URUGUAY",uy,"Salto"],["ARGENTINA",ar,"Concordia"],["BRASIL",brA,"SGB"]];
     let x=10; const html=chips.map(([p,e])=>{const w=(p.length+C[e][1].length+3)*8.6+18; const g=`<g><rect x="${x}" y="22" width="${w}" height="26" rx="13" fill="${C[e][0]}"/><text x="${x+13}" y="40" font-size="11.5" font-weight="800" fill="#fff" letter-spacing=".8" font-family="${F}">${p} · ${C[e][1]}</text></g>`; x+=w+8; return g}).join("");
     const donde=chips.filter(c=>c[1]==="alerta").map(c=>c[0][0]+c[0].slice(1).toLowerCase());
@@ -1008,7 +1010,7 @@ function drawCharts(z,r){
   if(pv&&$("#cPrev")){const M=(r.puerto.serie||[]).filter(p=>p.tipo==="medido").slice(-6), n=M.length, D=(M.length&&M.at(-1).f===hoyDM())?pv.dias.slice(1):pv.dias, lab=[...M.map(p=>p.f),...D.map(d=>d.f)];
     const pad=a=>[...Array(n).fill(null),...a];
     charts.push(new Chart($("#cPrev"),{type:"line",data:{labels:lab,datasets:[
-      {label:"previsto 1 día antes",data:[...M.map(p=>{const c=(pv.comparacion||[]).find(x=>x.anticipacion===1&&x.fecha.slice(8,10)+"/"+x.fecha.slice(5,7)===p.f);return c?c.previsto:null}),...Array(D.length).fill(null)],showLine:false,pointStyle:"triangle",pointRadius:6,borderColor:css("--warn"),backgroundColor:css("--warn")},
+      {label:"previsto 48 h antes",data:[...M.map(p=>{const c=(pv.comparacion||[]).find(x=>x.anticipacion===2&&x.fecha.slice(8,10)+"/"+x.fecha.slice(5,7)===p.f);return c?c.previsto:null}),...Array(D.length).fill(null)],showLine:false,pointStyle:"triangle",pointRadius:6,borderColor:css("--warn"),backgroundColor:css("--warn")},
       {label:"medido",data:[...M.map(p=>p.h),...Array(D.length).fill(null)],borderColor:css("--river"),backgroundColor:css("--fg"),borderDash:[2,3],borderWidth:1.5,pointRadius:5,pointHoverRadius:6},
       {label:"máximo",data:pad(D.map(d=>d.max)),borderColor:"transparent",backgroundColor:"rgba(78,168,255,.18)",fill:"+1",pointRadius:0,tension:.35},
       {label:"mínimo",data:pad(D.map(d=>d.min)),borderColor:"transparent",pointRadius:0,tension:.35},

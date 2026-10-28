@@ -257,6 +257,11 @@ def armar(ahora, ZONAS, res, med, rep, ctm, cuenca, nuestro, ver, inu, errores, 
     # alertas automáticas
     alertas = []
     sg = (docs.get("sgb") or {}).get("estaciones") or []
+    try:  # boletín de Brasil viejo (más de 48 h): no genera alertas
+        fb = dt.datetime.strptime(f"{ahora.year}/{docs['sgb']['fecha']}", "%Y/%d/%m %H:%M")
+        if (ahora.replace(tzinfo=None) - fb).total_seconds() > 48 * 3600: sg = []
+    except Exception:
+        pass
     sobre = [e for e in sg if e.get("nivel") and e.get("inund") and e["nivel"] >= e["inund"]]
     cerca = [e for e in sg if e.get("nivel") and e.get("inund") and 0.8 * e["inund"] <= e["nivel"] < e["inund"]]
     if sobre or cerca:
