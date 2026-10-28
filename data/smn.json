@@ -1,1 +1,1 @@
-{"init":"2026-10-28T12:00:00+00:00","fuente":"SMN Argentina WRF 4 km (AWS smn-ar-wrf)","zonas":{"salto":[],"montevideo":[],"este":[]}}
+{"init":"2026-10-28T12:00:00+00:00","fuente":"SMN Argentina WRF 4 km (AWS smn-ar-wrf)","zonas":{"salto":[{"fecha":"2026-10-29","tmax":27.2,"tmin":11.9,"mm":0.1,"vientoKmh":11,"vientoDir":13}],"montevideo":[{"fecha":"2026-10-29","tmax":16.4,"tmin":11.9,"mm":0.2,"vientoKmh":29,"vientoDir":110}],"este":[{"fecha":"2026-10-29","tmax":18.5,"tmin":10.2,"mm":0.1,"vientoKmh":22,"vientoDir":130}]}}
