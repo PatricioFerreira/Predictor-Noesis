@@ -1,0 +1,4 @@
+throw 'allowScriptTagRemoting is false.';
+//#DWR-REPLY
+if (window.dwr) dwr.engine.remote.handleBatchException({ name:'java.lang.IllegalArgumentException', message:'Failed to find parameter: windowName' });
+else if (window.parent.dwr) window.parent.dwr.engine.remote.handleBatchException({ name:'java.lang.IllegalArgumentException', message:'Failed to find parameter: windowName' });

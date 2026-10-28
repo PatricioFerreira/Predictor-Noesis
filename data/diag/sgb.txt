@@ -1,14 +1,15 @@
-=== raiz.html <- https://sace.sgb.gov.br/
-HTTP 200 · text/html; charset=utf-8 · 12447 bytes · final https://sace.sgb.gov.br/
-=== lista.html <- https://sace.sgb.gov.br/estacoes_lista.php?bacia=uruguai
-HTTP 200 · text/html; charset=utf-8 · 19775 bytes · final https://sace.sgb.gov.br/estacoes_lista.php?bacia=uruguai
-=== mapa.html <- https://sace.sgb.gov.br/estacoes_mapa.php?bacia=uruguai
-HTTP 200 · text/html; charset=utf-8 · 56183 bytes · final https://sace.sgb.gov.br/estacoes_mapa.php?bacia=uruguai
-=== uruguai.html <- https://sace.sgb.gov.br/uruguai/
-HTTP 200 · text/html; charset=iso-8859-1 · 58006 bytes · final https://sace.sgb.gov.br/uruguai/
-=== boletimScript.js <- https://sace.sgb.gov.br/uruguai/jsJawrPath/telas/publicacao/boletim/boletimScript.js
-HTTP 200 · text/javascript; charset=UTF-8 · 22035 bytes · final https://sace.sgb.gov.br/uruguai/jsJawrPath/telas/publicacao/boletim/boletimScript.js
-=== textoBoletimScript.js <- https://sace.sgb.gov.br/uruguai/jsJawrPath/telas/publicacao/textoBoletim/textoBoletimScript.js
-HTTP 200 · text/javascript; charset=UTF-8 · 2666 bytes · final https://sace.sgb.gov.br/uruguai/jsJawrPath/telas/publicacao/textoBoletim/textoBoletimScript.js
-=== nota.html <- https://www.sgb.gov.br/w/rs-monitoramento-no-rio-uruguai-aponta-estabilizacao-em-sao-borja-e-elevacao-dos-niveis-em-itaqui-e-uruguaiana
-HTTP 200 · text/html;charset=UTF-8 · 265638 bytes · final https://www.sgb.gov.br/w/rs-monitoramento-no-rio-uruguai-aponta-estabilizacao-em-sao-borja-e-elevacao-dos-niveis-em-itaqui-e-uruguaiana
+=== rel_uruguaiana.html <- https://sace.sgb.gov.br/relatorio.php?bacia=uruguai&pm=29&s=172&sr=173
+HTTP 200 · text/html; charset=utf-8 · 5239 bytes
+=== rel_saoborja.html <- https://sace.sgb.gov.br/relatorio.php?bacia=uruguai&pm=33&s=202&sr=203
+HTTP 200 · text/html; charset=utf-8 · 5245 bytes
+=== rel_itaqui_graf.html <- https://sace.sgb.gov.br/relatorio.php?apenas_grafico=sim&bacia=uruguai&pm=32&s=190&sr=191
+HTTP 200 · text/html; charset=utf-8 · 4817 bytes
+=== dwr_iface.js <- https://sace.sgb.gov.br/uruguai/dwr/interface/BoletimService.js
+HTTP 200 · text/javascript; charset=utf-8 · 4755 bytes
+=== dwr_call.txt
+HTTP 200 · 386 bytes
+throw 'allowScriptTagRemoting is false.';
+//#DWR-REPLY
+if (window.dwr) dwr.engine.remote.handleBatchException({ name:'java.lang.IllegalArgumentException', message:'Failed to find parameter: windowName' });
+else if (window.parent.dwr) window.parent.dwr.engine.remote.handleBatchException({ name:'java.lang.IllegalArgumentException', message:'Failed to find parameter: windowName' });
+

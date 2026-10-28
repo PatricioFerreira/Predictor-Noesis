@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SACE Níveis da Estação</title>
+	<link href="img/sgbfavicon.ico" rel="shortcut icon">
+    <script src="./scripts/jquery-3.7.1.js"></script>
+    <link rel="stylesheet" href="./templates/styles.css">
+    <link rel="stylesheet" href="./templates/bootstrap.min.css">
+    <script src="./scripts/bootstrap.bundle.min.js"></script>
+    <script src="./scripts/chart.umd.js"></script>
+    <script src="./scripts/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        .bolinha {
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 4px;
+            width: 1em;
+            height: 1em;
+            vertical-align: middle;
+            margin-bottom: 3px;
+        }
+        /* Modo popup (apenas_grafico, dentro do iframe do mapa): o conteúdo ocupa
+           toda a altura do iframe e o gráfico usa o espaço que sobrar entre o
+           cabeçalho e os botões, então não depende da altura da tela. */
+        body.modo-popup {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* só rola se faltar altura até para o gráfico mínimo */
+        }
+        body.modo-popup > .container-fluid {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .modo-popup #cabecalhoGrafico,
+        .modo-popup #botoesContainer {
+            flex: 0 0 auto;
+        }
+        .modo-popup #graficoContainer {
+            flex: 1 1 0;
+            min-height: 160px; /* altura mínima do gráfico */
+            position: relative; /* exigido pelo Chart.js para dimensionar o canvas */
+            overflow: hidden;
+        }
+        .modo-popup #primeiroGrafico {
+            display: block;
+            margin-bottom: 0;
+        }
+        .modo-popup #tbContainer {
+            flex: 1 1 0;
+            min-height: 0;
+            overflow: auto; /* a tabela rola dentro do popup */
+        }
+        @media (max-width: 767.98px) {
+            #logo_sgb_grafico,
+            .csv-btn {
+                display: none !important;
+            }
+            /* Botões lado a lado ("Ver dados" + "Ir para último boletim");
+               só quebram de linha se a tela for estreita demais para os dois */
+            #botoesContainer {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            #botoesContainer > div:first-child {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            #botaoBoletimWrapper {
+                position: static !important;
+                padding-right: 0 !important;
+            }
+            #botaoBoletim {
+                min-width: 0 !important;
+                white-space: nowrap;
+            }
+            /* Cabeçalho mais compacto para evitar a barra de rolagem vertical */
+            .container-fluid {
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+            #cabecalhoGrafico h2 {
+                margin-bottom: 0.25rem !important;
+            }
+            #cabecalhoGrafico p {
+                line-height: 1.25;
+            }
+        }
+        @media print {
+            #graficoContainer,
+            #botoesContainer,
+            #logo_sgb_grafico,
+            #botaoImprimir,
+            .no-print {
+                display: none !important;
+            }
+            #tbContainer {
+                display: block !important;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #cotasReferencia {
+                page-break-inside: avoid;
+            }
+            body.modo-popup {
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            body.modo-popup > .container-fluid {
+                display: block !important;
+            }
+            .modo-popup #tbContainer,
+            .table-responsive {
+                flex: none !important;
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+        }
+    </style>
+ </head>
+
+ <body class="">
+
+<header style="display: flex; align-items: center; gap: 2px; padding: 10px 0;">
+    <meta name="robots" content="noindex, nofollow" />
+    <img id="logo_sgb" src="./img/topo_logocprm_v2.png" style="height: 40px; width: auto; vertical-align: middle; margin-right: -60px;"/>
+    <h1 style="font-size: 1rem; font-weight: bold; margin: 0; padding: 0; vertical-align: middle;">SACE Uruguai Níveis das Estações</h1>
+</header>
+<div style="text-align:center; margin-top:40px;"><b>Nível do rio Uruguai e altura de chuva - Uruguaiana</b><br /><br />Dados insuficientes para exibição do gráfico </div>
