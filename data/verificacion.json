@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-29T05:04:05.379449+00:00",
+ "generado": "2026-10-29T06:04:05.441798+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -687,42 +687,42 @@
    "humedad": {
     "ecmwf": {
      "mae": 3.0,
-     "sesgo": 2.75,
+     "sesgo": 3.0,
      "n": 8
     },
     "gfs": {
      "mae": 6.75,
-     "sesgo": -6.75,
+     "sesgo": -6.5,
      "n": 8
     },
     "icon": {
-     "mae": 1.88,
-     "sesgo": 0.62,
+     "mae": 1.62,
+     "sesgo": 0.88,
      "n": 8
     },
     "gem": {
      "mae": 6.75,
-     "sesgo": -4.5,
+     "sesgo": -4.25,
      "n": 8
     },
     "jma": {
      "mae": 4.38,
-     "sesgo": 3.62,
+     "sesgo": 3.88,
      "n": 8
     },
     "arpege": {
-     "mae": 5.38,
-     "sesgo": -1.38,
+     "mae": 5.12,
+     "sesgo": -1.12,
      "n": 8
     },
     "ukmo": {
-     "mae": 8.38,
-     "sesgo": -8.38,
+     "mae": 8.12,
+     "sesgo": -8.12,
      "n": 8
     },
     "nuestro": {
      "mae": 3.0,
-     "sesgo": -1.75,
+     "sesgo": -1.5,
      "n": 8
     }
    },
@@ -1069,43 +1069,43 @@
    },
    "humedad": {
     "ecmwf": {
-     "mae": 6.0,
-     "sesgo": 5.56,
+     "mae": 5.89,
+     "sesgo": 5.44,
      "n": 9
     },
     "gfs": {
-     "mae": 5.67,
-     "sesgo": 2.56,
+     "mae": 5.78,
+     "sesgo": 2.44,
      "n": 9
     },
     "icon": {
-     "mae": 4.67,
-     "sesgo": 4.67,
+     "mae": 4.56,
+     "sesgo": 4.56,
      "n": 9
     },
     "gem": {
-     "mae": 4.44,
-     "sesgo": 3.78,
+     "mae": 4.33,
+     "sesgo": 3.67,
      "n": 9
     },
     "jma": {
-     "mae": 4.89,
-     "sesgo": 4.67,
+     "mae": 4.78,
+     "sesgo": 4.56,
      "n": 9
     },
     "arpege": {
-     "mae": 6.11,
-     "sesgo": 3.44,
+     "mae": 6.22,
+     "sesgo": 3.33,
      "n": 9
     },
     "ukmo": {
-     "mae": 3.33,
-     "sesgo": 0.44,
+     "mae": 3.44,
+     "sesgo": 0.33,
      "n": 9
     },
     "nuestro": {
-     "mae": 5.22,
-     "sesgo": 2.11,
+     "mae": 5.33,
+     "sesgo": 2.0,
      "n": 9
     }
    },
