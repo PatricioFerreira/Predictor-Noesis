@@ -1,5 +1,5 @@
 {
- "generado": "2026-10-30T09:02:12.853552+00:00",
+ "generado": "2026-10-30T10:02:12.869677+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -303,43 +303,43 @@
    },
    "humedad": {
     "ecmwf": {
-     "mae": 7.8,
-     "sesgo": 5.6,
+     "mae": 7.9,
+     "sesgo": 5.7,
      "n": 10
     },
     "gfs": {
-     "mae": 6.8,
-     "sesgo": 2.2,
+     "mae": 6.7,
+     "sesgo": 2.3,
      "n": 10
     },
     "icon": {
-     "mae": 5.5,
-     "sesgo": 4.5,
+     "mae": 5.6,
+     "sesgo": 4.6,
      "n": 10
     },
     "gem": {
-     "mae": 4.7,
-     "sesgo": 2.5,
+     "mae": 4.8,
+     "sesgo": 2.6,
      "n": 10
     },
     "jma": {
-     "mae": 6.2,
-     "sesgo": 3.0,
+     "mae": 6.1,
+     "sesgo": 3.1,
      "n": 10
     },
     "arpege": {
-     "mae": 6.1,
-     "sesgo": 3.9,
+     "mae": 6.0,
+     "sesgo": 4.0,
      "n": 10
     },
     "ukmo": {
-     "mae": 5.9,
-     "sesgo": 3.9,
+     "mae": 6.0,
+     "sesgo": 4.0,
      "n": 10
     },
     "nuestro": {
-     "mae": 5.3,
-     "sesgo": 2.7,
+     "mae": 5.2,
+     "sesgo": 2.8,
      "n": 10
     }
    },
@@ -1022,48 +1022,48 @@
    },
    "dir": {
     "ecmwf": {
-     "mae": 17.6,
-     "sesgo": -2.6,
+     "mae": 17.5,
+     "sesgo": -2.9,
      "n": 10
     },
     "gfs": {
-     "mae": 30.8,
-     "sesgo": 6.6,
+     "mae": 31.1,
+     "sesgo": 6.3,
      "n": 10
     },
     "icon": {
-     "mae": 17.5,
-     "sesgo": -2.3,
+     "mae": 17.2,
+     "sesgo": -2.6,
      "n": 10
     },
     "gem": {
-     "mae": 23.6,
-     "sesgo": 3.6,
+     "mae": 23.3,
+     "sesgo": 3.3,
      "n": 10
     },
     "jma": {
-     "mae": 30.7,
-     "sesgo": 8.1,
+     "mae": 31.0,
+     "sesgo": 7.8,
      "n": 10
     },
     "arpege": {
-     "mae": 25.2,
-     "sesgo": -0.2,
+     "mae": 24.9,
+     "sesgo": -0.5,
      "n": 10
     },
     "ukmo": {
-     "mae": 28.4,
-     "sesgo": -26.2,
+     "mae": 28.7,
+     "sesgo": -26.5,
      "n": 10
     },
     "smn": {
-     "mae": 38.11,
-     "sesgo": 12.78,
+     "mae": 37.78,
+     "sesgo": 12.44,
      "n": 9
     },
     "nuestro": {
-     "mae": 23.8,
-     "sesgo": 4.0,
+     "mae": 23.5,
+     "sesgo": 3.7,
      "n": 10
     }
    },
