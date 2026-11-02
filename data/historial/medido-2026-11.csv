@@ -1,1 +1,4 @@
 fecha,zona,tmax,tmin,mm,viento,dir,humedad,pmin,n,estacion
+2026-11-01,este,26.1,14.7,7.0,29,50,79,1010,27,SULS
+2026-11-01,montevideo,25.3,15.4,0.0,30,23,84,1010,30,SUMU
+2026-11-01,salto,27.3,13.9,0.0,18,53,65,1008.2,24,SUSO
