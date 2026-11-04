@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-04T22:04:01.213615+00:00",
+ "generado": "2026-11-04T23:04:03.966638+00:00",
  "zonas": {
   "salto": {
    "estacion": "SUSO",
@@ -7,7 +7,7 @@
     "t": "2026-11-04T19:00:00-03:00",
     "hora": "19:00",
     "temp": 23,
-    "presion": 1009,
+    "presion": 1009.6,
     "humedad": 69,
     "vientoKmh": 13,
     "vientoDir": 220,
@@ -18,8 +18,7 @@
     "previsto": 22.1,
     "desvio": 0.9,
     "presionPrevista": 1009.7,
-    "presionSynop": 1008.9,
-    "desvioPresion": -0.7,
+    "desvioPresion": -0.1,
     "previstoCorregido": 20.2
    },
    "dias": [
@@ -45,7 +44,7 @@
      "mm": 2.0,
      "vientoKmh": 15,
      "vientoDir": 214,
-     "humedad": 69,
+     "humedad": 70,
      "presionMin": 1009,
      "mmFuente": "pluviómetro CTM Salto"
     },
@@ -71,17 +70,12 @@
      "mm": 0.0,
      "vientoKmh": 25,
      "vientoDir": 177,
-     "humedad": 84,
+     "humedad": 83,
      "presionMin": 1003.7,
      "mmFuente": "pluviómetro CTM Salto"
     }
    ],
    "synop": [
-    {
-     "t": "2026-11-02T14:00:00-03:00",
-     "temp": 29.4,
-     "hPa": 1010.2
-    },
     {
      "t": "2026-11-02T15:00:00-03:00",
      "temp": 29.5,
@@ -341,21 +335,21 @@
      "t": "2026-11-04T18:00:00-03:00",
      "temp": 24.7,
      "hPa": 1008.9
+    },
+    {
+     "t": "2026-11-04T19:00:00-03:00",
+     "temp": 23.1,
+     "hPa": 1009.6
     }
    ],
    "sesgo": {
-    "temp": 1.91,
+    "temp": 1.92,
     "nTemp": 117,
     "presion": -0.14,
     "nPresion": 117,
     "dias": 7
    },
    "horariaCorregida": [
-    {
-     "t": "2026-11-04T19:00",
-     "temp": 20.2,
-     "hPa": 1009.8
-    },
     {
      "t": "2026-11-04T20:00",
      "temp": 18.9,
@@ -470,12 +464,17 @@
      "t": "2026-11-05T18:00",
      "temp": 22.0,
      "hPa": 1011.6
+    },
+    {
+     "t": "2026-11-05T19:00",
+     "temp": 20.2,
+     "hPa": 1011.7
     }
    ],
    "represa": {
     "fuente": "CTM Salto Grande, temperatura ambiente en la represa",
     "ultimo": {
-     "t": "2026-11-04T19:00:00-03:00",
+     "t": "2026-11-04T20:00:00-03:00",
      "temp": 0.0,
      "embalse": 0.0,
      "restitucion": 0.0,
@@ -483,10 +482,6 @@
      "vertido": null
     },
     "horario": [
-     {
-      "t": "2026-11-03T19:00:00-03:00",
-      "temp": 23.3
-     },
      {
       "t": "2026-11-03T20:00:00-03:00",
       "temp": 23.06
@@ -581,6 +576,10 @@
      },
      {
       "t": "2026-11-04T19:00:00-03:00",
+      "temp": 25.01
+     },
+     {
+      "t": "2026-11-04T20:00:00-03:00",
       "temp": 0.0
      }
     ],
@@ -589,13 +588,13 @@
       "fecha": "2026-11-03",
       "tmax": 24.77,
       "tmin": 23.06,
-      "n": 5
+      "n": 4
      },
      {
       "fecha": "2026-11-04",
       "tmax": 27.69,
       "tmin": 0.0,
-      "n": 20
+      "n": 21
      }
     ]
    }
@@ -603,36 +602,36 @@
   "montevideo": {
    "estacion": "SUMU",
    "actual": {
-    "t": "2026-11-04T19:00:00-03:00",
-    "hora": "19:00",
-    "temp": 20,
+    "t": "2026-11-04T20:00:00-03:00",
+    "hora": "20:00",
+    "temp": 18,
     "presion": 1009,
-    "humedad": 73,
-    "vientoKmh": 15,
+    "humedad": 83,
+    "vientoKmh": 9,
     "vientoDir": 280,
     "nubosidad": 1,
     "fenomeno": null,
-    "cielo": "sol",
+    "cielo": "luna",
     "fuente": "METAR SUMU (aeropuerto)",
-    "previsto": 19.9,
-    "desvio": 0.1,
-    "presionPrevista": 1008.5,
-    "presionSynop": 1007.9,
-    "desvioPresion": 0.5,
-    "previstoCorregido": 19.6
+    "previsto": 19.3,
+    "desvio": -1.3,
+    "presionPrevista": 1009.1,
+    "presionSynop": 1008.6,
+    "desvioPresion": -0.1,
+    "previstoCorregido": 19.0
    },
    "dias": [
     {
      "fecha": "2026-10-31",
-     "tmax": 18,
+     "tmax": 17,
      "tmin": 17,
-     "n": 4,
+     "n": 3,
      "completo": false,
      "mm": null,
      "vientoKmh": 24,
-     "vientoDir": 44,
+     "vientoDir": 38,
      "humedad": null,
-     "presionMin": 1013
+     "presionMin": null
     },
     {
      "fecha": "2026-11-01",
@@ -674,21 +673,16 @@
      "fecha": "2026-11-04",
      "tmax": 23.1,
      "tmin": 15.2,
-     "n": 20,
+     "n": 21,
      "completo": false,
      "mm": 0.0,
      "vientoKmh": 26,
-     "vientoDir": 264,
+     "vientoDir": 267,
      "humedad": 78,
      "presionMin": 1007.9
     }
    ],
    "synop": [
-    {
-     "t": "2026-11-02T14:00:00-03:00",
-     "temp": 21.2,
-     "hPa": 1011.5
-    },
     {
      "t": "2026-11-02T15:00:00-03:00",
      "temp": 21.0,
@@ -948,21 +942,21 @@
      "t": "2026-11-04T18:00:00-03:00",
      "temp": 22.3,
      "hPa": 1007.9
+    },
+    {
+     "t": "2026-11-04T19:00:00-03:00",
+     "temp": 20.1,
+     "hPa": 1008.6
     }
    ],
    "sesgo": {
     "temp": 0.26,
-    "nTemp": 134,
-    "presion": -0.29,
-    "nPresion": 134,
+    "nTemp": 133,
+    "presion": -0.28,
+    "nPresion": 133,
     "dias": 7
    },
    "horariaCorregida": [
-    {
-     "t": "2026-11-04T19:00",
-     "temp": 19.6,
-     "hPa": 1008.8
-    },
     {
      "t": "2026-11-04T20:00",
      "temp": 19.0,
@@ -1077,42 +1071,47 @@
      "t": "2026-11-05T18:00",
      "temp": 21.3,
      "hPa": 1011.3
+    },
+    {
+     "t": "2026-11-05T19:00",
+     "temp": 20.3,
+     "hPa": 1011.5
     }
    ]
   },
   "este": {
    "estacion": "SULS",
    "actual": {
-    "t": "2026-11-04T19:00:00-03:00",
-    "hora": "19:00",
-    "temp": 18,
-    "presion": 1008,
-    "humedad": 88,
-    "vientoKmh": 11,
-    "vientoDir": 210,
+    "t": "2026-11-04T20:00:00-03:00",
+    "hora": "20:00",
+    "temp": 16,
+    "presion": 1009,
+    "humedad": 100,
+    "vientoKmh": 6,
+    "vientoDir": 120,
     "nubosidad": 1,
     "fenomeno": null,
-    "cielo": "sol",
+    "cielo": "luna",
     "fuente": "METAR SULS (aeropuerto)",
-    "previsto": 17.8,
-    "desvio": 0.2,
-    "presionPrevista": 1008.6,
-    "presionSynop": 1008.0,
-    "desvioPresion": -0.6,
-    "previstoCorregido": 18.3
+    "previsto": 16.8,
+    "desvio": -0.8,
+    "presionPrevista": 1009.1,
+    "presionSynop": 1008.6,
+    "desvioPresion": -0.1,
+    "previstoCorregido": 17.3
    },
    "dias": [
     {
      "fecha": "2026-10-31",
      "tmax": 16,
      "tmin": 15,
-     "n": 4,
+     "n": 3,
      "completo": false,
      "mm": null,
-     "vientoKmh": 17,
-     "vientoDir": 57,
+     "vientoKmh": 15,
+     "vientoDir": 55,
      "humedad": null,
-     "presionMin": 1013
+     "presionMin": null
     },
     {
      "fecha": "2026-11-01",
@@ -1134,7 +1133,7 @@
      "completo": true,
      "mm": null,
      "vientoKmh": 24,
-     "vientoDir": 162,
+     "vientoDir": 163,
      "humedad": 94,
      "presionMin": 1010
     },
@@ -1154,21 +1153,16 @@
      "fecha": "2026-11-04",
      "tmax": 21.1,
      "tmin": 15.4,
-     "n": 21,
+     "n": 22,
      "completo": false,
      "mm": 0.4,
      "vientoKmh": 29,
-     "vientoDir": 66,
-     "humedad": 82,
+     "vientoDir": 68,
+     "humedad": 83,
      "presionMin": 1008.0
     }
    ],
    "synop": [
-    {
-     "t": "2026-11-02T14:00:00-03:00",
-     "temp": 19.4,
-     "hPa": 1011.1
-    },
     {
      "t": "2026-11-02T15:00:00-03:00",
      "temp": 18.1,
@@ -1428,21 +1422,21 @@
      "t": "2026-11-04T18:00:00-03:00",
      "temp": 19.2,
      "hPa": 1008.0
+    },
+    {
+     "t": "2026-11-04T19:00:00-03:00",
+     "temp": 17.8,
+     "hPa": 1008.6
     }
    ],
    "sesgo": {
-    "temp": -0.52,
-    "nTemp": 128,
+    "temp": -0.53,
+    "nTemp": 127,
     "presion": 0.59,
-    "nPresion": 128,
+    "nPresion": 127,
     "dias": 7
    },
    "horariaCorregida": [
-    {
-     "t": "2026-11-04T19:00",
-     "temp": 18.3,
-     "hPa": 1008.0
-    },
     {
      "t": "2026-11-04T20:00",
      "temp": 17.3,
@@ -1557,21 +1551,26 @@
      "t": "2026-11-05T18:00",
      "temp": 20.7,
      "hPa": 1010.5
+    },
+    {
+     "t": "2026-11-05T19:00",
+     "temp": 19.6,
+     "hPa": 1010.6
     }
    ]
   }
  },
  "cuencaLluvia": {
-  "n": 75,
-  "promedio24h": 12.7,
-  "promedio72h": 16.7,
+  "n": 77,
+  "promedio24h": 12.3,
+  "promedio72h": 16.9,
   "max72h": {
    "n": "Cuay Chico",
    "lat": -28.8147,
    "lon": -56.3378,
    "lluvia24h": 72.0,
    "lluvia72h": 72.0,
-   "t": "2026-11-04T18:30:00-03:00"
+   "t": "2026-11-04T19:30:00-03:00"
   },
   "top": [
    {
@@ -1580,7 +1579,7 @@
     "lon": -56.3378,
     "lluvia24h": 72.0,
     "lluvia72h": 72.0,
-    "t": "2026-11-04T18:30:00-03:00"
+    "t": "2026-11-04T19:30:00-03:00"
    },
    {
     "n": "Aguapey",
@@ -1588,15 +1587,15 @@
     "lon": -56.542211,
     "lluvia24h": 68.0,
     "lluvia72h": 68.0,
-    "t": "2026-11-04T18:00:00-03:00"
+    "t": "2026-11-04T19:00:00-03:00"
    },
    {
-    "n": "El Soberbio",
-    "lat": -27.298582,
-    "lon": -54.193437,
-    "lluvia24h": 57.0,
+    "n": "Santo Tomé",
+    "lat": null,
+    "lon": null,
+    "lluvia24h": 66.0,
     "lluvia72h": 66.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:30:00-03:00"
    },
    {
     "n": "Santo Tom&#xE9;",
@@ -1604,7 +1603,15 @@
     "lon": -56.028995,
     "lluvia24h": 66.0,
     "lluvia72h": 66.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:30:00-03:00"
+   },
+   {
+    "n": "El Soberbio",
+    "lat": -27.298582,
+    "lon": -54.193437,
+    "lluvia24h": 57.0,
+    "lluvia72h": 62.0,
+    "t": "2026-11-04T19:45:00-03:00"
    },
    {
     "n": "Las Marias",
@@ -1612,15 +1619,15 @@
     "lon": -56.05807,
     "lluvia24h": 52.0,
     "lluvia72h": 52.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:45:00-03:00"
    },
    {
     "n": "Guaviy&#xFA; de Arapey",
     "lat": -31.037601,
     "lon": -56.635879,
-    "lluvia24h": 51.0,
+    "lluvia24h": 21.0,
     "lluvia72h": 52.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:45:00-03:00"
    },
    {
     "n": "Garruchos",
@@ -1628,7 +1635,7 @@
     "lon": -55.642269,
     "lluvia24h": 50.0,
     "lluvia72h": 50.0,
-    "t": "2026-11-04T18:00:00-03:00"
+    "t": "2026-11-04T19:00:00-03:00"
    },
    {
     "n": "Yapeyú",
@@ -1636,7 +1643,7 @@
     "lon": null,
     "lluvia24h": 48.0,
     "lluvia72h": 48.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:45:00-03:00"
    },
    {
     "n": "Yapey&#xFA;",
@@ -1644,7 +1651,7 @@
     "lon": -56.81167,
     "lluvia24h": 48.0,
     "lluvia72h": 48.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:45:00-03:00"
    },
    {
     "n": "Uguay",
@@ -1652,7 +1659,7 @@
     "lon": -57.480465,
     "lluvia24h": 43.0,
     "lluvia72h": 43.0,
-    "t": "2026-11-04T17:45:00-03:00"
+    "t": "2026-11-04T18:45:00-03:00"
    },
    {
     "n": "San Javier",
@@ -1660,7 +1667,7 @@
     "lon": -55.129216,
     "lluvia24h": 42.0,
     "lluvia72h": 42.0,
-    "t": "2026-11-04T18:45:00-03:00"
+    "t": "2026-11-04T19:45:00-03:00"
    },
    {
     "n": "Meneses",
@@ -1668,7 +1675,7 @@
     "lon": -56.411658,
     "lluvia24h": 34.0,
     "lluvia72h": 38.0,
-    "t": "2026-11-04T18:30:00-03:00"
+    "t": "2026-11-04T19:00:00-03:00"
    },
    {
     "n": "San Roquito",
@@ -1676,34 +1683,26 @@
     "lon": -57.565952,
     "lluvia24h": 37.0,
     "lluvia72h": 37.0,
-    "t": "2026-11-04T18:15:00-03:00"
+    "t": "2026-11-04T19:15:00-03:00"
    },
    {
     "n": "Sarand&#xED; de Arapey",
     "lat": -30.988557,
     "lon": -56.215761,
-    "lluvia24h": 29.0,
+    "lluvia24h": 6.0,
     "lluvia72h": 35.0,
-    "t": "2026-11-04T18:45:00-03:00"
-   },
-   {
-    "n": "Cuareim Rio",
-    "lat": -30.58639,
-    "lon": -56.230152,
-    "lluvia24h": 12.0,
-    "lluvia72h": 33.0,
-    "t": "2026-11-04T18:00:00-03:00"
+    "t": "2026-11-04T19:45:00-03:00"
    }
   ]
  },
  "rio": {
   "Salto": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
-    "nivel": 8.04,
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 8.02,
     "lluvia": 0.0
    },
-   "nivelHace24h": 8.81,
+   "nivelHace24h": 8.77,
    "nivelHace72h": 9.58,
    "lluvia24h": 0.0,
    "lluvia72h": 2.0,
@@ -1775,20 +1774,20 @@
     {
      "fecha": "2026-11-04",
      "max": 8.6,
-     "min": 8.04,
-     "ultimo": 8.04,
-     "media": 8.33,
+     "min": 8.02,
+     "ultimo": 8.02,
+     "media": 8.32,
      "lluvia": 0.0
     }
    ]
   },
   "Puerto Concordia": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
-    "nivel": 7.82,
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 7.8,
     "lluvia": 0.0
    },
-   "nivelHace24h": 8.57,
+   "nivelHace24h": 8.54,
    "nivelHace72h": 9.3,
    "lluvia24h": 0.0,
    "lluvia72h": 2.0,
@@ -1860,21 +1859,21 @@
     {
      "fecha": "2026-11-04",
      "max": 8.37,
-     "min": 7.82,
-     "ultimo": 7.82,
-     "media": 8.11,
+     "min": 7.8,
+     "ultimo": 7.8,
+     "media": 8.1,
      "lluvia": 0.0
     }
    ]
   },
   "Salto Grande": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
+    "t": "2026-11-04T19:45:00-03:00",
     "nivel": 34.96,
     "lluvia": 0.0
    },
    "nivelHace24h": 35.01,
-   "nivelHace72h": 35.03,
+   "nivelHace72h": 35.02,
    "lluvia24h": 0.0,
    "lluvia72h": 0.0,
    "dias": [
@@ -1954,8 +1953,8 @@
   },
   "Federación": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
-    "nivel": 35.03,
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 35.02,
     "lluvia": 0.0
    },
    "nivelHace24h": 35.06,
@@ -2031,7 +2030,7 @@
      "fecha": "2026-11-04",
      "max": 35.06,
      "min": 35.02,
-     "ultimo": 35.03,
+     "ultimo": 35.02,
      "media": 35.04,
      "lluvia": 0.0
     }
@@ -2039,7 +2038,7 @@
   },
   "Belén": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
+    "t": "2026-11-04T19:45:00-03:00",
     "nivel": null,
     "lluvia": 0.0
    },
@@ -2049,9 +2048,94 @@
    "lluvia72h": 4.0,
    "dias": []
   },
+  "Monte Caseros": {
+   "ultimo": {
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 4.42,
+    "lluvia": 0.0
+   },
+   "nivelHace24h": 4.92,
+   "nivelHace72h": 5.79,
+   "lluvia24h": 0.0,
+   "lluvia72h": 0.0,
+   "dias": [
+    {
+     "fecha": "2026-10-27",
+     "max": 5.52,
+     "min": 5.16,
+     "ultimo": 5.52,
+     "media": 5.36,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-28",
+     "max": 5.76,
+     "min": 5.54,
+     "ultimo": 5.76,
+     "media": 5.66,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-29",
+     "max": 5.92,
+     "min": 5.75,
+     "ultimo": 5.92,
+     "media": 5.84,
+     "lluvia": 2.0
+    },
+    {
+     "fecha": "2026-10-30",
+     "max": 6.0,
+     "min": 5.9,
+     "ultimo": 5.99,
+     "media": 5.97,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-31",
+     "max": 6.01,
+     "min": 5.95,
+     "ultimo": 5.95,
+     "media": 5.99,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-01",
+     "max": 5.95,
+     "min": 5.71,
+     "ultimo": 5.71,
+     "media": 5.85,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-02",
+     "max": 5.72,
+     "min": 5.31,
+     "ultimo": 5.31,
+     "media": 5.53,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-03",
+     "max": 5.31,
+     "min": 4.84,
+     "ultimo": 4.84,
+     "media": 5.08,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-04",
+     "max": 4.82,
+     "min": 4.42,
+     "ultimo": 4.42,
+     "media": 4.62,
+     "lluvia": 0.0
+    }
+   ]
+  },
   "Bonpland": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
+    "t": "2026-11-04T19:45:00-03:00",
     "nivel": null,
     "lluvia": 0.0
    },
@@ -2063,12 +2147,12 @@
   },
   "Paso de los Libres": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
-    "nivel": 5.5,
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 5.45,
     "lluvia": 0.0
    },
-   "nivelHace24h": 6.16,
-   "nivelHace72h": 7.37,
+   "nivelHace24h": 6.09,
+   "nivelHace72h": 7.33,
    "lluvia24h": 3.0,
    "lluvia72h": 3.0,
    "dias": [
@@ -2139,21 +2223,21 @@
     {
      "fecha": "2026-11-04",
      "max": 5.99,
-     "min": 5.5,
-     "ultimo": 5.5,
-     "media": 5.72,
+     "min": 5.45,
+     "ultimo": 5.45,
+     "media": 5.71,
      "lluvia": 3.0
     }
    ]
   },
   "Yapeyú": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
-    "nivel": 5.69,
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 5.64,
     "lluvia": 0.0
    },
-   "nivelHace24h": 6.26,
-   "nivelHace72h": 7.56,
+   "nivelHace24h": 6.24,
+   "nivelHace72h": 7.53,
    "lluvia24h": 48.0,
    "lluvia72h": 48.0,
    "dias": [
@@ -2224,17 +2308,102 @@
     {
      "fecha": "2026-11-04",
      "max": 6.1,
-     "min": 5.65,
-     "ultimo": 5.69,
-     "media": 5.88,
+     "min": 5.64,
+     "ultimo": 5.64,
+     "media": 5.86,
      "lluvia": 48.0
+    }
+   ]
+  },
+  "Santo Tomé": {
+   "ultimo": {
+    "t": "2026-11-04T19:30:00-03:00",
+    "nivel": 5.4,
+    "lluvia": 0.0
+   },
+   "nivelHace24h": 5.23,
+   "nivelHace72h": 6.34,
+   "lluvia24h": 66.0,
+   "lluvia72h": 66.0,
+   "dias": [
+    {
+     "fecha": "2026-10-27",
+     "max": 11.45,
+     "min": 11.19,
+     "ultimo": 11.36,
+     "media": 11.37,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-28",
+     "max": 11.35,
+     "min": 10.53,
+     "ultimo": 10.53,
+     "media": 10.99,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-29",
+     "max": 10.5,
+     "min": 9.25,
+     "ultimo": 9.25,
+     "media": 9.9,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-30",
+     "max": 9.24,
+     "min": 7.99,
+     "ultimo": 7.99,
+     "media": 8.6,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-10-31",
+     "max": 7.98,
+     "min": 6.88,
+     "ultimo": 6.88,
+     "media": 7.4,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-01",
+     "max": 6.88,
+     "min": 6.26,
+     "ultimo": 6.26,
+     "media": 6.52,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-02",
+     "max": 6.26,
+     "min": 5.76,
+     "ultimo": 5.76,
+     "media": 6.04,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-03",
+     "max": 5.75,
+     "min": 5.11,
+     "ultimo": 5.11,
+     "media": 5.45,
+     "lluvia": 0.0
+    },
+    {
+     "fecha": "2026-11-04",
+     "max": 5.4,
+     "min": 5.01,
+     "ultimo": 5.4,
+     "media": 5.16,
+     "lluvia": 66.0
     }
    ]
   },
   "Garruchos": {
    "ultimo": {
-    "t": "2026-11-04T18:00:00-03:00",
-    "nivel": 4.53,
+    "t": "2026-11-04T19:00:00-03:00",
+    "nivel": 4.68,
     "lluvia": 0.0
    },
    "nivelHace24h": 3.4,
@@ -2308,24 +2477,24 @@
     },
     {
      "fecha": "2026-11-04",
-     "max": 4.53,
+     "max": 4.68,
      "min": 3.48,
-     "ultimo": 4.53,
-     "media": 3.76,
+     "ultimo": 4.68,
+     "media": 3.8,
      "lluvia": 50.0
     }
    ]
   },
   "El Soberbio": {
    "ultimo": {
-    "t": "2026-11-04T18:45:00-03:00",
-    "nivel": 3.8,
+    "t": "2026-11-04T19:45:00-03:00",
+    "nivel": 3.78,
     "lluvia": 0.0
    },
    "nivelHace24h": 4.38,
-   "nivelHace72h": 3.13,
+   "nivelHace72h": 3.1,
    "lluvia24h": 57.0,
-   "lluvia72h": 66.0,
+   "lluvia72h": 62.0,
    "dias": [
     {
      "fecha": "2026-10-27",
@@ -2394,9 +2563,9 @@
     {
      "fecha": "2026-11-04",
      "max": 4.35,
-     "min": 3.8,
-     "ultimo": 3.8,
-     "media": 4.1,
+     "min": 3.78,
+     "ultimo": 3.78,
+     "media": 4.09,
      "lluvia": 57.0
     }
    ]
