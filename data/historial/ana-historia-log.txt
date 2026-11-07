@@ -1,0 +1,13 @@
+Iraí (74100000): 35552 datos
+Itapiranga (74329000): 36020 datos
+Alto Uruguai (74500000): 27210 datos
+Porto Mauá (74720000): 34263 datos
+Porto Lucena (74800000): 29837 datos
+Garruchos BR (75550000): 35082 datos
+São Borja (75780000): 35989 datos
+Itaqui (75900000): 32604 datos
+Manoel Viana (76560000): 35797 datos
+Passo Mariano Pinto (76800000): 27716 datos
+Uruguaiana (77150000): 36100 datos
+Quaraí (77500000): 36179 datos
+filas 8615 desde 2025-11-03 00:00:00
