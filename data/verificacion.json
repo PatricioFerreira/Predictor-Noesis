@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-14T11:02:23.059070+00:00",
+ "generado": "2026-11-14T12:02:23.034695+00:00",
  "ventanaDias": 30,
  "minimoN": 5,
  "zonas": {
@@ -303,43 +303,43 @@
    },
    "humedad": {
     "ecmwf": {
-     "mae": 11.12,
-     "sesgo": 10.21,
+     "mae": 11.21,
+     "sesgo": 10.29,
      "n": 24
     },
     "gfs": {
-     "mae": 6.46,
-     "sesgo": 5.04,
+     "mae": 6.54,
+     "sesgo": 5.12,
      "n": 24
     },
     "icon": {
      "mae": 8.58,
-     "sesgo": 7.83,
+     "sesgo": 7.92,
      "n": 24
     },
     "gem": {
-     "mae": 7.29,
-     "sesgo": 3.12,
+     "mae": 7.21,
+     "sesgo": 3.21,
      "n": 24
     },
     "jma": {
-     "mae": 8.96,
-     "sesgo": 6.96,
+     "mae": 9.04,
+     "sesgo": 7.04,
      "n": 24
     },
     "arpege": {
-     "mae": 8.17,
-     "sesgo": 2.58,
+     "mae": 8.08,
+     "sesgo": 2.67,
      "n": 24
     },
     "ukmo": {
-     "mae": 7.42,
-     "sesgo": 6.08,
+     "mae": 7.5,
+     "sesgo": 6.17,
      "n": 24
     },
     "nuestro": {
-     "mae": 6.12,
-     "sesgo": 3.71,
+     "mae": 6.04,
+     "sesgo": 3.79,
      "n": 24
     }
    },
@@ -1069,43 +1069,43 @@
    },
    "humedad": {
     "ecmwf": {
-     "mae": 7.13,
-     "sesgo": 5.22,
+     "mae": 7.09,
+     "sesgo": 5.17,
      "n": 23
     },
     "gfs": {
-     "mae": 5.04,
-     "sesgo": 2.26,
+     "mae": 5.09,
+     "sesgo": 2.22,
      "n": 23
     },
     "icon": {
-     "mae": 5.22,
-     "sesgo": 4.0,
+     "mae": 5.26,
+     "sesgo": 3.96,
      "n": 23
     },
     "gem": {
-     "mae": 5.52,
-     "sesgo": 0.74,
+     "mae": 5.57,
+     "sesgo": 0.7,
      "n": 23
     },
     "jma": {
-     "mae": 6.26,
-     "sesgo": 5.74,
+     "mae": 6.22,
+     "sesgo": 5.7,
      "n": 23
     },
     "arpege": {
-     "mae": 6.48,
-     "sesgo": 5.26,
+     "mae": 6.43,
+     "sesgo": 5.22,
      "n": 23
     },
     "ukmo": {
-     "mae": 4.35,
-     "sesgo": -1.04,
+     "mae": 4.39,
+     "sesgo": -1.09,
      "n": 23
     },
     "nuestro": {
-     "mae": 4.65,
-     "sesgo": 1.35,
+     "mae": 4.7,
+     "sesgo": 1.3,
      "n": 23
     }
    },
