@@ -2828,3 +2828,6 @@ corrida,zona,hora_dato,temp_medida,temp_pronosticada,desvio,presion_hPa,presion_
 2026-11-14 07:03,salto,07:00,22,22.4,-0.4,1011,1011.6,-0.6,78,7,340,8.92,0.0,METAR SUSO (aeropuerto)
 2026-11-14 07:03,montevideo,07:00,20,19.9,0.1,1013,1012.4,0.6,83,20,10,,,METAR SUMU (aeropuerto)
 2026-11-14 07:03,este,07:00,21,19.7,1.3,1013,1013.3,-0.3,83,15,60,,,METAR SULS (aeropuerto)
+2026-11-14 07:18,salto,07:00,22,22.4,-0.4,1011,1011.6,-0.6,78,7,340,8.92,0.0,METAR SUSO (aeropuerto)
+2026-11-14 07:18,montevideo,07:00,20,19.9,0.1,1013,1012.4,0.6,83,20,10,,,METAR SUMU (aeropuerto)
+2026-11-14 07:18,este,07:00,21,19.7,1.3,1013,1013.3,-0.3,83,15,60,,,METAR SULS (aeropuerto)
