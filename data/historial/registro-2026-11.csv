@@ -3449,3 +3449,6 @@ corrida,zona,hora_dato,temp_medida,temp_pronosticada,desvio,presion_hPa,presion_
 2026-11-17 04:33,salto,04:00,19.5,29.3,1.7,1005.8,1003.1,2.7,49,13,120,8.72,23.3,SYNOP 86360 (INUMET)
 2026-11-17 04:33,montevideo,04:00,20,20.1,-0.1,1005.3,1005.0,0.3,88,9,20,,,METAR SUMU (aeropuerto)
 2026-11-17 04:33,este,04:00,20,19.6,0.4,1004.9,1005.8,-0.9,88,19,70,,,METAR SULS (aeropuerto)
+2026-11-17 07:35,salto,07:00,20,22.1,-2.1,1004.5,1004.3,0.2,94,6,350,8.83,23.54,METAR SUSO (aeropuerto)
+2026-11-17 07:35,montevideo,07:00,20,19.9,0.1,1002.7,1004.2,-1.5,88,20,50,,,METAR SUMU (aeropuerto)
+2026-11-17 07:35,este,07:00,22,20.0,2.0,1004.5,1005.1,-0.6,83,19,50,,,METAR SULS (aeropuerto)
